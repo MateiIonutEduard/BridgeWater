@@ -1,3 +1,5 @@
+using BridgeWater.Models;
+
 namespace BridgeWater
 {
     public class Program
@@ -7,6 +9,7 @@ namespace BridgeWater
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.Configure<BridgeWaterSettings>(builder.Configuration.GetSection("BridgeWaterDB"));
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
