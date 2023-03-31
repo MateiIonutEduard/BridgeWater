@@ -1,6 +1,7 @@
 ﻿using BridgeWater.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+#pragma warning disable
 
 namespace BridgeWater.Services
 {
@@ -13,6 +14,22 @@ namespace BridgeWater.Services
             var mongoClient = new MongoClient(bridgeWaterSettings.Value.ConnectionString);
             var mongoDatabase = mongoClient.GetDatabase(bridgeWaterSettings.Value.DatabaseName);
             products = mongoDatabase.GetCollection<Product>(bridgeWaterSettings.Value.ProductCollectionName);
+        }
+
+        public string?[] GetCategories()
+        {
+            var hash = new HashSet<string>();
+
+            var categories = products.Find(_ => true)
+                .ToList().Select(p => p.category);
+
+            foreach(string category in categories)
+            {
+                if(!hash.Contains(category))
+                    hash.Add(category);
+            }
+
+            return hash.ToArray();
         }
 
         public async Task<Product> GetProductAsync(string id)
