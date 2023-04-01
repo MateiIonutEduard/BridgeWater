@@ -32,6 +32,14 @@ namespace BridgeWater.Services
             return hash.ToArray();
         }
 
+        public async Task<Plant[]> GetProductsByCategoryAsync(string? category)
+        {
+            var product = await products.Find(p => p.category.CompareTo(category) == 0)
+                    .ToListAsync();
+
+            return product.ToArray();
+        }
+
         public async Task<Plant> GetProductAsync(string id)
         {
             Plant product = await products.Find(p => p.Id == id).FirstOrDefaultAsync();

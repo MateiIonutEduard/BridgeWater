@@ -1,0 +1,62 @@
+﻿@using BridgeWater.Services;
+@inject PlantService plantService;
+
+@{
+    string?[] categories = plantService.GetCategories();
+    string index = Context.Request.Query["id"];
+    if (string.IsNullOrEmpty(index)) index = "1";
+
+    string? category = categories[Convert.ToInt32(index) - 1];
+    Plant[] plants = await plantService.GetProductsByCategoryAsync(category);
+}
+
+<div class="row">
+    <div class="col-4">
+        <h2 class="text-secondary">Toate Plantele</h2>
+    </div>
+    <div class="col-8">
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                @category
+            </button>
+            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+                @for(int k = 0; k < categories.Length; k++)
+                {
+                    int id = k + 1;
+                    int iindex = Convert.ToInt32(index) - 1;
+
+                    if(iindex != k)
+                    {
+                        <li>
+                            <a class="dropdown-item" href="/Plant/?id=@id">@categories[k]</a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li>
+                            <a class="dropdown-item active" href="/Plant/?id=@id">@category</a>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="container bg-dark">
+<br/>
+    @for(int j = 0; j < plants.Length; j += 6)
+    {
+        <div class="row">
+            @for (int k = j; k <= j + 5 && k < plants.Length; k++)
+            {
+                <div class="col-2">
+                    <a href="#" class="list-group-item bg-secondary list-group-item-action">
+                        <img class="card-img-top" width="150" height="150" src="/Plant/Show/?id=@plants[k].Id&face=true" alt="@plants[k].name" />
+                        <h5 class="card-title text-info text-center">@plants[k].name</h5>
+                    </a>
+                </div>
+            }
+        </div>
+        <br />
+    }
+</div>
