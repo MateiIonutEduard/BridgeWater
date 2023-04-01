@@ -10,35 +10,38 @@
     Plant[] plants = await plantService.GetProductsByCategoryAsync(category);
 }
 
-<div class="row">
-    <div class="col-4">
-        <h2 class="text-secondary">Toate Plantele</h2>
-    </div>
-    <div class="col-8">
-        <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
-                @category
-            </button>
-            <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
-                @for(int k = 0; k < categories.Length; k++)
-                {
-                    int id = k + 1;
-                    int iindex = Convert.ToInt32(index) - 1;
+<div class="container">
+    <div class="row bg-secondary">
+        <div class="col-4">
+            <h3 class="text-light">Toate plantele</h3>
+        </div>
+        <div class="col-6"></div>
+        <div class="col-2">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                    @category
+                </button>
+                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton2">
+                    @for (int k = 0; k < categories.Length; k++)
+                    {
+                        int id = k + 1;
+                        int iindex = Convert.ToInt32(index) - 1;
 
-                    if(iindex != k)
-                    {
-                        <li>
-                            <a class="dropdown-item" href="/Plant/?id=@id">@categories[k]</a>
-                        </li>
+                        if (iindex != k)
+                        {
+                            <li>
+                                <a class="dropdown-item" href="/Plant/?id=@id">@categories[k]</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a class="dropdown-item active" href="/Plant/?id=@id">@category</a>
+                            </li>
+                        }
                     }
-                    else
-                    {
-                        <li>
-                            <a class="dropdown-item active" href="/Plant/?id=@id">@category</a>
-                        </li>
-                    }
-                }
-            </ul>
+                </ul>
+            </div>
         </div>
     </div>
 </div>
