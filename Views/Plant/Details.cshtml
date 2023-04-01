@@ -14,11 +14,14 @@
             <div class="col-12">
                 <img class="card-img-top" width="1200" height="300" src="/Plant/Show/?id=@plant.Id&face=false" alt="@plant.name" />
             </div>
-        </div><br/>
+        </div>
         <div class="row">
-            <div class="col-2"></div>
-            <div class="col-8 text-light">@Html.Raw(plant.description?.body)</div>
-            <div class="col-2"></div>
+            <div class="col-2" style="width: 100%; margin-bottom: 1%; border: 1px solid #6c757d;">
+                <br/><h5 class="text-light">@plant.category</h5>
+                <p class="text-light">@plant.name</p>
+            </div>
+            <div class="col-9 text-light">@Html.Raw(plant.description?.body)</div>
+            <div class="col-1"></div>
         </div>
     </div>
 }
