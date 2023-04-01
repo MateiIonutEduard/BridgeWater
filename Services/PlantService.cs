@@ -5,15 +5,15 @@ using MongoDB.Driver;
 
 namespace BridgeWater.Services
 {
-    public class ProductService
+    public class PlantService
     {
-        readonly IMongoCollection<Product> products;
+        readonly IMongoCollection<Plant> products;
 
-        public ProductService(IOptions<BridgeWaterSettings> bridgeWaterSettings)
+        public PlantService(IOptions<BridgeWaterSettings> bridgeWaterSettings)
         {
             var mongoClient = new MongoClient(bridgeWaterSettings.Value.ConnectionString);
             var mongoDatabase = mongoClient.GetDatabase(bridgeWaterSettings.Value.DatabaseName);
-            products = mongoDatabase.GetCollection<Product>(bridgeWaterSettings.Value.ProductCollectionName);
+            products = mongoDatabase.GetCollection<Plant>(bridgeWaterSettings.Value.PlantCollectionName);
         }
 
         public string?[] GetCategories()
@@ -32,18 +32,18 @@ namespace BridgeWater.Services
             return hash.ToArray();
         }
 
-        public async Task<Product> GetProductAsync(string id)
+        public async Task<Plant> GetProductAsync(string id)
         {
-            Product product = await products.Find(p => p.Id == id).FirstOrDefaultAsync();
+            Plant product = await products.Find(p => p.Id == id).FirstOrDefaultAsync();
             return product;
         }
 
-        public async Task CreateProductAsync(Product product) => await products.InsertOneAsync(product);
+        public async Task CreateProductAsync(Plant product) => await products.InsertOneAsync(product);
 
-        public async Task CreateProductsAsync(Product[] productList) => await products.InsertManyAsync(productList);
+        public async Task CreateProductsAsync(Plant[] productList) => await products.InsertManyAsync(productList);
 
         public async Task RemoveProductAsync(string id) => await products.DeleteOneAsync(x => x.Id == id);
 
-        public async Task RemoveProductsAsync() => await products.DeleteManyAsync(Builders<Product>.Filter.Empty);
+        public async Task RemoveProductsAsync() => await products.DeleteManyAsync(Builders<Plant>.Filter.Empty);
     }
 }

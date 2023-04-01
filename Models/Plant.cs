@@ -3,7 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace BridgeWater.Models
 {
-    public class Product
+    public class Plant
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]

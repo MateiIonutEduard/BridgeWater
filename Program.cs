@@ -11,7 +11,7 @@ namespace BridgeWater
 
             // Add services to the container.
             builder.Services.Configure<BridgeWaterSettings>(builder.Configuration.GetSection("BridgeWaterDB"));
-            builder.Services.AddSingleton<ProductService>();
+            builder.Services.AddSingleton<PlantService>();
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
