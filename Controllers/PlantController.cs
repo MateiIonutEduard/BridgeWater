@@ -17,6 +17,11 @@ namespace BridgeWater.Controllers
             return View();
         }
 
+        public IActionResult Details(string? id)
+        {
+            return View();
+        }
+
         public  async Task<IActionResult> Show(string id, bool? face)
         {
             Plant plant = await plantService.GetProductAsync(id);

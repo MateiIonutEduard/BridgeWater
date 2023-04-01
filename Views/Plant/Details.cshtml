@@ -1,0 +1,27 @@
+﻿@using BridgeWater.Services;
+@inject PlantService plantService;
+
+@{
+    string id = Context.Request.Query["id"];
+    Plant plant = await plantService.GetProductAsync(id);
+    if (plant != null) ViewData["Title"] = plant.name;
+}
+
+@if(plant != null)
+{
+    <div class="container bg-dark">
+        <div class="row">
+            <div class="col-12">
+                <img class="card-img-top" width="1200" height="300" src="/Plant/Show/?id=@plant.Id&face=false" alt="@plant.name" />
+            </div>
+        </div><br/>
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-8 text-light">@Html.Raw(plant.description?.body)</div>
+            <div class="col-2"></div>
+        </div>
+    </div>
+}
+else {
+
+}

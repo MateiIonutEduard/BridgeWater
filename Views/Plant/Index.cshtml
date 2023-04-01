@@ -8,6 +8,7 @@
 
     string? category = categories[Convert.ToInt32(index) - 1];
     Plant[] plants = await plantService.GetProductsByCategoryAsync(category);
+    ViewData["Title"] = "Toate plantele";
 }
 
 <div class="container">
@@ -53,7 +54,7 @@
             @for (int k = j; k <= j + 5 && k < plants.Length; k++)
             {
                 <div class="col-2">
-                    <a href="#" class="list-group-item bg-secondary list-group-item-action">
+                    <a href="/Plant/Details/?id=@plants[k].Id" class="list-group-item bg-secondary list-group-item-action">
                         <img class="card-img-top" width="150" height="150" src="/Plant/Show/?id=@plants[k].Id&face=true" alt="@plants[k].name" />
                         <h5 class="card-title text-info text-center">@plants[k].name</h5>
                     </a>
