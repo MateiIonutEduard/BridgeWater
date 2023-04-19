@@ -50,6 +50,27 @@ nav, footer {
     color: #eab676;
 }
 
+.dropdown-toggle {
+    color: #b0c7e9 !important;
+}
+
+.dropdown-toggle:hover {
+    color: #eab676 !important;
+}
+
+.dropdown-item {
+    color: #b0c7e9 !important;
+}
+
+.dropdown-item:hover {
+    color: #eab676 !important;
+    background-color: #353a48;
+}
+
+.dropdown-menu {
+    background-color: #353a48;
+}
+
 #footerPrivacy {
     text-decoration: none;
     color: #b0c7e9 !important;
