@@ -38,6 +38,23 @@ nav, footer {
     color: #b0c7e9;
 }
 
+.navbar-brand:hover {
+   color: #64b086;
+}
+
 .nav-link {
     color: #b0c7e9;
+}
+
+.nav-link:hover {
+    color: #eab676;
+}
+
+#footerPrivacy {
+    text-decoration: none;
+    color: #b0c7e9 !important;
+}
+
+#footerPrivacy:hover {
+    color: #eab676 !important;
 }
