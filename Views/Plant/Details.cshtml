@@ -6,20 +6,21 @@
     Plant plant = await plantService.GetProductAsync(id);
     if (plant != null) ViewData["Title"] = plant.name;
 }
-
+<br />
+<br />
 @if(plant != null)
 {
-    <div class="container bg-dark">
+    <div class="container bg-dark" style="width: 80%;">
         <div class="row">
             <div class="col-12">
-                <img class="card-img-top" width="1200" height="300" src="/Plant/Show/?id=@plant.Id&face=false" alt="@plant.name" />
+                <img class="card-img-top" width="900" height="400" src="/Plant/Show/?id=@plant.Id&face=false" alt="@plant.name" />
             </div>
-        </div>
+        </div><br/>
         <div class="row">
-            <div class="col-2" style="width: 100%; margin-bottom: 1%; border: 1px solid #6c757d;">
+            <div class="col-2" id="plantPanel">
                 <br/><h5 class="text-light">@plant.category</h5>
                 <p class="text-light">@plant.name</p>
-            </div>
+            </div><br/>
             <div class="col-9 text-light">@Html.Raw(plant.description?.body)</div>
             <div class="col-1"></div>
         </div>
@@ -30,13 +31,15 @@ else {
         <div class="col-2"></div>
         <div class="col-8">
             <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <h4 style="color: #5e2d32;" class="alert-heading">No result found!</h4>
-                <p style="color: #282A35;">It is possible that the search index is not available on the server at the moment.</p>
+                <h4 style="color: #5e2d32;" class="alert-heading">Nu a fost gasit nici un rezultat!</h4>
+                <p style="color: #282A35;">Este posibil ca indexul de cautare sa nu fie disponibil momentan pe server.</p>
                 <hr>
-                <p style="color: #282A35;" class="mb-0">We apologize for this unexpected situation!</p>
+                <p style="color: #282A35;" class="mb-0">Ne cerem scuze pentru aceasta situatie neasteptata!</p>
                 <button onclick="location.href = '/Plant/';" type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
         <div class="col-2"></div>
     </div>
 }
+<br />
+<br />

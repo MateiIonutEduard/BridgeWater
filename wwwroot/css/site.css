@@ -14,5 +14,30 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+    background-color: #333741;
+}
+
+nav, footer {
+    background-color: #353a48;
+}
+
+#plantPanel {
+    width: 100%;
+    margin-bottom: 1%;
+    margin-left: 1px;
+    border: 1px solid #6c757d;
+}
+
+#footerContainer {
+    margin-left: 42%;
+    color: white;
+}
+
+.navbar-brand {
+    color: #b0c7e9;
+}
+
+.nav-link {
+    color: #b0c7e9;
 }
