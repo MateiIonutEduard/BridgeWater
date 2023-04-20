@@ -79,3 +79,21 @@ nav, footer {
 #footerPrivacy:hover {
     color: #eab676 !important;
 }
+
+.fa-eye {
+    color: #4169E1;
+}
+
+.fa-trash {
+    color: #d9534f;
+}
+
+#productField {
+    background-color: #8496a9;
+    color: #273440;
+}
+
+#products tbody tr:hover td {
+    background-color: #5b7171 !important;
+    color: black;
+}

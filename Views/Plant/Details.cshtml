@@ -2,6 +2,7 @@
 @inject PlantService plantService;
 
 @{
+    #pragma warning disable
     string id = Context.Request.Query["id"];
     Plant plant = await plantService.GetProductAsync(id);
     if (plant != null) ViewData["Title"] = plant.name;

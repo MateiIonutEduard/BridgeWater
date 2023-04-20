@@ -1,4 +1,6 @@
-﻿using BridgeWater.Models;
+﻿using BridgeWater.Data;
+using BridgeWater.Models;
+using BridgeWater.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -6,11 +8,36 @@ namespace BridgeWater.Controllers
 {
     public class HomeController : Controller
     {
+        readonly IProductService productService;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IProductService productService, ILogger<HomeController> logger)
         {
            _logger = logger;
+            this.productService = productService;
+        }
+
+        public async Task<IActionResult> Show(int id, bool? logo)
+        {
+            Product? product = await productService.GetProductAsync(id);
+
+            if (product != null && logo != null)
+            {
+                if (logo.Value)
+                {
+                    int index = product.LogoImage.LastIndexOf(".");
+                    byte[] data = System.IO.File.ReadAllBytes(product.LogoImage);
+                    return File(data, $"image/{product.LogoImage.Substring(index + 1)}");
+                }
+                else
+                {
+                    int index = product.PosterImage.LastIndexOf(".");
+                    byte[] data = System.IO.File.ReadAllBytes(product.PosterImage);
+                    return File(data, $"image/{product.PosterImage.Substring(index + 1)}");
+                }
+            }
+            
+            return NotFound();
         }
 
         public IActionResult Index()

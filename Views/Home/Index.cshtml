@@ -1,9 +1,60 @@
 ﻿@using System.Web;
+@using BridgeWater.Data;
+@using BridgeWater.Services;
+@inject IProductService productService;
+
 @{
-    ViewData["Title"] = "Home Page";
+    #pragma warning disable
+    ViewData["Title"] = "Toate Produsele";
+
+    int? type = Context.Request.Query.Keys.Contains("type") ? Convert.ToInt32(Context.Request.Query["type"]) : null;
+    int? page = Context.Request.Query.Keys.Contains("page") ? Convert.ToInt32(Context.Request.Query["page"]) : null;
+
+    ProductResultModel result = await productService.GetProductsByCategoryAsync(type, page);
+    ProductViewModel[] products = result.ProductViewModels;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="bg-secondary">
+    <br/><br/>
+    @if (products != null && products.Length > 0)
+    {
+        <table class="table table-light table-hover" id="products" style="margin-left: 15%; width: 70%;">
+            <thead>
+                <tr>
+                    <th style="background-color: #506983; color: white;">#</th>
+                    <th style="background-color: #506983; color: white;">Nume Produs</th>
+                    <th style="background-color: #506983; color: white;">Recenzii</th>
+                    <th style="background-color: #506983; color: white;">Pretul</th>
+                    <th style="background-color: #506983; color: white;">Actiuni</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (ProductViewModel product in products)
+                {
+                    <tr>
+                        <td id="productField">
+                            <a href="/Home/About/?id=@product.Id">
+                                <img src="/Home/Show/?id=@product.Id&logo=true" alt="@product.Name" width="64" height="64" />
+                            </a>
+                        </td>
+                        <td id="productField">
+                            <small>@product.Name</small>
+                        </td>
+                        <td id="productField">Doe</td>
+                        <td id="productField">
+                            <small>@product.Price.ToString("##,###.##")</small>
+                            </td>
+                        <td id="productField">
+                            <a class="btn btn-sm" href="/Home/About/?id=@product.Id">
+                                <i class="fa fa-eye" aria-hidden="true"></i>
+                            </a>
+                            <a class="btn btn-sm" href="#">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</section>

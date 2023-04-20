@@ -16,6 +16,7 @@ namespace BridgeWater
                 opt.UseNpgsql(builder.Configuration.GetConnectionString("PostgresBW")));
 
             builder.Services.Configure<BridgeWaterSettings>(builder.Configuration.GetSection("BridgeWaterDB"));
+            builder.Services.AddTransient<IProductService, ProductService>();
             builder.Services.AddSingleton<PlantService>();
             builder.Services.AddControllersWithViews();
 

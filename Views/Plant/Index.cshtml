@@ -2,6 +2,7 @@
 @inject PlantService plantService;
 
 @{
+    #pragma warning disable
     string?[] categories = plantService.GetCategories();
     string index = Context.Request.Query["id"];
     if (string.IsNullOrEmpty(index)) index = "1";
