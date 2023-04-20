@@ -10,6 +10,9 @@ namespace BridgeWater.Data
         public string LogoImage { get; set; }
         public string PosterImage { get; set; } 
         public string TechInfo { get; set; }
+
+        public int CategoryId { get; set; }
+        public Category Category { get; set; }
         public int Stock { get; set; }
         public double Price { get; set; }
     }

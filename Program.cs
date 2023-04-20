@@ -1,5 +1,7 @@
+using BridgeWater.Data;
 using BridgeWater.Models;
 using BridgeWater.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace BridgeWater
 {
@@ -10,6 +12,9 @@ namespace BridgeWater
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddEntityFrameworkNpgsql().AddDbContext<BridgeContext>(opt =>
+                opt.UseNpgsql(builder.Configuration.GetConnectionString("PostgresBW")));
+
             builder.Services.Configure<BridgeWaterSettings>(builder.Configuration.GetSection("BridgeWaterDB"));
             builder.Services.AddSingleton<PlantService>();
             builder.Services.AddControllersWithViews();
