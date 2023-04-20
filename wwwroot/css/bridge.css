@@ -97,3 +97,16 @@ nav, footer {
     background-color: #5b7171 !important;
     color: black;
 }
+
+#navigation {
+    margin-left: 40%;
+}
+
+.page-link {
+    font-weight: bold;
+}
+
+.page-item:not(.active) {
+    border: 1px solid #9cbfdd;
+    border-radius: 10%;
+}

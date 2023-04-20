@@ -12,6 +12,21 @@
 
     ProductResultModel result = await productService.GetProductsByCategoryAsync(type, page);
     ProductViewModel[] products = result.ProductViewModels;
+
+    int nextPage = 0;
+    int previousPage = page != null ? page.Value - 1 : 1;
+    int mainPage = page != null ? page.Value : 1;
+
+    if (previousPage <= 0) 
+    {
+        previousPage = 1;
+
+        if (previousPage < result.Pages)
+            nextPage = 2;
+    }
+    
+    if (mainPage <= result.Pages - 1)
+        nextPage = mainPage + 1;
 }
 
 <section class="bg-secondary">
@@ -56,5 +71,53 @@
                 }
             </tbody>
         </table>
+        @if (type != null)
+        {
+            <nav id="navigation">
+                <ul class="pagination bg-secondary">
+                    @if (mainPage > 1)
+                    {
+                        <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@previousPage">&lt;&lt;</a></li>
+                        <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@previousPage">@previousPage</a></li>
+                    }
+                    <li class="page-item active"><a class="page-link" style="color: #ffa571 !important;">@mainPage</a></li>
+
+                    @if (nextPage <= result.Pages && mainPage < result.Pages)
+                    {
+                        <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@nextPage">@nextPage</a></li>
+                    }
+
+                    @if (nextPage <= result.Pages && mainPage < result.Pages)
+                    {
+                        <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@nextPage">&gt;&gt;</a></li>
+                    }
+                </ul>
+            </nav>
+            <br/><br/>
+        }
+        else
+        {
+            <nav id="navigation">
+                <ul class="pagination bg-secondary">
+                    @if(mainPage > 1)
+                    {
+                        <li class="page-item"><a class="page-link" href="/Home/?page=@previousPage">&lt;&lt;</a></li>
+                        <li class="page-item"><a class="page-link" href="/Home/?page=@previousPage">@previousPage</a></li>
+                    }
+                    <li class="page-item active"><a class="page-link" style="color: #ffa571 !important;">@mainPage</a></li>
+
+                    @if (nextPage <= result.Pages && mainPage < result.Pages)
+                    {
+                        <li class="page-item"><a class="page-link" href="/Home/?page=@nextPage">@nextPage</a></li>
+                    }
+
+                    @if (nextPage <= result.Pages && mainPage < result.Pages)
+                    {
+                        <li class="page-item"><a class="page-link" href="/Home/?page=@nextPage">&gt;&gt;</a></li>
+                    }
+                </ul>
+            </nav>
+            <br/><br/>
+        }
     }
 </section>
