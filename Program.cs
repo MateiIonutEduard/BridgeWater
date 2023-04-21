@@ -2,6 +2,8 @@ using BridgeWater.Data;
 using BridgeWater.Models;
 using BridgeWater.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace BridgeWater
 {
@@ -11,12 +13,25 @@ namespace BridgeWater
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Add PostgreSQL database linker to entities.
             builder.Services.AddEntityFrameworkNpgsql().AddDbContext<BridgeContext>(opt =>
                 opt.UseNpgsql(builder.Configuration.GetConnectionString("PostgresBW")));
 
+            // now, need MongoDB database config 
             builder.Services.Configure<BridgeWaterSettings>(builder.Configuration.GetSection("BridgeWaterDB"));
+
+            // get appSettings section
+            builder.Services.Configure<AppSettings>(
+                    builder.Configuration.GetSection(nameof(AppSettings)));
+
+            // register AppSettings as singleton service
+            builder.Services.AddSingleton<IAppSettings>(sp =>
+                sp.GetRequiredService<IOptions<AppSettings>>().Value);
+
+            // inject product service
             builder.Services.AddTransient<IProductService, ProductService>();
+
+            // add plant service
             builder.Services.AddSingleton<PlantService>();
 
             // Add cookie authentication
