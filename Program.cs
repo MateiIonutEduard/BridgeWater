@@ -18,8 +18,16 @@ namespace BridgeWater
             builder.Services.Configure<BridgeWaterSettings>(builder.Configuration.GetSection("BridgeWaterDB"));
             builder.Services.AddTransient<IProductService, ProductService>();
             builder.Services.AddSingleton<PlantService>();
-            builder.Services.AddControllersWithViews();
 
+            // Add cookie authentication
+            builder.Services.AddAuthentication("CookieAuthentication")
+                .AddCookie("CookieAuthentication", config =>
+                {
+                    config.Cookie.Name = "LoginCookie";
+                    config.LoginPath = "/Account";
+                });
+
+            builder.Services.AddControllersWithViews();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
