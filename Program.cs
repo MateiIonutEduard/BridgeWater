@@ -28,6 +28,17 @@ namespace BridgeWater
             builder.Services.AddSingleton<IAppSettings>(sp =>
                 sp.GetRequiredService<IOptions<AppSettings>>().Value);
 
+            // admin settings config section
+            builder.Services.Configure<AdminSettings>(
+                    builder.Configuration.GetSection(nameof(AdminSettings)));
+
+            // register admin settings as singleton service
+            builder.Services.AddSingleton<IAdminSettings>(sp =>
+                sp.GetRequiredService<IOptions<AdminSettings>>().Value);
+
+            // now, it is time, to declare admin service, as singleton
+            builder.Services.AddSingleton<IAdminService, AdminService>();
+
             // add crypto service, needed to password encryption
             builder.Services.AddSingleton<ICryptoService, CryptoService>();
 
@@ -52,7 +63,6 @@ namespace BridgeWater
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
 
