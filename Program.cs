@@ -28,6 +28,9 @@ namespace BridgeWater
             builder.Services.AddSingleton<IAppSettings>(sp =>
                 sp.GetRequiredService<IOptions<AppSettings>>().Value);
 
+            // add crypto service, needed to password encryption
+            builder.Services.AddSingleton<ICryptoService, CryptoService>();
+
             // inject product service
             builder.Services.AddTransient<IProductService, ProductService>();
 
@@ -58,6 +61,7 @@ namespace BridgeWater
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
