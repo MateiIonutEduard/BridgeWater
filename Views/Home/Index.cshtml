@@ -48,7 +48,7 @@
     <div class="col-2"></div>
     <div class="col-8">
             <form action="/Home/ByCategory" method="post">
-                <div class="d-flex bd-highlight" style="margin-left: 15%;">
+                <div class="d-flex bd-highlight" style="margin-left: 10%;">
                     <div class="p-2 flex-fill bd-highlight">
                         <nav aria-label="breadcrumb" id="navy">
                             <ol class="breadcrumb">
@@ -78,7 +78,7 @@
             </form>
             @if (products != null && products.Length > 0)
             {
-                <table class="table table-light table-hover" id="products" style="margin-left: 15%; width: 80%;">
+                <table class="table table-light table-hover" id="products" style="margin-left: 10%; width: 80%;">
                     <thead>
                         <tr>
                             <th style="background-color: #506983; color: white;">#</th>
@@ -102,7 +102,7 @@
                                 </td>
                                 <td id="productField">Doe</td>
                                 <td id="productField">
-                                    <small>@product.Price.ToString("##,###.##")</small>
+                                    <small>@((Math.Truncate(product.Price * 100) / 100).ToString("#####.##"))</small>
                                 </td>
                                 <td id="productField">
                                     <a class="btn btn-sm" href="/Home/About/?id=@product.Id">

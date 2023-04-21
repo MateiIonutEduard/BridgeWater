@@ -17,6 +17,34 @@ namespace BridgeWater.Services
             return categories;
         }
 
+        public async Task<ProductViewModel?> GetProductDetailsAsync(int id)
+        {
+            Product? product = await bridgeContext.Product
+                .FirstOrDefaultAsync(p => p.Id == id);
+
+            if (product != null)
+            {
+                Category? category = await bridgeContext.Category
+                    .FirstOrDefaultAsync(c => c.Id == product.CategoryId);
+
+                ProductViewModel productViewModel = new ProductViewModel
+                {
+                    Id = product.Id,
+                    Name = product.Name,
+                    Description = product.Description,
+                    CategoryId = category!.Id,
+                    Category = category!.Name,
+                    TechInfo = product.TechInfo,
+                    Price = product.Price,
+                    Stock = product.Stock
+                };
+
+                return productViewModel;
+            }
+
+            return null;
+        }
+
         public async Task<Product?> GetProductAsync(int id)
         {
             Product? product = await bridgeContext.Product

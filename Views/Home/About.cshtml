@@ -1,0 +1,93 @@
+﻿@using BridgeWater.Data;
+@using BridgeWater.Services;
+@inject IProductService productService;
+
+@{
+    int? id = Context.Request.Query.Keys.Contains("id") ? Convert.ToInt32(Context.Request.Query["id"]) : null;
+    ProductViewModel? productViewModel = null;
+    Product? product = null;
+
+    if (id != null)
+    { 
+        product = await productService.GetProductAsync(id.Value);
+        productViewModel = await productService.GetProductDetailsAsync(id.Value);
+    }
+}
+
+<section class="bg-light">
+    <div class="container-fluid" id="productShortView">
+        @if (product != null)
+        {
+            <div class="row">
+                <div class="col-4" style="margin-left: 8%;">
+                    <div class="row product-box">
+                        <div class="col-1"></div>
+                        <div class="col-10">
+                            <nav aria-label="breadcrumb" id="navz">
+                                <ol class="breadcrumb">
+                                    <li class="breadcrumb-item"><a id="core" href="/Home/">Acasa</a></li>
+                                    <li class="breadcrumb-item"><a id="next" href="/Home/?type=@productViewModel!.CategoryId">@productViewModel!.Category</a></li>
+                                    <li class="breadcrumb-item active" id="productxNav" aria-current="page">@product.Name</li>
+                                </ol>
+                            </nav>
+                            <div class="product-name">
+                                <h5>@product.Name</h5>
+                            </div>
+                        </div>
+                        <div class="col-1"></div>
+                    </div>
+                    <img src="/Home/Show/?id=@product.Id&logo=false" width="256" height="256" alt="@product.Name" id="poster"/>
+                </div>
+                <div class="col-4">
+                    <div class="row" id="buyPanel">
+                        <div class="col-1"></div>
+                        <div class="col-10">
+                            <div class="product-rating">
+                                <h5>Rating</h5>
+                                <span class="fa fa-star" style="color: orange;">&nbsp;<small class="rate">4.5</small></span>
+                            </div>
+                            <div class="product-available">
+                                <h5>Stoc disponibil</h5>
+                                @if(product.Stock > 0)
+                                {
+                                    <span class="fa fa-check" style="color: #14A44D !important; margin-left: 15% !important;">&nbsp;</span>
+                                }
+                                else
+                                {
+                                    <span class="fa fa-times" style="color: #DC4C64 !important; margin-left: 15% !important;">&nbsp;</span>
+                                }
+                            </div>
+                            <div class="price-box">
+                                <span class="regular-price" id="productPrice">
+                                    <span class="price">@((Math.Truncate(product.Price * 100) / 100).ToString("#####.##"))</span>
+                                </span>
+                            </div>
+                            <input class="form-control form-control-sm" id="quantity" type="number" value="1" min="1" max="@product.Stock" />
+                            <button class="btn" id="buy">ADAUGA IN COS</button>
+                        </div>
+                        <div class="col-1"></div>
+                    </div>
+                </div>
+                <div class="col-4"></div>
+            </div><br/>
+            <div class="row">
+                <div class="col-1"></div>
+                <div class="col-10">
+                    <div class="product-description">
+                        @Html.Raw(productViewModel.Description)
+                    </div>
+                </div>
+                <div class="col-1"></div>
+            </div><br/>
+            <div class="row">
+                <div class="col-1"></div>
+                <div class="col-10">
+                    <div class="product-tech">
+                        @Html.Raw(productViewModel.TechInfo)
+                    </div>
+                </div>
+                <div class="col-1"></div>
+            </div>
+        }
+    </div>
+</section>

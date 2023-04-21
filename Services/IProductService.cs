@@ -7,6 +7,7 @@ namespace BridgeWater.Services
     {
         Task<Category[]> GetCategoriesAsync();
         Task<ProductResultModel> GetProductsByCategoryAsync(int? categoryId, int? page);
+        Task<ProductViewModel?> GetProductDetailsAsync(int id);
         Task<Product?> GetProductAsync(int id);
     }
 }

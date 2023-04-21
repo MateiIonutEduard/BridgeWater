@@ -17,6 +17,7 @@ namespace BridgeWater.Controllers
             this.productService = productService;
         }
 
+        // show product image, logo or poster
         public async Task<IActionResult> Show(int id, bool? logo)
         {
             Product? product = await productService.GetProductAsync(id);
@@ -43,9 +44,17 @@ namespace BridgeWater.Controllers
         [HttpPost]
         public ActionResult ByCategory(string? category)
         {
+            /* Load products list filtered by category */
             return Redirect($"/?type={category}");
         }
 
+        // Represents product description page view
+        public IActionResult About()
+        {
+            return View();
+        }
+
+        // Main page that offers product list view
         public IActionResult Index()
         {
             return View();
