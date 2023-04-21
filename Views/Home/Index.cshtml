@@ -10,8 +10,21 @@
     int? type = Context.Request.Query.Keys.Contains("type") ? Convert.ToInt32(Context.Request.Query["type"]) : null;
     int? page = Context.Request.Query.Keys.Contains("page") ? Convert.ToInt32(Context.Request.Query["page"]) : null;
 
+    if (type == 0) type = null;
+    Category[] categories = await productService.GetCategoriesAsync();
     ProductResultModel result = await productService.GetProductsByCategoryAsync(type, page);
+
     ProductViewModel[] products = result.ProductViewModels;
+    string mainCategory = type != null && type.Value > 0 ? categories[type.Value - 1].Name : "Toate Produsele";
+
+    List<Category> list = new List<Category>();
+    Category firstCategory = new Category();
+
+    firstCategory.Name = "Toate Produsele";
+    int index = type != null ? type.Value : 0;
+
+    list.Add(firstCategory);
+    list.AddRange(categories);
 
     int nextPage = 0;
     int previousPage = page != null ? page.Value - 1 : 1;
@@ -31,93 +44,130 @@
 
 <section class="bg-secondary">
     <br/><br/>
-    @if (products != null && products.Length > 0)
-    {
-        <table class="table table-light table-hover" id="products" style="margin-left: 15%; width: 70%;">
-            <thead>
-                <tr>
-                    <th style="background-color: #506983; color: white;">#</th>
-                    <th style="background-color: #506983; color: white;">Nume Produs</th>
-                    <th style="background-color: #506983; color: white;">Recenzii</th>
-                    <th style="background-color: #506983; color: white;">Pretul</th>
-                    <th style="background-color: #506983; color: white;">Actiuni</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (ProductViewModel product in products)
+    <div class="row">
+    <div class="col-2"></div>
+    <div class="col-8">
+            <form action="/Home/ByCategory" method="post">
+                <div class="d-flex bd-highlight" style="margin-left: 15%;">
+                    <div class="p-2 flex-fill bd-highlight">
+                        <nav aria-label="breadcrumb" id="navy">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a id="home" href="/Home/">Acasa</a></li>
+                                <li class="breadcrumb-item active" id="productNav" aria-current="page">Produse</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div class="p-2 flex-fill bd-highlight">
+                        <select class="form-select bg-secondary" id="category" name="category" aria-label="@list[index].Name">
+                            <option id="CategoryItem" value="@list[index].Id" selected>@list[index].Name</option>
+                            @for (int k = 0; k < list.Count; k++)
+                            {
+                                if(index != k)
+                                {
+                                    <option id="CategoryItem" value="@list[k].Id">@list[k].Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="p-2 flex-fill bd-highlight">
+                        <button id="searchByCategory" class="btn btn-primary">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            @if (products != null && products.Length > 0)
+            {
+                <table class="table table-light table-hover" id="products" style="margin-left: 15%; width: 80%;">
+                    <thead>
+                        <tr>
+                            <th style="background-color: #506983; color: white;">#</th>
+                            <th style="background-color: #506983; color: white;">Nume Produs</th>
+                            <th style="background-color: #506983; color: white;">Recenzii</th>
+                            <th style="background-color: #506983; color: white;">Pretul</th>
+                            <th style="background-color: #506983; color: white;">Actiuni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (ProductViewModel product in products)
+                        {
+                            <tr>
+                                <td id="productField">
+                                    <a href="/Home/About/?id=@product.Id">
+                                        <img src="/Home/Show/?id=@product.Id&logo=true" alt="@product.Name" width="64" height="64" />
+                                    </a>
+                                </td>
+                                <td id="productField">
+                                    <small>@product.Name</small>
+                                </td>
+                                <td id="productField">Doe</td>
+                                <td id="productField">
+                                    <small>@product.Price.ToString("##,###.##")</small>
+                                </td>
+                                <td id="productField">
+                                    <a class="btn btn-sm" href="/Home/About/?id=@product.Id">
+                                        <i class="fa fa-eye" aria-hidden="true"></i>
+                                    </a>
+                                    <a class="btn btn-sm" href="#">
+                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @if (type != null)
                 {
-                    <tr>
-                        <td id="productField">
-                            <a href="/Home/About/?id=@product.Id">
-                                <img src="/Home/Show/?id=@product.Id&logo=true" alt="@product.Name" width="64" height="64" />
-                            </a>
-                        </td>
-                        <td id="productField">
-                            <small>@product.Name</small>
-                        </td>
-                        <td id="productField">Doe</td>
-                        <td id="productField">
-                            <small>@product.Price.ToString("##,###.##")</small>
-                            </td>
-                        <td id="productField">
-                            <a class="btn btn-sm" href="/Home/About/?id=@product.Id">
-                                <i class="fa fa-eye" aria-hidden="true"></i>
-                            </a>
-                            <a class="btn btn-sm" href="#">
-                                <i class="fa fa-trash" aria-hidden="true"></i>
-                            </a>
-                        </td>
-                    </tr>
+                    <nav id="navigation">
+                        <ul class="pagination bg-secondary">
+                            @if (mainPage > 1)
+                            {
+                                <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@previousPage">&lt;&lt;</a></li>
+                                <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@previousPage">@previousPage</a></li>
+                            }
+                            <li class="page-item active"><a class="page-link" style="color: #ffa571 !important;">@mainPage</a></li>
+
+                            @if (nextPage <= result.Pages && mainPage < result.Pages)
+                            {
+                                <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@nextPage">@nextPage</a></li>
+                            }
+
+                            @if (nextPage <= result.Pages && mainPage < result.Pages)
+                            {
+                                <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@nextPage">&gt;&gt;</a></li>
+                            }
+                        </ul>
+                    </nav>
+                    <br/>
+                    <br/>
                 }
-            </tbody>
-        </table>
-        @if (type != null)
-        {
-            <nav id="navigation">
-                <ul class="pagination bg-secondary">
-                    @if (mainPage > 1)
-                    {
-                        <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@previousPage">&lt;&lt;</a></li>
-                        <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@previousPage">@previousPage</a></li>
-                    }
-                    <li class="page-item active"><a class="page-link" style="color: #ffa571 !important;">@mainPage</a></li>
+                else
+                {
+                    <nav id="navigation">
+                        <ul class="pagination bg-secondary">
+                            @if (mainPage > 1)
+                            {
+                                <li class="page-item"><a class="page-link" href="/Home/?page=@previousPage">&lt;&lt;</a></li>
+                                <li class="page-item"><a class="page-link" href="/Home/?page=@previousPage">@previousPage</a></li>
+                            }
+                            <li class="page-item active"><a class="page-link" style="color: #ffa571 !important;">@mainPage</a></li>
 
-                    @if (nextPage <= result.Pages && mainPage < result.Pages)
-                    {
-                        <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@nextPage">@nextPage</a></li>
-                    }
+                            @if (nextPage <= result.Pages && mainPage < result.Pages)
+                            {
+                                <li class="page-item"><a class="page-link" href="/Home/?page=@nextPage">@nextPage</a></li>
+                            }
 
-                    @if (nextPage <= result.Pages && mainPage < result.Pages)
-                    {
-                        <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@nextPage">&gt;&gt;</a></li>
-                    }
-                </ul>
-            </nav>
-            <br/><br/>
-        }
-        else
-        {
-            <nav id="navigation">
-                <ul class="pagination bg-secondary">
-                    @if(mainPage > 1)
-                    {
-                        <li class="page-item"><a class="page-link" href="/Home/?page=@previousPage">&lt;&lt;</a></li>
-                        <li class="page-item"><a class="page-link" href="/Home/?page=@previousPage">@previousPage</a></li>
-                    }
-                    <li class="page-item active"><a class="page-link" style="color: #ffa571 !important;">@mainPage</a></li>
-
-                    @if (nextPage <= result.Pages && mainPage < result.Pages)
-                    {
-                        <li class="page-item"><a class="page-link" href="/Home/?page=@nextPage">@nextPage</a></li>
-                    }
-
-                    @if (nextPage <= result.Pages && mainPage < result.Pages)
-                    {
-                        <li class="page-item"><a class="page-link" href="/Home/?page=@nextPage">&gt;&gt;</a></li>
-                    }
-                </ul>
-            </nav>
-            <br/><br/>
-        }
-    }
+                            @if (nextPage <= result.Pages && mainPage < result.Pages)
+                            {
+                                <li class="page-item"><a class="page-link" href="/Home/?page=@nextPage">&gt;&gt;</a></li>
+                            }
+                        </ul>
+                    </nav>
+                    <br/>
+                    <br/>
+                }
+            }
+    </div>
+    <div class="col-2"></div>
+    </div>
 </section>

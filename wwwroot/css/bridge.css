@@ -110,3 +110,43 @@ nav, footer {
     border: 1px solid #9cbfdd;
     border-radius: 10%;
 }
+
+#searchByCategory {
+    border-radius: 25%;
+    margin-left: 40%;
+}
+
+#home {
+    color: white;
+}
+
+#productNav {
+    color: #203d6c;
+    font-weight: bold;
+}
+
+#productNav.active::before {
+    color: #a7f3ff;
+}
+
+#navy {
+    margin-top: 5%;
+    background-color: #6c757d;
+    color: black;
+}
+
+#category {
+    color: #b0c7e9 !important;
+}
+
+#category:hover {
+    color: #eab676 !important;
+}
+
+#CategoryItem {
+    color: #b0c7e9 !important;
+}
+
+#CategoryItem:hover {
+    color: #eab676 !important;
+}

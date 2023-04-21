@@ -40,6 +40,12 @@ namespace BridgeWater.Controllers
             return NotFound();
         }
 
+        [HttpPost]
+        public ActionResult ByCategory(string? category)
+        {
+            return Redirect($"/?type={category}");
+        }
+
         public IActionResult Index()
         {
             return View();
