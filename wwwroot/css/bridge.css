@@ -15,7 +15,7 @@ html {
 
 body {
     margin-bottom: 60px;
-    background-color: #ffffff; /* #333741; */
+    background-color: #eef1e3;
 }
 
 nav, footer {
@@ -292,4 +292,21 @@ input[type=number]::-webkit-outer-spin-button {
     border-bottom: 1px solid #e1e1e1;
     border-color: #687f37;
     margin-top: 40px;
+}
+
+.header {
+    padding-top: 15rem;
+    padding-bottom: 12rem;
+    background-color: #ffffff;
+    background-image: url(../images/about.jpg);
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+    word-wrap: break-word;
+}
+
+.more {
+    padding-top: 15rem;
+    padding-bottom: 12rem;
 }
