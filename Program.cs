@@ -42,6 +42,9 @@ namespace BridgeWater
             // add crypto service, needed to password encryption
             builder.Services.AddSingleton<ICryptoService, CryptoService>();
 
+            // add account service, with all features
+            builder.Services.AddTransient<IAccountService, AccountService>();
+
             // inject product service
             builder.Services.AddTransient<IProductService, ProductService>();
 

@@ -11,5 +11,6 @@ namespace BridgeWater.Data
         public int ProductOrderId { get; set; }
         public Product Product { get; set; }
         public int Stock { get; set; }
+        public bool? IsCanceled { get; set; }
     }
 }

@@ -9,10 +9,12 @@ namespace BridgeWater.Controllers
     public class HomeController : Controller
     {
         readonly IProductService productService;
+        readonly IAccountService accountService;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(IProductService productService, ILogger<HomeController> logger)
+        public HomeController(IAccountService accountService, IProductService productService, ILogger<HomeController> logger)
         {
+            this.accountService = accountService;
            _logger = logger;
             this.productService = productService;
         }
@@ -42,8 +44,9 @@ namespace BridgeWater.Controllers
         }
 
         [HttpPost]
-        public ActionResult ByCategory(string? category)
+        public async Task<ActionResult> ByCategory(string? category)
         {
+            await accountService.RecoverPasswordAsync("eduardmatei@outlook.com");
             /* Load products list filtered by category */
             return Redirect($"/?type={category}");
         }
