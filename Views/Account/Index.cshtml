@@ -1,0 +1,39 @@
+﻿@using BridgeWater.Models;
+@model AccountRequestModel;
+
+@{
+	ViewData["Title"] = "Conectare";
+}
+<div class="container">
+	<div class="row">
+		<div class="col-4"></div>
+		<div class="col-4">
+			<div class="row" style="margin-top: 40%; background-color: #eee7d9 !important; padding-top: 12%;">
+				<div class="col-2"></div>
+				<div class="col-8">
+					<script src="~/lib/jquery/dist/jquery.min.js"></script>
+					<form action="/Account/Signin" method="post">
+						<img class="mb-4" src="/images/logo.png" style="margin-left: 30%;" width="72" height="72">
+						<h4 class="h3 mb-3 font-weight-normal">Conectare la cont</h4>
+						<label for="address" class="sr-only">Email address</label>
+						<input type="email" id="address" name="address" class="form-control" placeholder="Adress" required autofocus><br />
+						<label for="password" class="sr-only">Password</label>
+						<input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+						<a href="/Account/Recover" class="nav-link text-dark">Ai uitat parola?</a>
+						<div class="form-check" style="margin-left: 10%;padding-bottom: 5%;">
+							<input class="form-check-input" type="checkbox" asp-for="admin" id="admin" name="admin" />
+							<label class="form-check-label" for="admin">
+								Is Admin
+							</label>
+						</div>
+						<button class="btn btn-lg btn-primary btn-block" type="submit">Conectare</button>
+						<a class="btn btn-lg btn-outline-info btn-block" href="/Account/Signup">Inregistrare</a>
+						<p class="mt-5 mb-3 text-muted" style="margin-left: 20%;">BridgeWater &copy; 2023</p>
+					</form>
+				</div>
+				<div class="col-2"></div>
+			</div>
+		</div>
+		<div class="col-4"></div>
+	</div>
+</div>
