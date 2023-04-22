@@ -42,7 +42,7 @@
         nextPage = mainPage + 1;
 }
 
-<section class="bg-secondary">
+<section style="background-color: #f1e3e3;">
     <br/><br/>
     <div class="row">
     <div class="col-2"></div>
@@ -100,9 +100,9 @@
                                 <td id="productField">
                                     <small>@product.Name</small>
                                 </td>
-                                <td id="productField">Doe</td>
+                                <td id="productField"><span class="fa fa-star" style="color: orange;"><small style="color: #404041;">4.5</small></span></td>
                                 <td id="productField">
-                                    <small>@((Math.Truncate(product.Price * 100) / 100).ToString("#####.##"))</small>
+                                    <small style="color: #66BB6A; font-weight: bold;">@((Math.Truncate(product.Price * 100) / 100).ToString("#####.##"))</small>
                                 </td>
                                 <td id="productField">
                                     <a class="btn btn-sm" href="/Home/About/?id=@product.Id">
@@ -119,7 +119,7 @@
                 @if (type != null)
                 {
                     <nav id="navigation">
-                        <ul class="pagination bg-secondary">
+                        <ul class="pagination">
                             @if (mainPage > 1)
                             {
                                 <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@previousPage">&lt;&lt;</a></li>
@@ -144,7 +144,7 @@
                 else
                 {
                     <nav id="navigation">
-                        <ul class="pagination bg-secondary">
+                        <ul class="pagination">
                             @if (mainPage > 1)
                             {
                                 <li class="page-item"><a class="page-link" href="/Home/?page=@previousPage">&lt;&lt;</a></li>

@@ -15,7 +15,7 @@ html {
 
 body {
     margin-bottom: 60px;
-    background-color: #333741;
+    background-color: #ffffff; /* #333741; */
 }
 
 nav, footer {
@@ -89,17 +89,18 @@ nav, footer {
 }
 
 #productField {
-    background-color: #8496a9;
-    color: #273440;
+    background-color: #edf5e1;
+    color: #05386b;
 }
 
 #products tbody tr:hover td {
-    background-color: #5b7171 !important;
+    background-color: #f5e1e9 !important;
     color: black;
 }
 
 #navigation {
     margin-left: 40%;
+    background-color: #f1e3e3;
 }
 
 .page-link {
@@ -107,7 +108,7 @@ nav, footer {
 }
 
 .page-item:not(.active) {
-    border: 1px solid #9cbfdd;
+    border: 1px solid #f1e3e3;
     border-radius: 10%;
 }
 
@@ -117,7 +118,7 @@ nav, footer {
 }
 
 #home {
-    color: white;
+    color: #7e5454;
     text-decoration: none;
     font-weight: bold;
 }
@@ -127,17 +128,18 @@ nav, footer {
     font-weight: bold;
 }
 
-#productNav.active::before {
-    color: #a7f3ff;
-}
+    #productNav.active::before {
+        color: #4d6568;
+    }
 
 #navy {
     margin-top: 5%;
-    background-color: #6c757d;
+    background-color: #f1e3e3;
     color: black;
 }
 
 #category {
+    background-color: #50576a !important;
     color: #b0c7e9 !important;
 }
 
@@ -170,7 +172,7 @@ nav, footer {
 }
 
 #productShortView {
-    background-color: #d5d4d4;
+    background-color: #f1e3e3;
 }
 
 input[type=number]::-webkit-inner-spin-button,
@@ -265,7 +267,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 #navz {
     margin-top: 1%;
-    background-color: #d5d4d4;
+    background-color: #f1e3e3;
     font-weight: bold;
     margin-left: -8%;
 }
