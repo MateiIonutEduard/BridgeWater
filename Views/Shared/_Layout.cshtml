@@ -24,15 +24,31 @@
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Magazin</a>
-                            <div class="dropdown-menu">
-                                <a href="/Home/" class="dropdown-item"><img src="~/images/productIcon.png" width="18" height="18" />&nbsp;Toate Produsele</a>
-                                <a href="/Plant/" class="dropdown-item"><img src="~/images/plantIcon.png" width="18" height="18" />&nbsp;Plantele mele</a>
+                            <a href="#" class="nav-link dropdown-toggle" id="explore" onmouseover="ExploreShop()" onmouseout="LeaveShop()" data-bs-toggle="dropdown">Magazin</a>
+                            <div class="dropdown-menu" id="storeMenu">
+                                <a href="/Home/" class="dropdown-item"><img src="~/images/productIcon.png" width="18" height="18" />&nbsp;&nbsp;Toate Produsele</a>
+                                <a href="/Plant/" class="dropdown-item"><img src="~/images/plantIcon.png" width="18" height="18" />&nbsp;&nbsp;Plantele mele</a>
                             </div>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                    </ul>
+                </div>
+                <div class="dropdown" id="accountBox">
+                    <a class="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" onmouseover="FadeShow()" data-bs-toggle="dropdown" aria-expanded="false">
+                        <img src="~/images/avatar.png" width="32" height="32" style="border-radius: 50%;" /> <b style="color: white;">Frosty</b>
+                    </a>
+
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                        <li>
+                            <a class="dropdown-item" href="#"><i class="fa fa-plus text-light" aria-hidden="true"></i>&nbsp;&nbsp;Adauga</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#"><i class="fa fa-gift text-light" aria-hidden="true"></i>&nbsp;&nbsp;Comenzi</a>
+                        </li>
+                        <li><a class="dropdown-item" href="#"><i class="fa fa-cog text-light" aria-hidden="true"></i>&nbsp;&nbsp;Preferinte</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fa fa-sign-out-alt text-light" aria-hidden="true"></i>&nbsp;&nbsp;Sign Out</a></li>
                     </ul>
                 </div>
             </div>

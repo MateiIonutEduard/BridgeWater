@@ -22,6 +22,10 @@ nav, footer {
     background-color: #353a48;
 }
 
+#accountBox {
+    margin-right: 1%;
+}
+
 #plantPanel {
     width: 100%;
     margin-bottom: 1%;
