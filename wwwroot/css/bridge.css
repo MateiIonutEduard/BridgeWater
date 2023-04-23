@@ -332,3 +332,8 @@ input[type=number]::-webkit-outer-spin-button {
 .rating-star:hover {
     color: orange;
 }
+
+.sender {
+    margin-left: -35%;
+    margin-top: -2%;
+}
