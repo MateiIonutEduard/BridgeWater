@@ -34,7 +34,7 @@ namespace BridgeWater.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(AccountRequestModel accountRequestModel)
         {
-			AccountResponseModel accountResponseModel = await accountService.SignUpAsync(accountRequestModel);
+			 AccountResponseModel accountResponseModel = await accountService.SignUpAsync(accountRequestModel);
             if (accountResponseModel.status == -1)
             {
 				ViewData["state"] = accountRequestModel;

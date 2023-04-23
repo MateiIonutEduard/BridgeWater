@@ -20,7 +20,7 @@
 				<div class="col-2"></div>
 				<div class="col-8">
 					<script src="~/lib/jquery/dist/jquery.min.js"></script>
-					<form action="/Account/Register" method="post">
+					<form action="/Account/Register" method="post" enctype="multipart/form-data">
 						<img class="mb-4" src="/images/logo.png" style="margin-left: 30%;" width="72" height="72">
 						<h4 class="h3 mb-3 font-weight-normal" style="margin-left: 20%;">Cont nou</h4>
 						@if(state != null)
@@ -68,7 +68,13 @@
 								<span style="color: #4f6f9f; margin-left: 35%;"><a href="/Account/" style="text-decoration: none;">Conectare</a></span>
 							}
 						}
-						<a href="/Account/Recover" style="color: #266fbb !important; margin-left: -10px; margin-top: 2%;" class="nav-link">Ai uitat parola?</a>
+						<div class="mb-3" style="margin-top: 10%;">
+							<input class="form-control form-control-sm" id="avatar" name="avatar" type="file">
+						</div>
+						<input class="form-check-input" type="checkbox" style="margin-left: 25%;" asp-for="admin" id="admin" name="admin" />
+						<label class="form-check-label" for="admin">
+							Is Admin
+						</label>
 						<div class="row" style="margin-top: 5%;">
 							<div class="col-2"></div>
 							<div class="col-4">
