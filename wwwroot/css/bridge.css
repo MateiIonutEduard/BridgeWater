@@ -337,3 +337,9 @@ input[type=number]::-webkit-outer-spin-button {
     margin-left: -35%;
     margin-top: -2%;
 }
+
+.posts {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #687f37;
+}
