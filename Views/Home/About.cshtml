@@ -1,10 +1,20 @@
 ﻿@using BridgeWater.Data;
 @using BridgeWater.Services;
+
 @inject IProductService productService;
+@inject IPostService postService;
 
 @{
+    #pragma warning disable
     int? id = Context.Request.Query.Keys.Contains("id") ? Convert.ToInt32(Context.Request.Query["id"]) : null;
     string? userId = Context.User?.Claims?.FirstOrDefault(u => u.Type == "id")?.Value;
+    bool canShowRating = userId != null && id != null;
+
+    if(canShowRating)
+    {
+        int uid = Convert.ToInt32(userId);
+        canShowRating = await postService.HasPostRatingAsync(uid, id.Value);
+    }
 
     ProductViewModel? productViewModel = null;
     Product? product = null;
@@ -90,35 +100,38 @@
                 </div>
                 <div class="col-1"></div>
             </div><br/>
-            <div class="row" style="margin-left: 8%;">
-                <div class="col-1"></div>
-                <h2 class="posts">Note si aprecieri</h2>
-                <div class="col-7">
-                    <form id="rating-form" method="post">
-                        <textarea id="body" style="height: 300px;" rows="10" cols="100"></textarea><br/>
-                        <div class="row">
-                            <div class="col-4">
-                                <p class="rateus">Cum evaluezi acest produs?</p>
-                            </div>
-                            <div class="col-4">
-                                <div class="rating">
-                                    <a id="star1" onclick="RateUs(1)" onmouseover="HoverUs(1)" onmouseout="ClearStars()" class="fa fa-star rating-star" title="1 Stea"></a>
-                                    <a id="star2" onclick="RateUs(2)" onmouseover="HoverUs(2)" onmouseout="ClearStars()" class="fa fa-star rating-star" title="2 Stele"></a>
-                                    <a id="star3" onclick="RateUs(3)" onmouseover="HoverUs(3)" onmouseout="ClearStars()" class="fa fa-star rating-star" title="3 Stele"></a>
-                                    <a id="star4" onclick="RateUs(4)" onmouseover="HoverUs(4)" onmouseout="ClearStars()" class="fa fa-star rating-star" title="4 Stele"></a>
-                                    <a id="star5" onclick="RateUs(5)" onmouseover="HoverUs(5)" onmouseout="ClearStars()" class="fa fa-star rating-star" title="5 Stele"></a>
+            @if (canShowRating)
+            {
+                <div class="row" style="margin-left: 8%;">
+                    <div class="col-1"></div>
+                    <h2 class="posts">Note si aprecieri</h2>
+                    <div class="col-7">
+                        <form id="rating-form" method="post">
+                            <textarea id="body" style="height: 300px;" rows="10" cols="100"></textarea><br/>
+                            <div class="row">
+                                <div class="col-4">
+                                    <p class="rateus">Cum evaluezi acest produs?</p>
+                                </div>
+                                <div class="col-4">
+                                    <div class="rating">
+                                        <a id="star1" onclick="RateUs(1)" onmouseover="HoverUs(1)" onmouseout="ClearStars()" class="fa fa-star rating-star" title="1 Stea"></a>
+                                        <a id="star2" onclick="RateUs(2)" onmouseover="HoverUs(2)" onmouseout="ClearStars()" class="fa fa-star rating-star" title="2 Stele"></a>
+                                        <a id="star3" onclick="RateUs(3)" onmouseover="HoverUs(3)" onmouseout="ClearStars()" class="fa fa-star rating-star" title="3 Stele"></a>
+                                        <a id="star4" onclick="RateUs(4)" onmouseover="HoverUs(4)" onmouseout="ClearStars()" class="fa fa-star rating-star" title="4 Stele"></a>
+                                        <a id="star5" onclick="RateUs(5)" onmouseover="HoverUs(5)" onmouseout="ClearStars()" class="fa fa-star rating-star" title="5 Stele"></a>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <input type="hidden" id="auid" value="@userId"/>
+                                    <input type="hidden" id="puid" value="@id" />
+                                    <button id="sender" type="submit" class="btn btn-primary btn-sm sender">Trimite</button>
                                 </div>
                             </div>
-                            <div class="col-4">
-                                <input type="hidden" id="auid" value="@userId"/>
-                                <input type="hidden" id="puid" value="@id" />
-                                <button id="sender" type="submit" class="btn btn-primary btn-sm sender">Trimite</button>
-                            </div>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
+                    <div class="col-3"></div>
                 </div>
-                <div class="col-3"></div>
-            </div>
+            }
         }
     </div>
 </section>

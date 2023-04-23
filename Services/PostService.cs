@@ -10,6 +10,15 @@ namespace BridgeWater.Services
         public PostService(BridgeContext bridgeContext)
         { this.bridgeContext = bridgeContext; }
 
+        public async Task<bool> HasPostRatingAsync(int accountId, int productId)
+        {
+            // check if post rating already exists and it is not canceled
+            Post? post = await bridgeContext.Post
+                .FirstOrDefaultAsync(e => e.AccountId == accountId && e.ProductId == productId && (e.IsDeleted == null || (e.IsDeleted != null && !e.IsDeleted.Value)));
+
+            return post == null;
+        }
+
         public async Task<int> CreatePostAsync(PostRatingModel postRatingModel)
         {
             Post? post = await bridgeContext.Post
