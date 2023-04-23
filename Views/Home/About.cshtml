@@ -4,6 +4,8 @@
 
 @{
     int? id = Context.Request.Query.Keys.Contains("id") ? Convert.ToInt32(Context.Request.Query["id"]) : null;
+    string? userId = Context.User?.Claims?.FirstOrDefault(u => u.Type == "id")?.Value;
+
     ProductViewModel? productViewModel = null;
     Product? product = null;
 
@@ -92,7 +94,7 @@
                 <div class="col-1"></div>
                 <h2 class="posts">Note si aprecieri</h2>
                 <div class="col-7">
-                    <form method="post">
+                    <form id="rating-form" method="post">
                         <textarea id="body" style="height: 300px;" rows="10" cols="100"></textarea><br/>
                         <div class="row">
                             <div class="col-4">
@@ -108,7 +110,9 @@
                                 </div>
                             </div>
                             <div class="col-4">
-                                <button type="submit" class="btn btn-primary btn-sm sender">Trimite</button>
+                                <input type="hidden" id="auid" value="@userId"/>
+                                <input type="hidden" id="puid" value="@id" />
+                                <button id="sender" type="submit" class="btn btn-primary btn-sm sender">Trimite</button>
                             </div>
                         </div>
                     </form>

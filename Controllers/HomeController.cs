@@ -22,11 +22,14 @@ namespace BridgeWater.Controllers
             _logger = logger;
         }
 
-        [HttpPost, Authorize]
+        [HttpPost]
         public async Task<IActionResult> CreatePost(PostRatingModel postRatingModel)
         {
+            // Creates new post with rating
             int res = await postService.CreatePostAsync(postRatingModel);
-            return View();
+            if (res < 0) return Forbid();
+            else if (res == 0) return BadRequest();
+            else return Ok();
         }
 
         // show product image, logo or poster
