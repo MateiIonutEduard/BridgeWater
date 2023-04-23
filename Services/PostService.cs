@@ -41,6 +41,21 @@ namespace BridgeWater.Services
 
             // user post exists
             return -1;
+        } 
+
+        public async Task<bool> RemovePostAsync(int accountId, int postRatingId)
+        {
+            Post? post = await bridgeContext.Post
+                .FirstOrDefaultAsync(e => e.AccountId == accountId && e.Id == postRatingId && e.IsDeleted == null || (e.IsDeleted != null && !e.IsDeleted.Value));
+
+            if (post != null)
+            {
+                post.IsDeleted = true;
+                await bridgeContext.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
         }
 
         public async Task<PostRatingModel[]> GetPostsAsync(int id)

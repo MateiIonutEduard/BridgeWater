@@ -6,5 +6,6 @@ namespace BridgeWater.Services
     {
         Task<PostRatingModel[]> GetPostsAsync(int id);
         Task<int> CreatePostAsync(PostRatingModel postRatingModel);
+        Task<bool> RemovePostAsync(int accountId, int postRatingId);
     }
 }
