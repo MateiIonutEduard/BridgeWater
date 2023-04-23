@@ -11,6 +11,7 @@
 
 	if (showNotMatch && code == null) code = -1;
 	string confirmPassword = state != null ? state.confirmPassword : string.Empty;
+	code = 0;
 }
 <div class="container">
 	<div class="row">
@@ -64,7 +65,8 @@
 							}
 							else
 							{
-								<span style="color: #b32424; margin-left: 10%;"><i class="fa fa-exclamation-circle" style="color: #e04848 !important;" aria-hidden="true"></i>&nbsp;&nbsp;Contul exista deja!</span>
+								<span style="color: #b32424; margin-left: 20%;"><i class="fa fa-exclamation-circle" style="color: #e04848 !important;" aria-hidden="true"></i>&nbsp;&nbsp;Contul exista deja!</span>
+								<span style="color: #4f6f9f; margin-left: 35%;"><a href="/Account/" style="text-decoration: none;">Conectare</a></span>
 							}
 						}
 						<a href="/Account/Recover" style="color: #266fbb !important; margin-left: -10px; margin-top: 2%;" class="nav-link">Ai uitat parola?</a>
