@@ -45,6 +45,9 @@ namespace BridgeWater
             // add account service, with all features
             builder.Services.AddTransient<IAccountService, AccountService>();
 
+            // declares post rating service, with both features
+            builder.Services.AddTransient<IPostService, PostService>();
+
             // inject product service
             builder.Services.AddTransient<IProductService, ProductService>();
 
