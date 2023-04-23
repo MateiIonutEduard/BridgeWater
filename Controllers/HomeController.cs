@@ -1,6 +1,7 @@
 ﻿using BridgeWater.Data;
 using BridgeWater.Models;
 using BridgeWater.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -8,15 +9,24 @@ namespace BridgeWater.Controllers
 {
     public class HomeController : Controller
     {
+        readonly IPostService postService;
         readonly IProductService productService;
         readonly IAccountService accountService;
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(IAccountService accountService, IProductService productService, ILogger<HomeController> logger)
+        public HomeController(IAccountService accountService, IPostService postService, IProductService productService, ILogger<HomeController> logger)
         {
             this.accountService = accountService;
-           _logger = logger;
             this.productService = productService;
+            this.postService = postService;
+            _logger = logger;
+        }
+
+        [HttpPost, Authorize]
+        public async Task<IActionResult> CreatePost(PostRatingModel postRatingModel)
+        {
+            int res = await postService.CreatePostAsync(postRatingModel);
+            return View();
         }
 
         // show product image, logo or poster
