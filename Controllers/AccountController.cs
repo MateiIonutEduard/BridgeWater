@@ -26,6 +26,11 @@ namespace BridgeWater.Controllers
             return View();
         }
 
+        public IActionResult Recover()
+        {
+            return View();
+        }
+
         public async Task<IActionResult> Show(int id)
         {
             Account? account = await accountService.GetAccountAsync(id);
@@ -58,7 +63,7 @@ namespace BridgeWater.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(AccountRequestModel accountRequestModel)
         {
-			 AccountResponseModel accountResponseModel = await accountService.SignUpAsync(accountRequestModel);
+            AccountResponseModel accountResponseModel = await accountService.SignUpAsync(accountRequestModel);
             if (accountResponseModel.status == -1)
             {
 				ViewData["state"] = accountRequestModel;
@@ -79,6 +84,14 @@ namespace BridgeWater.Controllers
 			await HttpContext.SignInAsync(userPrincipal);
 			return Redirect("/Home/");
 		}
+
+        [HttpPost]
+        public async Task<IActionResult> Send(string address)
+        {
+            AccountResponseModel accountResponseModel = await accountService.RecoverPasswordAsync(address);
+            if(accountResponseModel.status == -1) Redirect("/Account/Signup");
+            return Redirect("/Account/");
+        }
 
         public async Task<IActionResult> Signout()
         {

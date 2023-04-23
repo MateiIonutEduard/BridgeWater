@@ -1,0 +1,37 @@
+﻿@{
+    ViewData["Title"] = "Recuperare Cont";
+}
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="~/js/recover.js"></script>
+<div class="form-gap"></div>
+<div class="container" id="model">
+    <br /><br /><br />
+    <div class="row" style="margin-left: 40%;">
+        <div class="col-md-4 col-md-offset-4" style="background-color: #eee7d9 !important;">
+            <div class="panel panel-default" style="margin-top: 10%;">
+                <div class="panel-body">
+                    <div class="text-center">
+                        <h3><i class="fa fa-lock fa-4x text-info"></i></h3>
+                        <h2 class="text-center">Ati uitat parola?</h2>
+                        <p>Veti primi un email cu parola in scurt timp.</p>
+                        <div class="panel-body">
+                            <form action="/Account/Send" role="form" autocomplete="off" class="form" method="post">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <span class="input-group-addon"><i class="fa fa-envelope-o text-primary"></i>&nbsp;</span>
+                                        <input id="address" name="address" placeholder="email address" class="form-control" type="email">
+                                    </div>
+                                </div><br />
+                                <div class="form-group">
+                                    <input name="recover-submit" style="margin-bottom: 10%;" class="btn btn-lg btn-primary btn-block" value="Trimite" type="submit">
+                                </div>
+                                <input type="hidden" class="hide" name="token" id="token" value="">
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
