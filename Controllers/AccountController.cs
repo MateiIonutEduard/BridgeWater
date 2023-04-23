@@ -16,11 +16,19 @@ namespace BridgeWater.Controllers
             return View();
         }
 
+        public IActionResult Signup()
+        {
+            return View();
+        }
+
         [HttpPost]
         public async Task<IActionResult> Signin(AccountRequestModel accountRequestModel)
         {
             AccountResponseModel accountResponseModel = await accountService.SignInAsync(accountRequestModel);
-            return View();
+
+            if (accountResponseModel.status < 0) return Redirect("/Account/Signup");
+            else if (accountResponseModel.status == 0) return Redirect("/Account/?FailCode=true");
+            return Redirect("/Home/");
         }
     }
 }

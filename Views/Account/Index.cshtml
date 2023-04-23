@@ -3,6 +3,7 @@
 
 @{
 	ViewData["Title"] = "Conectare";
+	bool valid = Context.Request.Query.ContainsKey("FailCode") ? Convert.ToBoolean(Context.Request.Query["FailCode"]) : false;
 }
 <div class="container">
 	<div class="row">
@@ -19,15 +20,20 @@
 						<input type="email" id="address" name="address" class="form-control" placeholder="Adress" required autofocus><br />
 						<label for="password" class="sr-only">Password</label>
 						<input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
-						<a href="/Account/Recover" class="nav-link text-dark">Ai uitat parola?</a>
-						<div class="form-check" style="margin-left: 10%;padding-bottom: 5%;">
-							<input class="form-check-input" type="checkbox" asp-for="admin" id="admin" name="admin" />
-							<label class="form-check-label" for="admin">
-								Is Admin
-							</label>
+						@if (valid) {
+							<span style="color: #DC4C64; margin-left: 10%;">Parola gresita! <a href="/Account/Recover" style="color: #7a74cc !important; text-decoration: none;">Recuperati?</a></span>
+						}
+						<a href="/Account/Recover" style="color: #266fbb !important; margin-left: -10px; margin-top: 2%;" class="nav-link">Ai uitat parola?</a>
+						<div class="row" style="margin-top: 5%;">
+							<div class="col-2"></div>
+							<div class="col-4">
+								<button class="btn btn-sm btn-primary btn-block" type="submit">Conectare</button>
+							</div>
+							<div class="col-4">
+								<a class="btn btn-sm btn-outline-info btn-block" href="/Account/Signup">Inregistrare</a>
+							</div>
+							<div class="col-2"></div>
 						</div>
-						<button class="btn btn-lg btn-primary btn-block" type="submit">Conectare</button>
-						<a class="btn btn-lg btn-outline-info btn-block" href="/Account/Signup">Inregistrare</a>
 						<p class="mt-5 mb-3 text-muted" style="margin-left: 20%;">BridgeWater &copy; 2023</p>
 					</form>
 				</div>
