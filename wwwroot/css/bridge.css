@@ -314,3 +314,21 @@ input[type=number]::-webkit-outer-spin-button {
     padding-top: 15rem;
     padding-bottom: 12rem;
 }
+
+.rateus {
+    font-weight: bold;
+    color: #625c5c;
+}
+
+.rating-star {
+    color: #385581;
+    text-decoration: none;
+}
+
+.checked {
+    color: orange;
+}
+
+.rating-star:hover {
+    color: orange;
+}

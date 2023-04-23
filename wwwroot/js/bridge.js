@@ -1,19 +1,28 @@
-﻿// Open account menu when mouse is over this control.
-function FadeShow() {
-    let dropdown1 = new bootstrap.Dropdown($('#dropdownMenuLink'));
-    dropdown1.show();
+﻿var index = 0;
 
-    // hide dropdown
-    let dropdown2 = new bootstrap.Dropdown($('#explore'));
-    dropdown2.hide();
+$(document).ready(function () {
+    $('#body').summernote();
+});
+
+// fill stars on click, store index
+function RateUs(id) {
+    for (var j = 1; j <= 5; j++)
+        $(`#star${j}`).removeClass("checked");
+
+    for (var k = 1; k <= id; k++)
+        $(`#star${k}`).addClass("checked");
+
+    index = id;
 }
 
-// View store products and plants.
-function ExploreShop() {
-    let dropdown1 = new bootstrap.Dropdown($('#explore'));
-    dropdown1.show();
+// fill stars on hover
+function HoverUs(id) {
+    for (var k = 1; k <= id; k++)
+        $(`#star${k}`).addClass("checked");
+}
 
-    // hide account menu
-    let dropdown2 = new bootstrap.Dropdown($('#dropdownMenuLink'));
-    dropdown2.hide();
+// empty stars when mouse out
+function ClearStars() {
+    for (var j = index + 1; j <= 5; j++)
+        $(`#star${j}`).removeClass("checked");
 }
