@@ -1,6 +1,10 @@
 ﻿using BridgeWater.Models;
 using BridgeWater.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
+using System.Security.Claims;
+#pragma warning disable
 
 namespace BridgeWater.Controllers
 {
@@ -28,7 +32,17 @@ namespace BridgeWater.Controllers
 
             if (accountResponseModel.status < 0) return Redirect("/Account/Signup");
             else if (accountResponseModel.status == 0) return Redirect("/Account/?FailCode=true");
-            return Redirect("/Home/");
+			var claims = new Claim[]
+{
+				new Claim("id", accountResponseModel.id.Value.ToString()),
+				new Claim(ClaimTypes.Name, accountResponseModel.username),
+				new Claim("admin", accountResponseModel.admin.Value.ToString())
+};
+
+			var identity = new ClaimsIdentity(claims, "User Identity");
+			var userPrincipal = new ClaimsPrincipal(new[] { identity });
+			await HttpContext.SignInAsync(userPrincipal);
+			return Redirect("/Home/");
         }
 
         [HttpPost]
@@ -42,7 +56,24 @@ namespace BridgeWater.Controllers
 			}
 
             if (accountResponseModel.status <= 0) return Redirect("/Account/Signup/?FailCode=0");
-            return Redirect("/Home/");
+
+			var claims = new Claim[]
+			{
+				new Claim("id", accountResponseModel.id.Value.ToString()),
+				new Claim(ClaimTypes.Name, accountResponseModel.username),
+				new Claim("admin", accountResponseModel.admin.Value.ToString())
+            };
+
+			var identity = new ClaimsIdentity(claims, "User Identity");
+			var userPrincipal = new ClaimsPrincipal(new[] { identity });
+			await HttpContext.SignInAsync(userPrincipal);
+			return Redirect("/Home/");
+		}
+
+        public async Task<IActionResult> Signout()
+        {
+			await HttpContext.SignOutAsync();
+            return Redirect("/Account/");
 		}
     }
 }

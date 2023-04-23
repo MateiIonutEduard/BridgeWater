@@ -40,6 +40,7 @@ namespace BridgeWater.Services
                     /* account is signed in successfully */
                     accountResponseModel.status = 1;
                     accountResponseModel.username = account.Username;
+                    accountResponseModel.admin = account.IsAdmin;
                     accountResponseModel.id = account.Id;
                 }
             }
@@ -96,6 +97,7 @@ namespace BridgeWater.Services
                 // new account was created
                 accountResponseModel.id = account.Id;
                 accountResponseModel.username = account.Username;
+                accountResponseModel.admin = account.IsAdmin;
                 accountResponseModel.status = 1;
             }
             else
