@@ -35,22 +35,31 @@
                         </li>
                     </ul>
                 </div>
-                <!--<div class="dropdown" id="accountBox">
-                    <a class="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" onmouseover="FadeShow()" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="~/images/avatar.png" width="32" height="32" style="border-radius: 50%;" /> <b style="color: white;">Frosty</b>
-                    </a>
+                @{
+                    string? userId = Context.User?.Claims?.FirstOrDefault(u => u.Type == "id")?.Value;
+                    string? username = Context.User?.Claims.FirstOrDefault(u => u.Type.Contains("name"))?.Value;
+                    string? admin = Context.User?.Claims.FirstOrDefault(u => u.Type == "admin")?.Value;
+                }
 
-                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                        <li>
-                            <a class="dropdown-item" href="#"><i class="fa fa-plus text-light" aria-hidden="true"></i>&nbsp;&nbsp;Adauga</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#"><i class="fa fa-gift text-light" aria-hidden="true"></i>&nbsp;&nbsp;Comenzi</a>
-                        </li>
-                        <li><a class="dropdown-item" href="#"><i class="fa fa-cog text-light" aria-hidden="true"></i>&nbsp;&nbsp;Preferinte</a></li>
-                        <li><a class="dropdown-item" href="#"><i class="fa fa-sign-out-alt text-light" aria-hidden="true"></i>&nbsp;&nbsp;Sign Out</a></li>
-                    </ul>
-                </div>-->
+                @if (!string.IsNullOrEmpty(userId))
+                {
+                    <div class="dropdown" id="accountBox">
+                        <a class="btn dropdown-toggle" href="#" role="button" id="dropdownMenuLink" onmouseover="FadeShow()" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="/Account/Show/?id=@userId" width="32" height="32" style="border-radius: 50%;" /> <b style="color: white;">@username</b>
+                        </a>
+
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <li>
+                                <a class="dropdown-item" href="#"><i class="fa fa-plus text-light" aria-hidden="true"></i>&nbsp;&nbsp;Adauga</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#"><i class="fa fa-gift text-light" aria-hidden="true"></i>&nbsp;&nbsp;Comenzi</a>
+                            </li>
+                            <li><a class="dropdown-item" href="#"><i class="fa fa-cog text-light" aria-hidden="true"></i>&nbsp;&nbsp;Preferinte</a></li>
+                            <li><a class="dropdown-item" href="/Account/Signout"><i class="fa fa-sign-out-alt text-light" aria-hidden="true"></i>&nbsp;&nbsp;Sign Out</a></li>
+                        </ul>
+                    </div>
+                }
             </div>
         </nav>
     </header>

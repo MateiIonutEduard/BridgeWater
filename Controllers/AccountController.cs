@@ -1,4 +1,5 @@
-﻿using BridgeWater.Models;
+﻿using BridgeWater.Data;
+using BridgeWater.Models;
 using BridgeWater.Services;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,15 @@ namespace BridgeWater.Controllers
             return View();
         }
 
+        public async Task<IActionResult> Show(int id)
+        {
+            Account? account = await accountService.GetAccountAsync(id);
+            int index = account.Avatar.LastIndexOf(".");
+
+            byte[] data = System.IO.File.ReadAllBytes(account.Avatar);
+            return File(data, $"image/{account.Avatar.Substring(index + 1)}");
+        }
+
         [HttpPost]
         public async Task<IActionResult> Signin(AccountRequestModel accountRequestModel)
         {
@@ -33,11 +43,11 @@ namespace BridgeWater.Controllers
             if (accountResponseModel.status < 0) return Redirect("/Account/Signup");
             else if (accountResponseModel.status == 0) return Redirect("/Account/?FailCode=true");
 			var claims = new Claim[]
-{
+            {
 				new Claim("id", accountResponseModel.id.Value.ToString()),
 				new Claim(ClaimTypes.Name, accountResponseModel.username),
 				new Claim("admin", accountResponseModel.admin.Value.ToString())
-};
+            };
 
 			var identity = new ClaimsIdentity(claims, "User Identity");
 			var userPrincipal = new ClaimsPrincipal(new[] { identity });

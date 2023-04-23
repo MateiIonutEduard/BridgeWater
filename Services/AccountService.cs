@@ -20,6 +20,15 @@ namespace BridgeWater.Services
             this.bridgeContext = bridgeContext;
         }
 
+        public async Task<Account?> GetAccountAsync(int id)
+        {
+            /* get user account */
+            Account? account = await bridgeContext.Account
+                .FirstOrDefaultAsync(u => u.Id == id);
+
+            return account;
+        }
+
         public async Task<AccountResponseModel> SignInAsync(AccountRequestModel accountRequestModel)
         {
             Account? account = await bridgeContext.Account
@@ -85,7 +94,7 @@ namespace BridgeWater.Services
                 account = new Account
                 {
                     Username = accountRequestModel.username,
-                    Password = accountRequestModel.password,
+                    Password = cryptoService.Encrypt(accountRequestModel.password),
                     Address = accountRequestModel.address,
                     IsAdmin = accountRequestModel.admin,
                     Avatar = avatarPath
