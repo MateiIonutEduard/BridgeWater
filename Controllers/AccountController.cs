@@ -30,5 +30,19 @@ namespace BridgeWater.Controllers
             else if (accountResponseModel.status == 0) return Redirect("/Account/?FailCode=true");
             return Redirect("/Home/");
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(AccountRequestModel accountRequestModel)
+        {
+			AccountResponseModel accountResponseModel = await accountService.SignUpAsync(accountRequestModel);
+            if (accountResponseModel.status == -1)
+            {
+				ViewData["state"] = accountRequestModel;
+                return View("Views/Account/Signup.cshtml", ViewData["state"]);
+			}
+
+            if (accountResponseModel.status <= 0) return Redirect("/Account/Signup/?FailCode=0");
+            return Redirect("/Home/");
+		}
     }
 }

@@ -55,6 +55,12 @@ namespace BridgeWater.Services
         public async Task<AccountResponseModel> SignUpAsync(AccountRequestModel accountRequestModel)
         {
             AccountResponseModel accountResponseModel = new AccountResponseModel();
+            if(accountRequestModel.password.CompareTo(accountRequestModel.confirmPassword) != 0)
+            {
+				// passwords do not match
+				accountResponseModel.status = -1;
+                return accountResponseModel;
+            }
             string encryptedPassword = cryptoService.Encrypt(accountRequestModel.password);
             string avatarPath = "./Storage/Account/avatar.png";
 

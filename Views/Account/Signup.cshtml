@@ -1,5 +1,89 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using BridgeWater.Models;
+@model AccountRequestModel;
+
 @{
+	#pragma warning disable
+	ViewData["Title"] = "Inregistrare";
+	int? code = Context.Request.Query.ContainsKey("FailCode") ? Convert.ToInt32(Context.Request.Query["FailCode"]) : null;
+
+	AccountRequestModel? state = ViewData["state"] as AccountRequestModel;
+	bool showNotMatch = (code != null && code.Value == -1) || (state != null && state.password.CompareTo(state.confirmPassword) != 0);
+
+	if (showNotMatch && code == null) code = -1;
+	string confirmPassword = state != null ? state.confirmPassword : string.Empty;
 }
+<div class="container">
+	<div class="row">
+		<div class="col-4"></div>
+		<div class="col-4">
+			<div class="row" style="margin-top: 40%; background-color: #eee7d9 !important; padding-top: 12%;">
+				<div class="col-2"></div>
+				<div class="col-8">
+					<script src="~/lib/jquery/dist/jquery.min.js"></script>
+					<form action="/Account/Register" method="post">
+						<img class="mb-4" src="/images/logo.png" style="margin-left: 30%;" width="72" height="72">
+						<h4 class="h3 mb-3 font-weight-normal" style="margin-left: 20%;">Cont nou</h4>
+						@if(state != null)
+						{
+							<label for="username" class="sr-only">Username</label>
+							<input type="text" id="username" name="username" class="form-control" value="@state.username" placeholder="Username" required autofocus>
+
+							<br />
+							<label for="address" class="sr-only">Email address</label>
+							<input type="email" id="address" name="address" class="form-control" value="@state.address" placeholder="Adress" required autofocus>
+
+							<br />
+							<label for="password" class="sr-only">Password</label>
+							<input type="password" id="password" name="password" class="form-control" value="@state.password" placeholder="Password" required>
+
+							<br />
+						}
+						else 
+						{
+							<label for="username" class="sr-only">Username</label>
+							<input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus><br />
+							<label for="address" class="sr-only">Email address</label>
+							<input type="email" id="address" name="address" class="form-control" placeholder="Adress" required autofocus><br />
+							<label for="password" class="sr-only">Password</label>
+							<input type="password" id="password" name="password" class="form-control" placeholder="Password" required><br/>
+						}
+						<label for="confirmPassword" class="sr-only">Confirm Password</label>
+						@if(showNotMatch)
+						{
+							<input type="password" style="border: 1px solid #f57171;" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Confirm Password" value="@confirmPassword" required>
+						}
+						else
+						{
+							<input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Confirm Password" value="@confirmPassword" required>
+						}
+						@if (code != null)
+						{
+							if(code.Value < 0)
+							{
+								<span style="color: #b32424; margin-left: 10%;"><i class="fa fa-exclamation-circle" style="color: #e04848 !important;" aria-hidden="true"></i>&nbsp;&nbsp;Parolele nu se potrivesc!</span>
+							}
+							else
+							{
+								<span style="color: #b32424; margin-left: 10%;"><i class="fa fa-exclamation-circle" style="color: #e04848 !important;" aria-hidden="true"></i>&nbsp;&nbsp;Contul exista deja!</span>
+							}
+						}
+						<a href="/Account/Recover" style="color: #266fbb !important; margin-left: -10px; margin-top: 2%;" class="nav-link">Ai uitat parola?</a>
+						<div class="row" style="margin-top: 5%;">
+							<div class="col-2"></div>
+							<div class="col-4">
+								<button class="btn btn-sm btn-primary btn-block" type="submit">Inregistrare</button>
+							</div>
+							<div class="col-4">
+								<a class="btn btn-sm btn-outline-secondary btn-block" href="/Account/">Inapoi</a>
+							</div>
+							<div class="col-2"></div>
+						</div>
+						<p class="mt-5 mb-3 text-muted" style="margin-left: 20%;">BridgeWater &copy; 2023</p>
+					</form>
+				</div>
+				<div class="col-2"></div>
+			</div>
+		</div>
+		<div class="col-4"></div>
+	</div>
+</div>
