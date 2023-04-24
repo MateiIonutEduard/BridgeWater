@@ -74,10 +74,22 @@
                                     <span class="price">@((Math.Truncate(product.Price * 100) / 100).ToString("#####.##"))</span>
                                 </span>
                             </div>
-                            <form method="post">
-                                <input class="form-control form-control-sm" id="quantity" type="number" value="1" min="1" max="@product.Stock" />
-                                <button class="btn" type="submit" id="buy">ADAUGA IN COS</button>
-                            </form>
+                            @if(product.Stock > 0)
+                            {
+                                <form action="/Order/Create" method="post">
+                                    <input class="form-control form-control-sm" id="Stock" name="Stock" type="number" value="1" min="1" max="@product.Stock" />
+                                    <input type="hidden" id="ProductOrderId" name="ProductOrderId" value="@product.Id" />
+                                    <button class="btn" type="submit" id="buy">ADAUGA IN COS</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <form method="post">
+                                    <input class="form-control form-control-sm" id="Stock" name="Stock" type="number" value="0" min="0" max="0" />
+                                    <input type="hidden" id="ProductOrderId" name="ProductOrderId" value="@product.Id" />
+                                    <button class="btn" type="submit" id="buy" disabled>ADAUGA IN COS</button>
+                                </form>
+                            }
                         </div>
                         <div class="col-1"></div>
                     </div>

@@ -51,6 +51,9 @@ namespace BridgeWater
             // inject product service
             builder.Services.AddTransient<IProductService, ProductService>();
 
+            // add order service
+            builder.Services.AddTransient<IOrderService, OrderService>();
+
             // add plant service
             builder.Services.AddSingleton<PlantService>();
 
