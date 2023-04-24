@@ -17,6 +17,9 @@
     ProductViewModel[] products = result.ProductViewModels;
     string mainCategory = type != null && type.Value > 0 ? categories[type.Value - 1].Name : "Toate Produsele";
 
+    string? admin = Context.User?.Claims.FirstOrDefault(u => u.Type == "admin")?.Value;
+    bool CanRemove = !string.IsNullOrEmpty(admin) ? Convert.ToBoolean(admin) : false;
+
     List<Category> list = new List<Category>();
     Category firstCategory = new Category();
 
@@ -105,12 +108,26 @@
                                     <small style="color: #66BB6A; font-weight: bold;">@((Math.Truncate(product.Price * 100) / 100).ToString("#####.##"))</small>
                                 </td>
                                 <td id="productField">
-                                    <a class="btn btn-sm" href="/Home/About/?id=@product.Id">
-                                        <i class="fa fa-eye" aria-hidden="true"></i>
-                                    </a>
-                                    <a class="btn btn-sm" href="#">
-                                        <i class="fa fa-trash" aria-hidden="true"></i>
-                                    </a>
+                                <div class="row">
+                                    <div class="col-4"></div>
+                                    <div class="col-2">
+                                            <a class="btn btn-sm" href="/Home/About/?id=@product.Id" title="Vizualizare">
+                                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                            </a>
+                                    </div>
+                                    <div class="col-2">
+                                            @if (CanRemove)
+                                            {
+                                                <form method="post">
+                                                    <input type="hidden" value="@product.Id" />
+                                                    <button class="btn btn-sm" type="submit" title="Elimina Produsul">
+                                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                    </div>
+                                    <div class="col-4"></div>
+                                </div>
                                 </td>
                             </tr>
                         }
