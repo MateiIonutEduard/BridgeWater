@@ -22,7 +22,9 @@ namespace BridgeWater.Services
         public async Task<int> CreatePostAsync(PostRatingModel postRatingModel)
         {
             Post? post = await bridgeContext.Post
-                .FirstOrDefaultAsync(e => Exists(e, postRatingModel));
+                .FirstOrDefaultAsync(e => e.AccountId == postRatingModel.accountId && e.ProductId == postRatingModel.productId
+                    && (e.IsDeleted != null ? e.IsDeleted.Value : false)
+                );
 
             if (post == null)
             {
@@ -85,13 +87,6 @@ namespace BridgeWater.Services
              }).ToArray();
 
             return postRatingModels;
-        }
-
-        private bool Exists(Post post, PostRatingModel postRatingModel)
-        {
-            bool isFeed = post.AccountId == postRatingModel.accountId && post.ProductId == postRatingModel.productId;
-            bool isDeleted = post.IsDeleted != null ? post.IsDeleted.Value : false;
-            return isFeed && isDeleted;
         }
     }
 }

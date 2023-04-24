@@ -22,14 +22,23 @@ namespace BridgeWater.Controllers
             _logger = logger;
         }
 
-        [HttpPost]
+        [HttpPost, Authorize]
         public async Task<IActionResult> CreatePost(PostRatingModel postRatingModel)
         {
-            // Creates new post with rating
-            int res = await postService.CreatePostAsync(postRatingModel);
-            if (res < 0) return Forbid();
-            else if (res == 0) return BadRequest();
-            else return Ok();
+            string? userId = HttpContext.User?.Claims?
+                .FirstOrDefault(u => u.Type == "id")?.Value;
+
+            if (userId != null)
+            {
+                // Creates new post with rating
+                int AccountId = Convert.ToInt32(userId);
+                postRatingModel.accountId = AccountId;
+
+                int res = await postService.CreatePostAsync(postRatingModel);
+                return Redirect($"/Home/About/?id={postRatingModel.productId}");
+            }
+            else
+                return Redirect("/Account/");
         }
 
         // show product image, logo or poster

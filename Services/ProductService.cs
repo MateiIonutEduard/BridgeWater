@@ -1,6 +1,7 @@
 ﻿using BridgeWater.Data;
 using BridgeWater.Models;
 using Microsoft.EntityFrameworkCore;
+#pragma warning disable
 
 namespace BridgeWater.Services
 {
@@ -27,6 +28,17 @@ namespace BridgeWater.Services
                 Category? category = await bridgeContext.Category
                     .FirstOrDefaultAsync(c => c.Id == product.CategoryId);
 
+                Post[] posts = await bridgeContext.Post.Where(e => e.ProductId == id && (e.IsDeleted == null || (e.IsDeleted != null && !e.IsDeleted.Value)))
+                    .ToArrayAsync();
+
+                double RatingStars = 0;
+                
+                if(posts.Length > 0)
+                {
+                    int? stars = posts.Sum(e => e.Rating);
+                    RatingStars =  stars.Value / posts.Length;
+                }
+
                 ProductViewModel productViewModel = new ProductViewModel
                 {
                     Id = product.Id,
@@ -35,6 +47,7 @@ namespace BridgeWater.Services
                     CategoryId = category!.Id,
                     Category = category!.Name,
                     TechInfo = product.TechInfo,
+                    Stars = RatingStars,
                     Price = product.Price,
                     Stock = product.Stock
                 };
@@ -79,6 +92,23 @@ namespace BridgeWater.Services
                         Price = p.Price,
                         Stock = p.Stock
                     }).ToListAsync();
+
+
+                for(int k = 0; k < products.Count; k++)
+                {
+                    Post[] posts = await bridgeContext.Post.Where(e => e.ProductId == products[k].Id && (e.IsDeleted == null || (e.IsDeleted != null && !e.IsDeleted.Value)))
+                        .ToArrayAsync();
+
+                    double RatingStars = 0;
+
+                    if (posts.Length > 0)
+                    {
+                        int? stars = posts.Sum(e => e.Rating);
+                        RatingStars = stars.Value / posts.Length;
+                    }
+
+                    products[k].Stars = RatingStars;
+                }
             }
             else
             {
@@ -99,6 +129,22 @@ namespace BridgeWater.Services
                         Price = p.Price,
                         Stock = p.Stock
                     }).ToList();
+
+                for (int k = 0; k < products.Count; k++)
+                {
+                    Post[] posts = await bridgeContext.Post.Where(e => e.ProductId == products[k].Id && (e.IsDeleted == null || (e.IsDeleted != null && !e.IsDeleted.Value)))
+                        .ToArrayAsync();
+
+                    double RatingStars = 0;
+
+                    if (posts.Length > 0)
+                    {
+                        int? stars = posts.Sum(e => e.Rating);
+                        RatingStars = stars.Value / posts.Length;
+                    }
+
+                    products[k].Stars = RatingStars;
+                }
             }
 
             ProductResultModel productResultModel = new ProductResultModel

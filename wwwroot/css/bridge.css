@@ -343,3 +343,8 @@ input[type=number]::-webkit-outer-spin-button {
     margin-bottom: 10px;
     color: #687f37;
 }
+
+.alert-link {
+    color: #3d9393 !important;
+    text-decoration: none;
+}

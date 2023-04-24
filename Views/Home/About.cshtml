@@ -56,7 +56,7 @@
                         <div class="col-10">
                             <div class="product-rating">
                                 <h5>Rating</h5>
-                                <span class="fa fa-star" style="color: orange;">&nbsp;<small class="rate">4.5</small></span>
+                                <span class="fa fa-star" style="color: orange;">&nbsp;<small class="rate">@productViewModel.Stars</small></span>
                             </div>
                             <div class="product-available">
                                 <h5>Stoc disponibil</h5>
@@ -106,8 +106,8 @@
                     <div class="col-1"></div>
                     <h2 class="posts">Note si aprecieri</h2>
                     <div class="col-7">
-                        <form id="rating-form" method="post">
-                            <textarea id="body" style="height: 300px;" rows="10" cols="100"></textarea><br/>
+                        <form action="/Home/CreatePost" method="post">
+                            <textarea id="body" name="body" style="height: 300px;" rows="10" cols="100"></textarea><br/>
                             <div class="row">
                                 <div class="col-4">
                                     <p class="rateus">Cum evaluezi acest produs?</p>
@@ -122,12 +122,24 @@
                                     </div>
                                 </div>
                                 <div class="col-4">
-                                    <input type="hidden" id="auid" value="@userId"/>
-                                    <input type="hidden" id="puid" value="@id" />
+                                    <input type="hidden" id="rating" name="rating" value="0" />
+                                    <input type="hidden" id="productId" name="productId" value="@id" />
                                     <button id="sender" type="submit" class="btn btn-primary btn-sm sender">Trimite</button>
                                 </div>
                             </div>
                         </form>
+                    </div>
+                    <div class="col-3"></div>
+                </div>
+            }
+            @if(string.IsNullOrEmpty(userId))
+            {
+                <div class="row" style="margin-left: 8%;">
+                    <div class="col-1"></div>
+                    <div class="col-7">
+                        <div class="alert alert-warning" role="alert">
+                            Pentru a putea oferi recenzii, trebuie sa va <a href="/Account/" class="alert-link">conectati</a>.
+                        </div>
                     </div>
                     <div class="col-3"></div>
                 </div>
