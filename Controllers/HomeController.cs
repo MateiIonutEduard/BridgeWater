@@ -4,6 +4,7 @@ using BridgeWater.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Cryptography;
 
 namespace BridgeWater.Controllers
 {
@@ -54,6 +55,22 @@ namespace BridgeWater.Controllers
 
                 await postService.RemovePostAsync(AccountId, pid);
                 return Redirect($"/Home/About/?id={post?.ProductId}");
+            }
+            else
+                return Redirect("/Account/");
+        }
+
+        [HttpPost, Authorize]
+        public async Task<IActionResult> RemoveProduct(int productId)
+        {
+            string? userId = HttpContext.User?.Claims?
+                .FirstOrDefault(u => u.Type == "id")?.Value;
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                int AccountId = Convert.ToInt32(userId);
+                await productService.RemoveProductAsync(productId);
+                return Redirect($"/Home/");
             }
             else
                 return Redirect("/Account/");

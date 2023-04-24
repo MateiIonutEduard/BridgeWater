@@ -1,4 +1,5 @@
-﻿using BridgeWater.Data;
+﻿using System.IO;
+using BridgeWater.Data;
 using BridgeWater.Models;
 using Microsoft.EntityFrameworkCore;
 #pragma warning disable
@@ -16,6 +17,36 @@ namespace BridgeWater.Services
         {
             Category[] categories = await bridgeContext.Category.ToArrayAsync();
             return categories;
+        }
+
+        public async Task<bool> RemoveProductAsync(int productId)
+        {
+            Product? product = await bridgeContext.Product
+                .FirstOrDefaultAsync(e => e.Id == productId);
+
+            if(product != null)
+            {
+                // get all comments
+                Post[] posts = await bridgeContext.Post.Where(e => e.ProductId == productId)
+                    .ToArrayAsync();
+
+                // all product orders
+                Order[] orders = await bridgeContext.Order.Where(e => e.ProductOrderId == productId)
+                    .ToArrayAsync();
+
+                // removes comments and orders
+                bridgeContext.Post.RemoveRange(posts);
+                bridgeContext.Order.RemoveRange(orders);
+
+                File.Delete(product.LogoImage);
+                File.Delete(product.PosterImage);
+
+                bridgeContext.Product.Remove(product);
+                await bridgeContext.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
         }
 
         public async Task<ProductViewModel?> GetProductDetailsAsync(int id)

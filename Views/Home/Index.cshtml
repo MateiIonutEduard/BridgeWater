@@ -118,8 +118,8 @@
                                     <div class="col-2">
                                             @if (CanRemove)
                                             {
-                                                <form method="post">
-                                                    <input type="hidden" value="@product.Id" />
+                                                <form action="/Home/RemoveProduct" method="post">
+                                                    <input type="hidden" id="productId" name="productId" value="@product.Id" />
                                                     <button class="btn btn-sm" type="submit" title="Elimina Produsul">
                                                         <i class="fa fa-trash" aria-hidden="true"></i>
                                                     </button>
