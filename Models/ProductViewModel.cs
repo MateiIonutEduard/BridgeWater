@@ -12,6 +12,7 @@ namespace BridgeWater.Models
         public string? Category { get; set; }
         public string TechInfo { get; set; }
         public double Stars { get; set; }
+        public PostRatingViewModel[]? postRatingViewModels { get; set; }
         public int Stock { get; set; }
         public double Price { get; set; }
     }

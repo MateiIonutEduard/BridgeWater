@@ -56,7 +56,7 @@
                         <div class="col-10">
                             <div class="product-rating">
                                 <h5>Rating</h5>
-                                <span class="fa fa-star" style="color: orange;">&nbsp;<small class="rate">@productViewModel.Stars</small></span>
+                                <span class="fa fa-star" style="color: orange;">&nbsp;<small class="rate">@productViewModel.Stars.ToString("0.##")</small></span>
                             </div>
                             <div class="product-available">
                                 <h5>Stoc disponibil</h5>
@@ -143,6 +143,46 @@
                     </div>
                     <div class="col-3"></div>
                 </div>
+            }
+
+            @if (productViewModel.postRatingViewModels != null && productViewModel.postRatingViewModels.Length > 0)
+            {
+                <div class="row" style="margin-left: 8%;">
+                    <div class="col-1"></div>
+                    <div class="col-7">
+                        <h2 class="posts">Toate aprecierile (<small style="color: #7a4444;">@productViewModel.postRatingViewModels.Length</small>)</h2><br />
+                        @foreach(PostRatingViewModel post in productViewModel.postRatingViewModels)
+                        {
+                            <div class="container">
+                                <div class="post">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <img src="/Account/Show/?id=@post.accountId" alt="@post.username">&nbsp;
+                                            <p class="post-name">@post.username</p>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="row">
+                                                <div class="col-4"></div>
+                                                <div class="col-2">
+                                                    <p style="color: #404041; margin-left: 56%; font-weight: bold;">@post.rating</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    @for (int k = 1; k <= post.rating; k++)
+                                                    {
+                                                        <span class="fa fa-star" style="color: orange;"></span>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="margin-left: 13%;">@Html.Raw(post.body)</div>
+                                    <span class="time-right">@post.createdAt?.ToString("dd/MM/yyyy hh:mm tt")</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                <div class="col-3"></div>
+            </div>
             }
         }
     </div>

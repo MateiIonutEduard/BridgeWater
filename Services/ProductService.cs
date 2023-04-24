@@ -28,15 +28,24 @@ namespace BridgeWater.Services
                 Category? category = await bridgeContext.Category
                     .FirstOrDefaultAsync(c => c.Id == product.CategoryId);
 
-                Post[] posts = await bridgeContext.Post.Where(e => e.ProductId == id && (e.IsDeleted == null || (e.IsDeleted != null && !e.IsDeleted.Value)))
-                    .ToArrayAsync();
-
+                PostRatingViewModel[] posts = (from p in await bridgeContext.Post.Where(e => e.ProductId == id && (e.IsDeleted == null || (e.IsDeleted != null && !e.IsDeleted.Value)))
+                    .ToListAsync() join a in await bridgeContext.Account.ToListAsync() on p.AccountId equals a.Id
+                    select new PostRatingViewModel
+                    {
+                        id = p.Id,
+                        body = p.Body,
+                        rating = p.Rating,
+                        username = a.Username,
+                        accountId = p.AccountId,
+                        createdAt = p.CreatedAt
+                    }
+                ).ToArray();
                 double RatingStars = 0;
                 
                 if(posts.Length > 0)
                 {
-                    int? stars = posts.Sum(e => e.Rating);
-                    RatingStars =  stars.Value / posts.Length;
+                    int? stars = posts.Sum(e => e.rating);
+                    RatingStars =  (double)stars.Value / posts.Length;
                 }
 
                 ProductViewModel productViewModel = new ProductViewModel
@@ -48,6 +57,7 @@ namespace BridgeWater.Services
                     Category = category!.Name,
                     TechInfo = product.TechInfo,
                     Stars = RatingStars,
+                    postRatingViewModels = posts,
                     Price = product.Price,
                     Stock = product.Stock
                 };
@@ -104,7 +114,7 @@ namespace BridgeWater.Services
                     if (posts.Length > 0)
                     {
                         int? stars = posts.Sum(e => e.Rating);
-                        RatingStars = stars.Value / posts.Length;
+                        RatingStars = (double)stars.Value / posts.Length;
                     }
 
                     products[k].Stars = RatingStars;
@@ -140,7 +150,7 @@ namespace BridgeWater.Services
                     if (posts.Length > 0)
                     {
                         int? stars = posts.Sum(e => e.Rating);
-                        RatingStars = stars.Value / posts.Length;
+                        RatingStars = (double)stars.Value / posts.Length;
                     }
 
                     products[k].Stars = RatingStars;

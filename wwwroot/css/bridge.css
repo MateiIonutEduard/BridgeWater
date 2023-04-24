@@ -348,3 +348,36 @@ input[type=number]::-webkit-outer-spin-button {
     color: #3d9393 !important;
     text-decoration: none;
 }
+
+.post {
+    border: 2px solid #dedede;
+    background-color: #f1f1f1;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+}
+
+.post::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+.post img {
+    float: left;
+    max-width: 60px;
+    width: 100%;
+    margin-right: 20px;
+    border-radius: 50%;
+}
+
+.time-right {
+    float: right;
+    color: #293a76;
+}
+
+.post-name {
+    color: #8b5e5e;
+    font-weight: bold;
+    margin-top: -3%;
+}
