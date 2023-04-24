@@ -372,7 +372,6 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .time-right {
-    float: right;
     color: #293a76;
 }
 

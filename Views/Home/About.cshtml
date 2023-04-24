@@ -176,7 +176,22 @@
                                         </div>
                                     </div>
                                     <div style="margin-left: 13%;">@Html.Raw(post.body)</div>
-                                    <span class="time-right">@post.createdAt?.ToString("dd/MM/yyyy hh:mm tt")</span>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <span class="time-right">@post.createdAt?.ToString("dd/MM/yyyy hh:mm tt")</span>
+                                        </div>
+                                        <div class="col-6">
+                                            @if(!string.IsNullOrEmpty(userId) && userId.CompareTo(post.accountId.ToString()) == 0)
+                                            {
+                                                <form action="/Home/RemovePost" method="post">
+                                                    <input type="hidden" id="pid" name="pid" value="@post.id" />
+                                                    <button style="margin-left: 90%;" class="btn btn-sm" type="submit">
+                                                        <span class="fa fa-trash" style="color: #DC4C64;"></span>
+                                                    </button>
+                                                </form>
+                                            }
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         }
