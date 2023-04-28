@@ -1,0 +1,89 @@
+﻿@using System.Web;
+@using BridgeWater.Data;
+@using BridgeWater.Services;
+@inject IOrderService orderService;
+
+@{
+#pragma warning disable
+    ViewData["Title"] = "Comenzile Mele";
+    List<OrderViewModel> orders = new List<OrderViewModel>();
+    string? uid = Context.User?.Claims.FirstOrDefault(u => u.Type == "id")?.Value;
+
+    if (!string.IsNullOrEmpty(uid))
+    {
+        int userId = Convert.ToInt32(uid);
+        var list = await orderService.GetProductOrdersAsync(userId);
+        orders.AddRange(list);
+    }
+}
+
+<section style="background-color: #f1e3e3;">
+    <br /><br />
+    <div class="row" style="padding-bottom: 6%;">
+        <div class="col-2"></div>
+        <div class="col-8">
+            @if (orders.Count > 0)
+            {
+                <table class="table table-light table-hover" id="products" style="margin-left: 10%; width: 80%;">
+                    <thead>
+                        <tr>
+                            <th style="background-color: #506983; color: white;">#</th>
+                            <th style="background-color: #506983; color: white;">Nume Produs</th>
+                            <th style="background-color: #506983; color: white;">Cantitate</th>
+                            <th style="background-color: #506983; color: white;">Pretul</th>
+                            <th style="background-color: #506983; color: white;">Actiuni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (OrderViewModel order in orders)
+                        {
+                            <tr>
+                                <td id="productField">
+                                    <a href="/Home/About/?id=@order.ProductId">
+                                        <img src="/Home/Show/?id=@order.ProductId&logo=true" alt="@order.ProductName" width="64" height="64" />
+                                    </a>
+                                </td>
+                                <td id="productField">
+                                    <small>@order.ProductName</small>
+                                </td>
+                                <td id="productField"><small style="color: #6079b3; font-weight: bold;">&nbsp;@order.Stock</small></td>
+                                <td id="productField">
+                                    <small style="color: #66BB6A; font-weight: bold;">@((Math.Truncate((order.Price * order.Stock) * 100) / 100).ToString("#####.##"))</small>
+                                </td>
+                                <td id="productField">
+                                    <div class="row">
+                                        <div class="col-4"></div>
+                                        <div class="col-2">
+                                            <a class="btn btn-sm" href="/Home/About/?id=@order.ProductId" title="Vizualizare">
+                                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                            </a>
+                                        </div>
+                                        <div class="col-2">
+                                            @if (!string.IsNullOrEmpty(uid))
+                                            {
+                                                <form action="/Order/Cancel" method="post">
+                                                    <input type="hidden" id="orderId" name="orderId" value="@order.Id" />
+                                                    <button class="btn btn-sm" type="submit" title="Elimina Comanda">
+                                                        <i class="fa fa-trash" aria-hidden="true"></i>
+                                                    </button>
+                                                </form>
+                                            }
+                                        </div>
+                                        <div class="col-4"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <div class="alert alert-warning" role="alert">
+                    Nu aveti comenzi momentan, in cosul dvs. <br>Mergeti la <a href="/Home/" class="alert-link">produse</a> pentru a putea inregistra comenzi.
+                </div>
+            }
+        </div>
+        <div class="col-2"></div>
+    </div>
+</section>
