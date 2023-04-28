@@ -17,6 +17,22 @@ namespace BridgeWater.Controllers
         }
 
         [HttpPost, Authorize]
+        public async Task<IActionResult> UpdateOrder(OrderModel orderModel)
+        {
+            string? userId = HttpContext.User?.Claims?
+                .FirstOrDefault(u => u.Type == "id")?.Value;
+
+            if(!string.IsNullOrEmpty(userId))
+            {
+                orderModel.AccountId = Convert.ToInt32(userId);
+                await orderService.ModifyOrderAsync(orderModel);
+                return Redirect("/Order/");
+            }
+            else
+                return Redirect("/Account/");
+        }
+
+        [HttpPost, Authorize]
         public async Task<IActionResult> Create(OrderModel orderModel)
         {
             string? userId = HttpContext.User?.Claims?

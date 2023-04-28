@@ -24,7 +24,7 @@
         <div class="col-8">
             @if (orders.Count > 0)
             {
-                <table class="table table-light table-hover" id="products" style="margin-left: 10%; width: 80%;">
+                <table class="table table-light table-hover" id="products" style="margin-left: 10%; width: 90%;">
                     <thead>
                         <tr>
                             <th style="background-color: #506983; color: white;">#</th>
@@ -46,13 +46,22 @@
                                 <td id="productField">
                                     <small>@order.ProductName</small>
                                 </td>
-                                <td id="productField"><small style="color: #6079b3; font-weight: bold;">&nbsp;@order.Stock</small></td>
+                                <td id="productField"><small id="quantity" onclick="ModifyQuantity(this, @order.Stock, @order.Price)" title="Modificati Cantitatea" style="color: #6079b3; font-weight: bold;">&nbsp;@order.Stock</small></td>
                                 <td id="productField">
-                                    <small style="color: #66BB6A; font-weight: bold;">@((Math.Truncate((order.Price * order.Stock) * 100) / 100).ToString("#####.##"))</small>
+                                    <small id="totalPrice" style="color: #66BB6A; font-weight: bold;">@((Math.Truncate((order.Price * order.Stock) * 100) / 100).ToString("#####.##"))&nbsp;Lei</small>
                                 </td>
                                 <td id="productField">
                                     <div class="row">
-                                        <div class="col-4"></div>
+                                        <div class="col-3"></div>
+                                        <div class="col-2">
+                                            <form action="/Order/UpdateOrder" method="post">
+                                                <input type="hidden" id="ProductOrderId" name="ProductOrderId" value="@order.ProductId"/>
+                                                <input type="hidden" id="Stock" name="Stock" value="@order.Stock" />
+                                                <button id="changeOrder" name="changeOrder" style="visibility: hidden;" class="btn btn-sm" type="submit" title="Modificati Comanda">
+                                                    <i class="fas fa-sync" style="color: #784949;" aria-hidden="true"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                         <div class="col-2">
                                             <a class="btn btn-sm" href="/Home/About/?id=@order.ProductId" title="Vizualizare">
                                                 <i class="fa fa-eye" aria-hidden="true"></i>
@@ -69,7 +78,7 @@
                                                 </form>
                                             }
                                         </div>
-                                        <div class="col-4"></div>
+                                        <div class="col-3"></div>
                                     </div>
                                 </td>
                             </tr>
