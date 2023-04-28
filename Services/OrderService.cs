@@ -12,6 +12,26 @@ namespace BridgeWater.Services
         public OrderService(BridgeContext bridgeContext)
         { this.bridgeContext = bridgeContext; }
 
+        public async Task<List<OrderViewModel>> GetProductOrdersAsync(int userId)
+        {
+            List<OrderViewModel> productOrders = (
+                from p in await bridgeContext.Product.ToListAsync()
+                join o in await bridgeContext.Order.ToListAsync()
+                on p.Id equals o.ProductOrderId
+                where o.IsCanceled == null || (o.IsCanceled.HasValue && !o.IsCanceled.Value)
+                select new OrderViewModel
+                {
+                    Id = o.Id,
+                    ProductId = p.Id,
+                    ProductName = p.Name,
+                    Price = p.Price,
+                    Stock = o.Stock
+                }
+            ).ToList();
+
+            return productOrders;
+        }
+
         public async Task<bool> CreateOrderAsync(OrderModel orderModel)
         {
             Order? order = await bridgeContext.Order
