@@ -19,6 +19,55 @@ namespace BridgeWater.Services
             return categories;
         }
 
+        public async Task<bool> CreateProductAsync(ProductModel productModel)
+        {
+            Product? product = await bridgeContext.Product
+                .FirstOrDefaultAsync(p => p.Name == productModel.name);
+
+            if (product == null)
+            {
+                string logoImage = string.Empty;
+                string posterImage = string.Empty;
+
+                if (productModel.logo != null)
+                {
+                    logoImage = $"./Storage/Products/Logo/{productModel.logo.FileName}";
+                    var ms = new MemoryStream();
+                    await productModel.logo.CopyToAsync(ms);
+                    File.WriteAllBytes(logoImage, ms.ToArray());
+                }
+
+                if (productModel.poster != null)
+                {
+                    posterImage = $"./Storage/Products/Poster/{productModel.poster.FileName}";
+                    var ms = new MemoryStream();
+                    await productModel.poster.CopyToAsync(ms);
+                    File.WriteAllBytes(posterImage, ms.ToArray());
+                }
+
+                if (!string.IsNullOrEmpty(logoImage) && !string.IsNullOrEmpty(posterImage))
+                {
+                    product = new Product
+                    {
+                        Name = productModel.name,
+                        Description = productModel.description,
+                        CategoryId = productModel.categoryId,
+                        Price = productModel.price,
+                        Stock = productModel.stock,
+                        TechInfo = productModel.techInfo,
+                        LogoImage = logoImage,
+                        PosterImage = posterImage
+                    };
+
+                    bridgeContext.Product.Add(product);
+                    await bridgeContext.SaveChangesAsync();
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         public async Task<bool> RemoveProductAsync(int productId)
         {
             Product? product = await bridgeContext.Product

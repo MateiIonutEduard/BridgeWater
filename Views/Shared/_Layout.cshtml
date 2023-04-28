@@ -50,9 +50,12 @@
                         </a>
 
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            <li>
-                                <a class="dropdown-item" href="#"><i class="fa fa-plus text-light" aria-hidden="true"></i>&nbsp;&nbsp;Adauga</a>
-                            </li>
+                            @if (!string.IsNullOrEmpty(admin))
+                            {
+                                <li>
+                                    <a class="dropdown-item" href="/Home/Create"><i class="fa fa-plus text-light" aria-hidden="true"></i>&nbsp;&nbsp;Adauga</a>
+                                </li>
+                            }
                             <li>
                                 <a class="dropdown-item" href="/Order/"><i class="fa fa-gift text-light" aria-hidden="true"></i>&nbsp;&nbsp;Comenzi</a>
                             </li>

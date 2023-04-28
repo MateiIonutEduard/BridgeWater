@@ -6,6 +6,7 @@ namespace BridgeWater.Services
     public interface IProductService
     {
         Task<Category[]> GetCategoriesAsync();
+        Task<bool> CreateProductAsync(ProductModel productModel);
         Task<ProductResultModel> GetProductsByCategoryAsync(int? categoryId, int? page);
         Task<ProductViewModel?> GetProductDetailsAsync(int id);
         Task<bool> RemoveProductAsync(int productId);

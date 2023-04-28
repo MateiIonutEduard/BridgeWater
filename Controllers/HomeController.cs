@@ -23,6 +23,19 @@ namespace BridgeWater.Controllers
             _logger = logger;
         }
 
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost, Authorize]
+        public async Task<IActionResult> Create(ProductModel productModel)
+        {
+            bool result = await productService.CreateProductAsync(productModel);
+            if(result) return Redirect($"/Home/?id={productModel.categoryId}");
+            else return Redirect($"/Home/Create");
+        }
+
         [HttpPost, Authorize]
         public async Task<IActionResult> CreatePost(PostRatingModel postRatingModel)
         {
