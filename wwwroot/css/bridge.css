@@ -236,7 +236,7 @@ input[type=number]::-webkit-outer-spin-button {
     color: #66BB6A;
     font-size: 25px;
     font-weight: bold;
-    margin-left: 15%;
+    margin-left: 5%;
 }
 
 .regular-price {
