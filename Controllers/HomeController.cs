@@ -120,9 +120,10 @@ namespace BridgeWater.Controllers
         [HttpPost]
         public async Task<ActionResult> ByCategory(string? category)
         {
-            await accountService.RecoverPasswordAsync("eduardmatei@outlook.com");
+            int CategoryId = Convert.ToInt32(category);
             /* Load products list filtered by category */
-            return Redirect($"/?type={category}");
+            if (CategoryId > 0) return Redirect($"/?type={category}");
+            else return Redirect("/");
         }
 
         // Represents product description page view
