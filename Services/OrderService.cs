@@ -29,7 +29,7 @@ namespace BridgeWater.Services
             return false;
         }
 
-        public async Task<List<OrderViewModel>> GetProductOrdersAsync(int userId)
+        public async Task<ProductOrderViewList> GetProductOrdersAsync(int userId)
         {
             List<OrderViewModel> productOrders = (
                 from p in await bridgeContext.Product.ToListAsync()
@@ -46,7 +46,16 @@ namespace BridgeWater.Services
                 }
             ).ToList();
 
-            return productOrders;
+            int totalPages = productOrders.Count >> 3;
+            if ((productOrders.Count & 7) != 0) totalPages++;
+
+            ProductOrderViewList productOrderViewList = new ProductOrderViewList
+            {
+                pages = totalPages,
+                orderViewModels = productOrders.ToArray()
+            };
+
+            return productOrderViewList;
         }
 
         public async Task<bool> CreateOrderAsync(OrderModel orderModel)

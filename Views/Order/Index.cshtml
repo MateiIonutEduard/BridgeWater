@@ -12,8 +12,8 @@
     if (!string.IsNullOrEmpty(uid))
     {
         int userId = Convert.ToInt32(uid);
-        var list = await orderService.GetProductOrdersAsync(userId);
-        orders.AddRange(list);
+        var productOrderViewList = await orderService.GetProductOrdersAsync(userId);
+        orders.AddRange(productOrderViewList.orderViewModels);
     }
 }
 
