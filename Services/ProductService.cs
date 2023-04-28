@@ -191,6 +191,7 @@ namespace BridgeWater.Services
             ProductResultModel productResultModel = new ProductResultModel
             {
                 Pages = TotalPages,
+                Results = frames,
                 ProductViewModels = products.ToArray()
             };
 
