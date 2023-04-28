@@ -118,12 +118,33 @@
                                     <div class="col-2">
                                             @if (CanRemove)
                                             {
-                                                <form action="/Home/RemoveProduct" method="post">
-                                                    <input type="hidden" id="productId" name="productId" value="@product.Id" />
-                                                    <button class="btn btn-sm" type="submit" title="Elimina Produsul">
-                                                        <i class="fa fa-trash" aria-hidden="true"></i>
-                                                    </button>
-                                                </form>
+                                                <button type="button" class="btn btn-sm" title="Elimina Produsul" data-bs-toggle="modal" data-bs-target="#removeProductModal">
+                                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                                </button>
+                                                <div class="modal fade" id="removeProductModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="productModalLabel">Elimina Produs</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>Sunteti sigur, ca va doriti sa eliminati complet acest produs?</p>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-sm btn-success" data-bs-dismiss="modal">
+                                                                    <i class="fa fa-times" aria-hidden="true"></i>&nbsp;Anulare
+                                                                </button>
+                                                                <form action="/Home/RemoveProduct" method="post">
+                                                                    <input type="hidden" id="productId" name="productId" value="@product.Id" />
+                                                                    <button type="submit" class="btn btn-sm btn-danger" title="Elimina Produsul">
+                                                                        <i class="fa fa-trash" style="color: white;" aria-hidden="true"></i>&nbsp;Elimina
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             }
                                     </div>
                                     <div class="col-4"></div>
