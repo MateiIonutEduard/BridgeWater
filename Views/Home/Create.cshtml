@@ -4,6 +4,7 @@
 
 @{
     Category[] categories = await productService.GetCategoriesAsync();
+    ProductModel? state = ViewData["state"] as ProductModel;
 }
 <section style="background-color: #f1e3e3;">
     <br /><br />
@@ -14,62 +15,128 @@
                 <div class="row">
                     <div class="col-2"></div>
                     <div class="col-8">
-                        <div class="form-group">
-                            <label for="name">Numele Produsului</label>
-                            <input type="text" id="name" name="name" class="form-control" required />
-                            <small id="help" style="display: none;" class="form-text text-muted">Produsul exista deja!</small>
-                        </div>
-                        <br />
-                        <div class="form-group">
-                            <label for="description">Descriere</label>
-                            <textarea id="description" name="description" class="form-control" required></textarea>
-                        </div>
-                        <br />
-                        <div class="form-group">
-                            <label for="techInfo">Mai multe</label>
-                            <textarea id="techInfo" name="techInfo" class="form-control" required></textarea>
-                        </div>
-                        <br />
-                        <div class="row">
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label for="stock">Cantitate</label>
-                                    <input class="form-control form-control-sm" id="stock" name="stock" type="number" value="1" min="1" />
+                        @if(state != null)
+                        {
+                            <div class="form-group">
+                                <label for="name">Numele Produsului</label>
+                                <input type="text" id="name" name="name" class="form-control" value="@state.name" required />
+                                <small id="help" style="display: block; color: #b32424 !important;" class="form-text text-muted"><i class="fa fa-exclamation-circle" style="color: #e04848 !important;" aria-hidden="true"></i>&nbsp;&nbsp;Produsul exista deja!</small>
+                            </div>
+                            <br />
+                            <div class="form-group">
+                                <label for="description">Descriere</label>
+                                <textarea id="description" name="description" class="form-control" required>@state.description</textarea>
+                            </div>
+                            <br />
+                            <div class="form-group">
+                                <label for="techInfo">Mai multe</label>
+                                <textarea id="techInfo" name="techInfo" class="form-control" required>@state.techInfo</textarea>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="stock">Cantitate</label>
+                                        <input class="form-control form-control-sm" id="stock" name="stock" type="number" value="@state.stock" min="1" />
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="price">Pret Produs</label>
+                                        <input type="text" id="price" name="price" class="form-control" value="@state.price" required />
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-6">
-                                <div class="form-group">
-                                    <label for="price">Pret Produs</label>
-                                    <input type="text" id="price" name="price" class="form-control" required />
+
+                            <br />
+                            <div class="form-group">
+                                <label for="price">Categoria</label>
+                                <select class="form-select" id="categoryId" name="categoryId" aria-label="Categoria">
+                                    <option value="@state.categoryId" selected>@categories[state.categoryId - 1].Name</option>
+                                    @for (int k = 0; k < categories.Length; k++)
+                                    {
+                                        if(state.categoryId != k)
+                                        {
+                                            <option value="@categories[k].Id">@categories[k].Name</option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-6">
+                                    <input type="file" id="logo" name="logo" class="form-control form-control-sm" required />
+                                </div>
+                                <div class="col-6">
+                                    <input type="file" id="poster" name="poster" class="form-control form-control-sm" required />
                                 </div>
                             </div>
-                        </div><br />
-                        <div class="form-group">
-                            <label for="price">Categoria</label>
-                            <select class="form-select" id="categoryId" name="categoryId" aria-label="Categoria">
-                                <option value="@categories[0].Id" selected>@categories[0].Name</option>
-                                @for (int k = 1; k < categories.Length; k++)
-                                {
-                                    <option value="@categories[k].Id">@categories[k].Name</option>
-                                }
-                            </select>
-                        </div>
-                        <br />
-                        <div class="row">
-                            <div class="col-6">
-                                <input type="file" id="logo" name="logo" class="form-control form-control-sm" required />
+
+                            <br />
+                        }
+                        else
+                        {
+                            <div class="form-group">
+                                <label for="name">Numele Produsului</label>
+                                <input type="text" id="name" name="name" class="form-control" required />
+                                <small id="help" style="display: none; color: #b32424 !important;" class="form-text text-muted"><i class="fa fa-exclamation-circle" style="color: #e04848 !important;" aria-hidden="true"></i>&nbsp;&nbsp;Produsul exista deja!</small>
                             </div>
-                            <div class="col-6">
-                                <input type="file" id="poster" name="poster" class="form-control form-control-sm" required />
+                            <br />
+                            <div class="form-group">
+                                <label for="description">Descriere</label>
+                                <textarea id="description" name="description" class="form-control" required></textarea>
                             </div>
-                        </div><br />
+                            <br />
+                            <div class="form-group">
+                                <label for="techInfo">Mai multe</label>
+                                <textarea id="techInfo" name="techInfo" class="form-control" required></textarea>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="stock">Cantitate</label>
+                                        <input class="form-control form-control-sm" id="stock" name="stock" type="number" value="1" min="1" />
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-group">
+                                        <label for="price">Pret Produs</label>
+                                        <input type="text" id="price" name="price" class="form-control" required />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <br />
+                            <div class="form-group">
+                                <label for="price">Categoria</label>
+                                <select class="form-select" id="categoryId" name="categoryId" aria-label="Categoria">
+                                    <option value="@categories[0].Id" selected>@categories[0].Name</option>
+                                    @for (int k = 1; k < categories.Length; k++)
+                                    {
+                                        <option value="@categories[k].Id">@categories[k].Name</option>
+                                    }
+                                </select>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-6">
+                                    <input type="file" id="logo" name="logo" class="form-control form-control-sm" required />
+                                </div>
+                                <div class="col-6">
+                                    <input type="file" id="poster" name="poster" class="form-control form-control-sm" required />
+                                </div>
+                            </div>
+
+                            <br />
+                        }
                         <div class="row">
                             <div class="col-4"></div>
                             <div class="col-2">
                                 <button type="submit" class="btn btn-primary">Salvare</button>
                             </div>
                             <div class="col-2">
-                                <button type="submit" class="btn btn-danger">Anulare</button>
+                                <a href="/Home/" type="button" class="btn btn-danger">Anulare</a>
                             </div>
                             <div class="col-4"></div>
                         </div>

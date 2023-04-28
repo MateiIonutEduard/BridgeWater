@@ -33,7 +33,11 @@ namespace BridgeWater.Controllers
         {
             bool result = await productService.CreateProductAsync(productModel);
             if(result) return Redirect($"/Home/?id={productModel.categoryId}");
-            else return Redirect($"/Home/Create");
+            else
+            {
+                ViewData["state"] = productModel;
+                return View($"Views/Home/Create.cshtml", ViewData["state"]);
+            }
         }
 
         [HttpPost, Authorize]
