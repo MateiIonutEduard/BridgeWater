@@ -17,6 +17,22 @@ namespace BridgeWater.Controllers
         }
 
         [HttpPost, Authorize]
+        public IActionResult Search(OrderSearchFilter orderSearchFilter)
+        {
+            string? userId = HttpContext.User?.Claims?
+                .FirstOrDefault(u => u.Type == "id")?.Value;
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                int UserId = Convert.ToInt32(userId);
+                ViewData["filter"] = orderSearchFilter;
+                return View("Views/Order/Index.cshtml", ViewData["filter"]);
+            }
+            else
+                return Redirect("/Account/");
+        }
+
+        [HttpPost, Authorize]
         public async Task<IActionResult> UpdateOrder(OrderModel orderModel)
         {
             string? userId = HttpContext.User?.Claims?

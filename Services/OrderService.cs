@@ -29,22 +29,63 @@ namespace BridgeWater.Services
             return false;
         }
 
-        public async Task<ProductOrderViewList> GetProductOrdersAsync(int userId, int? page)
+        public async Task<ProductOrderViewList> GetProductOrdersAsync(OrderSearchFilter? orderSearchFilter, int userId, int? page)
         {
-            List<OrderViewModel> productOrders = (
-                from p in await bridgeContext.Product.ToListAsync()
-                join o in await bridgeContext.Order.ToListAsync()
-                on p.Id equals o.ProductOrderId
-                where o.IsCanceled == null || (o.IsCanceled.HasValue && !o.IsCanceled.Value)
-                select new OrderViewModel
+            List<OrderViewModel> productOrders = new List<OrderViewModel>();
+
+            if (orderSearchFilter != null && orderSearchFilter.IsCanceled != null)
+            {
+                productOrders = (
+                    from p in await bridgeContext.Product.ToListAsync()
+                    join o in await bridgeContext.Order.ToListAsync()
+                    on p.Id equals o.ProductOrderId
+                    where orderSearchFilter.IsCanceled.Value == (o.IsCanceled != null ? o.IsCanceled.Value : false)
+                    select new OrderViewModel
+                    {
+                        Id = o.Id,
+                        ProductId = p.Id,
+                        ProductName = p.Name,
+                        IsCanceled = (o.IsCanceled != null ? o.IsCanceled.Value : false),
+                        Price = p.Price,
+                        Stock = o.Stock
+                    }
+                ).ToList();
+            }
+            else
+            {
+                productOrders = (
+                    from p in await bridgeContext.Product.ToListAsync()
+                    join o in await bridgeContext.Order.ToListAsync()
+                    on p.Id equals o.ProductOrderId
+                    select new OrderViewModel
+                    {
+                        Id = o.Id,
+                        ProductId = p.Id,
+                        ProductName = p.Name,
+                        IsCanceled = (o.IsCanceled != null ? o.IsCanceled.Value : false),
+                        Price = p.Price,
+                        Stock = o.Stock
+                    }
+                ).ToList();
+            }
+
+            if (orderSearchFilter != null && !string.IsNullOrEmpty(orderSearchFilter.ProductName))
+            {
+                productOrders = productOrders.Where(p => p.ProductName.Contains(orderSearchFilter.ProductName))
+                    .ToList();
+            }
+
+            if(orderSearchFilter != null && orderSearchFilter.CategoryId != null && orderSearchFilter.CategoryId.Value > 0)
+            {
+                for(int k = 0; k < productOrders.Count; k++)
                 {
-                    Id = o.Id,
-                    ProductId = p.Id,
-                    ProductName = p.Name,
-                    Price = p.Price,
-                    Stock = o.Stock
+                    Product? product = await bridgeContext.Product
+                        .FirstOrDefaultAsync(p => p.Id == productOrders[k].ProductId);
+
+                    if (product != null && product.CategoryId != orderSearchFilter.CategoryId.Value)
+                        productOrders.RemoveAt(k);
                 }
-            ).ToList();
+            }
 
             int totalPages = productOrders.Count >> 3;
             if ((productOrders.Count & 7) != 0) totalPages++;

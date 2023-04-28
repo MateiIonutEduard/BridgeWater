@@ -1,7 +1,9 @@
 ﻿@using System.Web;
 @using BridgeWater.Data;
+@using BridgeWater.Models;
 @using BridgeWater.Services;
 @inject IOrderService orderService;
+@inject IProductService productService;
 
 @{
     #pragma warning disable
@@ -10,6 +12,14 @@
 
     string? uid = Context.User?.Claims.FirstOrDefault(u => u.Type == "id")?.Value;
     int? page = Context.Request.Query.Keys.Contains("page") ? Convert.ToInt32(Context.Request.Query["page"]) : null;
+    Category[] categories = await productService.GetCategoriesAsync();
+
+    List<Category> list = new List<Category>();
+    Category firstCategory = new Category();
+    firstCategory.Name = "Toate Produsele";
+
+    list.Add(firstCategory);
+    list.AddRange(categories);
 
     int previousPage = 1, totalPages = 1;
     int nextPage = 1, mainPage = 1;
@@ -18,7 +28,8 @@
     if (!string.IsNullOrEmpty(uid))
     {
         int userId = Convert.ToInt32(uid);
-        var productOrderViewList = await orderService.GetProductOrdersAsync(userId, page);
+        OrderSearchFilter? filter = ViewData["filter"] as OrderSearchFilter;
+        var productOrderViewList = await orderService.GetProductOrdersAsync(filter, userId, page);
 
         orders.AddRange(productOrderViewList.orderViewModels);
         totalResults = productOrderViewList.results;
@@ -40,6 +51,33 @@
         <div class="col-8">
             @if (orders.Count > 0)
             {
+                <form action="/Order/Search" method="post">
+                    <div class="row" style="margin-left: 10%;">
+                        <div class="col-3">
+                            <input class="form-control form-control-sm" id="ProductName" name="ProductName" type="text" placeholder="Product Name" />
+                        </div>
+                        <div class="col-3">
+                            <select class="form-select form-select-sm" id="CategoryId" name="CategoryId" aria-label="Toate Produsele">
+                                <option value="0" selected>Toate Produsele</option>
+                                @for(int j = 1; j < list.Count; j++)
+                                {
+                                    <option value="@list[j].Id">@list[j].Name</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-3">
+                            <div class="form-check" style="margin-left: 25%;">
+                                @Html.CheckBox("IsCanceled", false)
+                                <label class="form-check-label" for="IsCanceled">
+                                    Anulate
+                                </label>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <button type="submit" style="margin-left: 45%;" class="btn btn-primary btn-sm"><i class="fa fa-search" aria-hidden="true"></i>&nbsp;Cauta</button>
+                        </div>
+                    </div>
+                </form><br/>
                 <table class="table table-light table-hover" id="products" style="margin-left: 10%; width: 90%;">
                     <thead>
                         <tr>
@@ -47,6 +85,7 @@
                             <th style="background-color: #506983; color: white;">Nume Produs</th>
                             <th style="background-color: #506983; color: white;">Cantitate</th>
                             <th style="background-color: #506983; color: white;">Pretul</th>
+                            <th style="background-color: #506983; color: white;">Anulata</th>
                             <th style="background-color: #506983; color: white;">Actiuni</th>
                         </tr>
                     </thead>
@@ -65,6 +104,16 @@
                                 <td id="productField"><small id="quantity" onclick="ModifyQuantity(this, @order.Stock, @order.Price)" title="Modificati Cantitatea" style="color: #6079b3; font-weight: bold;">&nbsp;@order.Stock</small></td>
                                 <td id="productField">
                                     <small id="totalPrice" style="color: #66BB6A; font-weight: bold;">@((Math.Truncate((order.Price * order.Stock) * 100) / 100).ToString("#####.##"))&nbsp;Lei</small>
+                                </td>
+                                <td id="productField">
+                                    @if(!order.IsCanceled)
+                                    {
+                                        <span class="fa fa-check text-success" style="margin-left: 35%;"></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="fa fa-times text-danger" style="margin-left: 35%;"></span>
+                                    }
                                 </td>
                                 <td id="productField">
                                     <div class="row">

@@ -118,7 +118,7 @@ namespace BridgeWater.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> ByCategory(string? category)
+        public ActionResult ByCategory(string? category)
         {
             int CategoryId = Convert.ToInt32(category);
             /* Load products list filtered by category */
