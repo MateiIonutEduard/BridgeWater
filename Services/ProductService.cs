@@ -123,7 +123,7 @@ namespace BridgeWater.Services
 
 
                 products = await bridgeContext.Product
-                    .Where(p => p.CategoryId == categoryId).Skip(8 * index).Take(8)
+                    .Where(p => p.CategoryId == categoryId).OrderBy(p => p.Id).Skip(8 * index).Take(8)
                     .Select(p => new ProductViewModel
                     {
                         Id = p.Id,
@@ -160,7 +160,7 @@ namespace BridgeWater.Services
 
 
                 products = (await bridgeContext.Product
-                    .ToListAsync()).Skip(8 * index).Take(8)
+                    .ToListAsync()).OrderBy(p => p.Id).Skip(8 * index).Take(8)
                     .Select(p => new ProductViewModel
                     {
                         Id = p.Id,
