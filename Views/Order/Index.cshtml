@@ -4,16 +4,32 @@
 @inject IOrderService orderService;
 
 @{
-#pragma warning disable
+    #pragma warning disable
     ViewData["Title"] = "Comenzile Mele";
     List<OrderViewModel> orders = new List<OrderViewModel>();
+
     string? uid = Context.User?.Claims.FirstOrDefault(u => u.Type == "id")?.Value;
+    int? page = Context.Request.Query.Keys.Contains("page") ? Convert.ToInt32(Context.Request.Query["page"]) : null;
+
+    int previousPage = 1, totalPages = 1;
+    int nextPage = 1, mainPage = 1;
+    int totalResults = 0;
 
     if (!string.IsNullOrEmpty(uid))
     {
         int userId = Convert.ToInt32(uid);
-        var productOrderViewList = await orderService.GetProductOrdersAsync(userId);
+        var productOrderViewList = await orderService.GetProductOrdersAsync(userId, page);
+
         orders.AddRange(productOrderViewList.orderViewModels);
+        totalResults = productOrderViewList.results;
+        totalPages = productOrderViewList.pages;
+
+        if(productOrderViewList.pages > 1)
+        {
+            previousPage = 1;
+            mainPage = 1;
+            nextPage = 2;
+        }
     }
 }
 
@@ -85,6 +101,38 @@
                         }
                     </tbody>
                 </table>
+                <div class="row" style="margin-left: 10%;">
+                    <div class="col-4">
+                        <span style="font-weight: bold; color: #997878;">Numarul de rezultate:&nbsp;&nbsp;<small style="font-weight: bold; color: #6970c5 !important;">@totalResults</small></span>
+                    </div>
+                    <div class="col-8">
+                        @if(totalPages > 1)
+                        {
+                        <nav id="navigation" style="margin-left: 60% !important;">
+                            <ul class="pagination">
+                                @if (mainPage > 1)
+                                {
+                                    <li class="page-item"><a class="page-link" href="/Order/?page=@previousPage">&lt;&lt;</a></li>
+                                    <li class="page-item"><a class="page-link" href="/Order/?page=@previousPage">@previousPage</a></li>
+                                }
+                                <li class="page-item active"><a class="page-link" style="color: #ffa571 !important;">@mainPage</a></li>
+
+                                @if (nextPage <= totalPages && mainPage < totalPages)
+                                {
+                                    <li class="page-item"><a class="page-link" href="/Order/?page=@nextPage">@nextPage</a></li>
+                                }
+
+                                @if (nextPage <= totalPages && mainPage < totalPages)
+                                {
+                                    <li class="page-item"><a class="page-link" href="/Order/?page=@nextPage">&gt;&gt;</a></li>
+                                }
+                            </ul>
+                        </nav>
+                        <br/>
+                        <br/>
+                        }
+                    </div>
+                </div>
             }
             else
             {

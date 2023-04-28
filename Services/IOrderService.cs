@@ -5,7 +5,7 @@ namespace BridgeWater.Services
     public interface IOrderService
     {
         Task<bool> ModifyOrderAsync(OrderModel orderModel);
-        Task<ProductOrderViewList> GetProductOrdersAsync(int userId);
+        Task<ProductOrderViewList> GetProductOrdersAsync(int userId, int? page);
         Task<bool> CreateOrderAsync(OrderModel orderModel);
         Task<bool> CancelOrderAsync(int userId, int orderId);
     }
