@@ -154,60 +154,63 @@
                         }
                     </tbody>
                 </table>
-                <div class="row" style="margin-left: 10%;">
+                <div class="row" style="margin-left: 10%; margin-bottom: 4%;">
                     <div class="col-4">
                         <span style="font-weight: bold; color: #997878;">Total <small style="font-weight: bold; color: #6970c5 !important;">@result.Results</small> rezultate</span>
                     </div>
                     <div class="col-8">
-                        @if (type != null)
+                        @if(result.Pages > 1)
                         {
-                            <nav id="navigation">
-                                <ul class="pagination">
-                                    @if (mainPage > 1)
-                                    {
-                                        <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@previousPage">&lt;&lt;</a></li>
-                                        <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@previousPage">@previousPage</a></li>
-                                    }
-                                    <li class="page-item active"><a class="page-link" style="color: #ffa571 !important;">@mainPage</a></li>
+                            @if (type != null)
+                            {
+                                <nav id="navigation">
+                                    <ul class="pagination">
+                                        @if (mainPage > 1)
+                                        {
+                                            <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@previousPage">&lt;&lt;</a></li>
+                                            <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@previousPage">@previousPage</a></li>
+                                        }
+                                        <li class="page-item active"><a class="page-link" style="color: #ffa571 !important;">@mainPage</a></li>
 
-                                    @if (nextPage <= result.Pages && mainPage < result.Pages)
-                                    {
-                                        <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@nextPage">@nextPage</a></li>
-                                    }
+                                        @if (nextPage <= result.Pages && mainPage < result.Pages)
+                                        {
+                                            <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@nextPage">@nextPage</a></li>
+                                        }
 
-                                    @if (nextPage <= result.Pages && mainPage < result.Pages)
-                                    {
-                                        <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@nextPage">&gt;&gt;</a></li>
-                                    }
-                                </ul>
-                            </nav>
-                            <br />
-                            <br />
-                        }
-                        else
-                        {
-                            <nav id="navigation">
-                                <ul class="pagination">
-                                    @if (mainPage > 1)
-                                    {
-                                        <li class="page-item"><a class="page-link" href="/Home/?page=@previousPage">&lt;&lt;</a></li>
-                                        <li class="page-item"><a class="page-link" href="/Home/?page=@previousPage">@previousPage</a></li>
-                                    }
-                                    <li class="page-item active"><a class="page-link" style="color: #ffa571 !important;">@mainPage</a></li>
+                                        @if (nextPage <= result.Pages && mainPage < result.Pages)
+                                        {
+                                            <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@nextPage">&gt;&gt;</a></li>
+                                        }
+                                    </ul>
+                                </nav>
+                                <br />
+                                <br />
+                            }
+                            else
+                            {
+                                <nav id="navigation">
+                                    <ul class="pagination">
+                                        @if (mainPage > 1)
+                                        {
+                                            <li class="page-item"><a class="page-link" href="/Home/?page=@previousPage">&lt;&lt;</a></li>
+                                            <li class="page-item"><a class="page-link" href="/Home/?page=@previousPage">@previousPage</a></li>
+                                        }
+                                        <li class="page-item active"><a class="page-link" style="color: #ffa571 !important;">@mainPage</a></li>
 
-                                    @if (nextPage <= result.Pages && mainPage < result.Pages)
-                                    {
-                                        <li class="page-item"><a class="page-link" href="/Home/?page=@nextPage">@nextPage</a></li>
-                                    }
+                                        @if (nextPage <= result.Pages && mainPage < result.Pages)
+                                        {
+                                            <li class="page-item"><a class="page-link" href="/Home/?page=@nextPage">@nextPage</a></li>
+                                        }
 
-                                    @if (nextPage <= result.Pages && mainPage < result.Pages)
-                                    {
-                                        <li class="page-item"><a class="page-link" href="/Home/?page=@nextPage">&gt;&gt;</a></li>
-                                    }
-                                </ul>
-                            </nav>
-                            <br />
-                            <br />
+                                        @if (nextPage <= result.Pages && mainPage < result.Pages)
+                                        {
+                                            <li class="page-item"><a class="page-link" href="/Home/?page=@nextPage">&gt;&gt;</a></li>
+                                        }
+                                    </ul>
+                                </nav>
+                                <br />
+                                <br />
+                            }
                         }
                     </div>
                 </div>
