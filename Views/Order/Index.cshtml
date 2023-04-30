@@ -41,6 +41,13 @@
             mainPage = 1;
             nextPage = 2;
         }
+
+        if(page != null)
+        {
+            mainPage = page.Value;
+            nextPage = mainPage + 1;
+            previousPage = mainPage - 1;
+        }
     }
 }
 
