@@ -90,23 +90,23 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (OrderViewModel order in orders)
+                        @for(int k = 0; k < orders.Count; k++)
                         {
                             <tr>
                                 <td id="productField">
-                                    <a href="/Home/About/?id=@order.ProductId">
-                                        <img src="/Home/Show/?id=@order.ProductId&logo=true" alt="@order.ProductName" width="64" height="64" />
+                                    <a href="/Home/About/?id=@orders[k].ProductId">
+                                        <img src="/Home/Show/?id=@orders[k].ProductId&logo=true" alt="@orders[k].ProductName" width="64" height="64" />
                                     </a>
                                 </td>
                                 <td id="productField">
-                                    <small>@order.ProductName</small>
+                                    <small>@orders[k].ProductName</small>
                                 </td>
-                                <td id="productField"><small id="quantity" onclick="ModifyQuantity(this, @order.Stock, @order.Price)" title="Modificati Cantitatea" style="color: #6079b3; font-weight: bold;">&nbsp;@order.Stock</small></td>
+                                <td id="productField"><small id="quantity" onclick="ModifyQuantity(this, @orders[k].Stock, @orders[k].Price)" title="Modificati Cantitatea" style="color: #6079b3; font-weight: bold;">&nbsp;@orders[k].Stock</small></td>
                                 <td id="productField">
-                                    <small id="totalPrice" style="color: #66BB6A; font-weight: bold;">@((Math.Truncate((order.Price * order.Stock) * 100) / 100).ToString("#####.##"))&nbsp;Lei</small>
+                                    <small id="totalPrice" style="color: #66BB6A; font-weight: bold;">@((Math.Truncate((orders[k].Price * orders[k].Stock) * 100) / 100).ToString("#####.##"))&nbsp;Lei</small>
                                 </td>
                                 <td id="productField">
-                                    @if(!order.IsCanceled)
+                                    @if(!orders[k].IsCanceled)
                                     {
                                         <span class="fa fa-check text-success" style="margin-left: 35%;"></span>
                                     }
@@ -120,15 +120,15 @@
                                         <div class="col-3"></div>
                                         <div class="col-2">
                                             <form action="/Order/UpdateOrder" method="post">
-                                                <input type="hidden" id="ProductOrderId" name="ProductOrderId" value="@order.ProductId"/>
-                                                <input type="hidden" id="Stock" name="Stock" value="@order.Stock" />
+                                                <input type="hidden" id="ProductOrderId" name="ProductOrderId" value="@orders[k].ProductId"/>
+                                                <input type="hidden" id="Stock" name="Stock" value="@orders[k].Stock" />
                                                 <button id="changeOrder" name="changeOrder" style="visibility: hidden;" class="btn btn-sm" type="submit" title="Modificati Comanda">
                                                     <i class="fas fa-sync" style="color: #784949;" aria-hidden="true"></i>
                                                 </button>
                                             </form>
                                         </div>
                                         <div class="col-2">
-                                            <a class="btn btn-sm" href="/Home/About/?id=@order.ProductId" title="Vizualizare">
+                                            <a class="btn btn-sm" href="/Home/About/?id=@orders[k].ProductId" title="Vizualizare">
                                                 <i class="fa fa-eye" aria-hidden="true"></i>
                                             </a>
                                         </div>
@@ -153,7 +153,7 @@
                                                                     <i class="fa fa-times" aria-hidden="true"></i>&nbsp;Inchideti
                                                                 </button>
                                                                 <form action="/Order/Cancel" method="post">
-                                                                    <input type="hidden" id="orderId" name="orderId" value="@order.Id" />
+                                                                    <input type="hidden" id="orderId" name="orderId" value="@orders[k].Id" />
                                                                     <button class="btn btn-sm btn-danger" type="submit" title="Elimina Comanda">
                                                                         <i class="fa fa-trash" style="color: white;" aria-hidden="true"></i>&nbsp;Anulati
                                                                     </button>
