@@ -1,5 +1,5 @@
 ﻿var index = 0;
-var ChildControl = undefined;
+var childIndex = 0;
 var MaxQuantity = 0;
 var PricePerUnit = 0;
 
@@ -35,48 +35,54 @@ function ClearStars() {
 
 // detect if quantity was changed
 function UpdatePrice() {
-    var quantity = parseFloat($("#quant").val());
+    var quantity = parseFloat($(`#quant_${childIndex}`).val());
     var price = quantity * PricePerUnit;
 
+    var childs = $(`#order_${childIndex}`).children();
+    var parentControl = childs[2];
+
     var realPrice = Math.trunc(price * 100) / 100;
-    $('#totalPrice').html(`${realPrice.toFixed(2)}&nbsp;Lei`);
+    $(childs[3].querySelector('#totalPrice')).html(`${realPrice.toFixed(2)}&nbsp;Lei`);
 
     // display update button if quantity was changed
     if (quantity < MaxQuantity) {
-        $('#changeOrder').css('visibility', 'visible');
-        $('#Stock').val(parseInt(quantity));
+        $(childs[5].querySelector('#changeOrder')).css('visibility', 'visible');
+        $(childs[5].querySelector('#Stock')).val(parseInt(quantity));
     }
     else {
         // otherwise, revert initial control
-        $('#changeOrder').css('visibility', 'hidden');
-        $('#quant').remove();
+        $(childs[5].querySelector('#changeOrder')).css('visibility', 'hidden');
+        $(`#quant_${childIndex}`).remove();
 
-        $("#quantity").css('display', 'block');
+        $(parentControl.querySelector("#quantity")).css('display', 'block');
+        childIndex = 0;
     }
 }
 
-function ModifyQuantity(control, maxQuantity, pricePerUnit) {
-    if (ChildControl !== undefined) {
-        if (ChildControl === control) {
-            var parentControl = $(control).parent();
-            $("#quantity").css('display', 'none');
+function ModifyQuantity(newIndex, maxQuantity, pricePerUnit) {
+    if (childIndex !== 0) {
+        if (childIndex === newIndex) {
+            var childs = $(`#order_${newIndex}`).children();
+            var parentControl = childs[2];
+            $(parentControl.querySelector("#quantity")).css('display', 'none');
 
             MaxQuantity = maxQuantity;
             PricePerUnit = pricePerUnit;
 
-            const nextUnit = `<input onchange='UpdatePrice()' class='form-control form-control-sm' style='width: 80px !important;' id='quant' name='quant' type='number' value='${maxQuantity}' min='1' max='${maxQuantity}' />`;
-            parentControl.append(nextUnit);
+            const nextUnit = `<input onchange='UpdatePrice()' class='form-control form-control-sm' style='width: 80px !important;' id='quant_${newIndex}' name='quant_${newIndex}' type='number' value='${maxQuantity}' min='1' max='${maxQuantity}' />`;
+            $(parentControl).append(nextUnit);
         }
     }
     else {
-        var parentControl = $(control).parent();
-        $("#quantity").css('display', 'none');
+        var childs = $(`#order_${newIndex}`).children();
+        var parentControl = childs[2];
+        $(parentControl.querySelector("#quantity")).css('display', 'none');
 
         MaxQuantity = maxQuantity;
         PricePerUnit = pricePerUnit;
-        ChildControl = control;
+        childIndex = newIndex;
 
-        const nextUnit = `<input onchange='UpdatePrice()' class='form-control form-control-sm' style='width: 80px !important;' id='quant' name='quant' type='number' value='${maxQuantity}' min='1' max='${maxQuantity}' />`;
-        parentControl.append(nextUnit);
+        const nextUnit = `<input onchange='UpdatePrice()' class='form-control form-control-sm' style='width: 80px !important;' id='quant_${newIndex}' name='quant_${newIndex}' type='number' value='${maxQuantity}' min='1' max='${maxQuantity}' />`;
+        $(parentControl).append(nextUnit);
     }
 }

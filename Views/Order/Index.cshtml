@@ -92,7 +92,7 @@
                     <tbody>
                         @for(int k = 0; k < orders.Count; k++)
                         {
-                            <tr>
+                            <tr id="order_@(k + 1)">
                                 <td id="productField">
                                     <a href="/Home/About/?id=@orders[k].ProductId">
                                         <img src="/Home/Show/?id=@orders[k].ProductId&logo=true" alt="@orders[k].ProductName" width="64" height="64" />
@@ -101,7 +101,7 @@
                                 <td id="productField">
                                     <small>@orders[k].ProductName</small>
                                 </td>
-                                <td id="productField"><small id="quantity" onclick="ModifyQuantity(this, @orders[k].Stock, @orders[k].Price)" title="Modificati Cantitatea" style="color: #6079b3; font-weight: bold;">&nbsp;@orders[k].Stock</small></td>
+                                <td id="productField"><small id="quantity" onclick="ModifyQuantity(@(k + 1), @orders[k].Stock, @orders[k].Price)" title="Modificati Cantitatea" style="color: #6079b3; font-weight: bold;">&nbsp;@orders[k].Stock</small></td>
                                 <td id="productField">
                                     <small id="totalPrice" style="color: #66BB6A; font-weight: bold;">@((Math.Truncate((orders[k].Price * orders[k].Stock) * 100) / 100).ToString("#####.##"))&nbsp;Lei</small>
                                 </td>
