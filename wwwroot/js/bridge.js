@@ -54,7 +54,7 @@ function UpdatePrice() {
         $(childs[5].querySelector('#changeOrder')).css('visibility', 'hidden');
         $(`#quant_${childIndex}`).remove();
 
-        $(parentControl.querySelector("#quantity")).css('display', 'block');
+        $(parentControl.querySelector("#quantity")).css('display', 'inline');
         childIndex = 0;
     }
 }
@@ -85,4 +85,21 @@ function ModifyQuantity(newIndex, maxQuantity, pricePerUnit) {
         const nextUnit = `<input onchange='UpdatePrice()' class='form-control form-control-sm' style='width: 80px !important;' id='quant_${newIndex}' name='quant_${newIndex}' type='number' value='${maxQuantity}' min='1' max='${maxQuantity}' />`;
         $(parentControl).append(nextUnit);
     }
+}
+
+function OverQuantity(index) {
+    var childs = $(`#order_${index}`).children();
+    var parentControl = childs[2];
+
+    let control = parentControl.querySelector("#quantity");
+    control.style.border = '1px #8f7167 solid';
+    control.style.borderRadius = '15%';
+}
+
+function LeaveQuantity(index) {
+    var childs = $(`#order_${index}`).children();
+    var parentControl = childs[2];
+
+    let control = parentControl.querySelector("#quantity");
+    control.style.border = 'none';
 }
