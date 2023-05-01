@@ -85,6 +85,60 @@ namespace BridgeWater.Services
             return accountResponseModel;
         }
 
+        public async Task<bool> RemoveAccountAsync(int userId)
+        {
+            Account? account = await bridgeContext.Account
+                .FirstOrDefaultAsync(e => e.Id == userId);
+
+            if(account != null)
+            {
+                List<Post> posts = await bridgeContext.Post.Where(e => e.AccountId == userId)
+                    .ToListAsync();
+
+                // remove all post rating of this account
+                bridgeContext.Post.RemoveRange(posts);
+                await bridgeContext.SaveChangesAsync();
+
+                List<Order> orders = await bridgeContext.Order.Where(e => e.AccountId == userId)
+                    .ToListAsync();
+
+                for(int k = 0; k < orders.Count; k++)
+                {
+                    Product? product = await bridgeContext.Product
+                        .FirstOrDefaultAsync(e => e.Id == orders[k].ProductOrderId);
+
+                    // update product quantity before removes
+                    if ((orders[k].IsCanceled == null) || (orders[k].IsCanceled != null && !orders[k].IsCanceled.Value))
+                    {
+                        if(product != null)
+                        {
+                            product.Stock += orders[k].Stock;
+                            bridgeContext.Product.Remove(product);
+                            await bridgeContext.SaveChangesAsync();
+                        }
+                    }
+                    else
+                    {
+                        // remove without change quantity, because was updated in the past 
+                        bridgeContext.Product.Remove(product);
+                        await bridgeContext.SaveChangesAsync();
+                    }
+
+                }
+
+                // remove if avatar is not default image
+                if (!account.Avatar.EndsWith("avatar.png"))
+                    File.Delete(account.Avatar);
+
+                // now remove account entity from database
+                bridgeContext.Account.Remove(account);
+                await bridgeContext.SaveChangesAsync();
+            }
+
+            // account does not exists
+            return false;
+        }
+
         public async Task<Account?> GetAccountAsync(int id)
         {
             /* get user account */
