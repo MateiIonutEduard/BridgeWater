@@ -65,6 +65,17 @@ namespace BridgeWater.Controllers
                 return Redirect("/Account/");
 
             // account preferences was updated successfully
+            await HttpContext.SignOutAsync();
+            var claims = new Claim[]
+{
+                new Claim("id", accountResponseModel.id.Value.ToString()),
+                new Claim(ClaimTypes.Name, accountResponseModel.username),
+                new Claim("admin", accountResponseModel.admin.Value.ToString())
+};
+
+            var identity = new ClaimsIdentity(claims, "User Identity");
+            var userPrincipal = new ClaimsPrincipal(new[] { identity });
+            await HttpContext.SignInAsync(userPrincipal);
             return Redirect("/Home/");
         }
 

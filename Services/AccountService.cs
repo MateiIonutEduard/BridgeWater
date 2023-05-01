@@ -75,6 +75,11 @@ namespace BridgeWater.Services
                 // update success
                 if(updateAvatar) account.Avatar = avatarPath;
                 await bridgeContext.SaveChangesAsync();
+
+                accountResponseModel.id = account.Id;
+                accountResponseModel.username = account.Username;
+                
+                accountResponseModel.admin = accountRequestModel.admin;
                 accountResponseModel.status = 1;
             }
             else
