@@ -20,6 +20,71 @@ namespace BridgeWater.Services
             this.bridgeContext = bridgeContext;
         }
 
+        public async Task<AccountResponseModel> UpdateAccountPreferencesAsync(AccountRequestModel accountRequestModel)
+        {
+            Account? account = await bridgeContext.Account
+                .FirstOrDefaultAsync(e => e.Id == accountRequestModel.Id.Value);
+
+            AccountResponseModel accountResponseModel = new AccountResponseModel();
+            if (accountRequestModel.password.CompareTo(accountRequestModel.confirmPassword) != 0)
+            {
+                // passwords do not match
+                accountResponseModel.status = -1;
+                return accountResponseModel;
+            }
+
+            // account exists, so update it
+            if (account != null)
+            {
+                string encryptedPassword = cryptoService.Encrypt(accountRequestModel.password);
+                string avatarPath = "./Storage/Account/avatar.png";
+
+                // copy avatar image first
+                if (accountRequestModel.avatar != null)
+                {
+                    avatarPath = $"./Storage/Account/{accountRequestModel.avatar.FileName}";
+                    MemoryStream ms = new MemoryStream();
+
+                    /* save avatar logo at disk, when hash 
+                       functions have different values. */
+                    await accountRequestModel.avatar.CopyToAsync(ms);
+                    byte[] oldData = await File.ReadAllBytesAsync(account.Avatar);
+
+                    string lhash = cryptoService.ComputeHash(oldData);
+                    string rhash = cryptoService.ComputeHash(ms.ToArray());
+
+                    if(lhash.CompareTo(rhash) != 0)
+                    {
+                        // remove if avatar is not default image
+                        if (!account.Avatar.EndsWith("avatar.png"))
+                            File.Delete(account.Avatar);
+
+                        // write new image file at disk
+                        System.IO.File.WriteAllBytes(avatarPath, ms.ToArray());
+                    }
+                }
+
+                account.Address = accountRequestModel.address;
+                account.Username = accountRequestModel.username;
+
+                account.Password = encryptedPassword;
+                account.IsAdmin = accountRequestModel.admin;
+
+                // update success
+                account.Avatar = avatarPath;
+                await bridgeContext.SaveChangesAsync();
+                accountResponseModel.status = 1;
+            }
+            else
+            {
+                // account does not exists!
+                accountResponseModel.status = 0;
+                return accountResponseModel;
+            }
+
+            return accountResponseModel;
+        }
+
         public async Task<Account?> GetAccountAsync(int id)
         {
             /* get user account */
