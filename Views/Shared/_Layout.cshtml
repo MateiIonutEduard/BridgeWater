@@ -40,6 +40,7 @@
                     string? userId = Context.User?.Claims?.FirstOrDefault(u => u.Type == "id")?.Value;
                     string? username = Context.User?.Claims.FirstOrDefault(u => u.Type.Contains("name"))?.Value;
                     string? admin = Context.User?.Claims.FirstOrDefault(u => u.Type == "admin")?.Value;
+                    bool hasRights = !string.IsNullOrEmpty(admin) ? Convert.ToBoolean(admin) : false;
                 }
 
                 @if (!string.IsNullOrEmpty(userId))
@@ -50,7 +51,7 @@
                         </a>
 
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            @if (!string.IsNullOrEmpty(admin))
+                            @if (hasRights)
                             {
                                 <li>
                                     <a class="dropdown-item" href="/Home/Create"><i class="fa fa-plus text-light" aria-hidden="true"></i>&nbsp;&nbsp;Adauga</a>
@@ -59,7 +60,7 @@
                             <li>
                                 <a class="dropdown-item" href="/Order/"><i class="fa fa-gift text-light" aria-hidden="true"></i>&nbsp;&nbsp;Comenzi</a>
                             </li>
-                            <li><a class="dropdown-item" href="#"><i class="fa fa-cog text-light" aria-hidden="true"></i>&nbsp;&nbsp;Preferinte</a></li>
+                            <li><a class="dropdown-item" href="/Account/Preferences"><i class="fa fa-cog text-light" aria-hidden="true"></i>&nbsp;&nbsp;Preferinte</a></li>
                             <li><a class="dropdown-item" href="/Account/Signout"><i class="fa fa-sign-out-alt text-light" aria-hidden="true"></i>&nbsp;&nbsp;Sign Out</a></li>
                         </ul>
                     </div>

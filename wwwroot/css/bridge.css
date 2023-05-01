@@ -386,3 +386,25 @@ input[type=number]::-webkit-outer-spin-button {
     font-weight: bold;
     padding-right: 6%;
 }
+
+#adminLabel {
+    color: #894545;
+}
+
+#adminPanel {
+    margin-left: 15%;
+}
+
+.text-warn {
+    font-weight: bold;
+    color: #647569;
+    font-size: 16px;
+}
+
+#dangerZone {
+    border: 2px #d19292 solid;
+}
+
+#save {
+    margin-left: 30%;
+}

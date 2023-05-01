@@ -38,6 +38,7 @@ namespace BridgeWater.Services
             {
                 string encryptedPassword = cryptoService.Encrypt(accountRequestModel.password);
                 string avatarPath = "./Storage/Account/avatar.png";
+                bool updateAvatar = false;
 
                 // copy avatar image first
                 if (accountRequestModel.avatar != null)
@@ -61,6 +62,7 @@ namespace BridgeWater.Services
 
                         // write new image file at disk
                         System.IO.File.WriteAllBytes(avatarPath, ms.ToArray());
+                        updateAvatar = true;
                     }
                 }
 
@@ -71,7 +73,7 @@ namespace BridgeWater.Services
                 account.IsAdmin = accountRequestModel.admin;
 
                 // update success
-                account.Avatar = avatarPath;
+                if(updateAvatar) account.Avatar = avatarPath;
                 await bridgeContext.SaveChangesAsync();
                 accountResponseModel.status = 1;
             }
@@ -145,6 +147,7 @@ namespace BridgeWater.Services
             Account? account = await bridgeContext.Account
                 .FirstOrDefaultAsync(u => u.Id == id);
 
+            account.Password = cryptoService.Decrypt(account.Password);
             return account;
         }
 

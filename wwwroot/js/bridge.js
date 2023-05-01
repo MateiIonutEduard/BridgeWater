@@ -113,3 +113,11 @@ function LeaveQuantity(index, canEdit) {
         control.style.border = 'none';
     }
 }
+
+function OnMouseOver() {
+    $('#trash').css('color', 'white');
+}
+
+function OnMouseExit() {
+    $('#trash').css('color', '#DC4C64');
+}
