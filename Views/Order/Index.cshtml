@@ -108,7 +108,7 @@
                                 <td id="productField">
                                     <small>@orders[k].ProductName</small>
                                 </td>
-                                <td id="productField"><small id="quantity" onmouseover="OverQuantity(@(k + 1))" onmouseout="LeaveQuantity(@(k + 1))" onclick="ModifyQuantity(@(k + 1), @orders[k].Stock, @orders[k].Price)" title="Modificati Cantitatea">&nbsp;@orders[k].Stock</small></td>
+                                <td id="productField"><small id="quantity" onmouseover="OverQuantity(@(k + 1), @orders[k].IsCanceled.ToString().ToLower())" onmouseout="LeaveQuantity(@(k + 1), @orders[k].IsCanceled.ToString().ToLower())" onclick="ModifyQuantity(@orders[k].IsCanceled.ToString().ToLower(), @(k + 1), @orders[k].Stock, @orders[k].Price)" title="Modificati Cantitatea">&nbsp;@orders[k].Stock</small></td>
                                 <td id="productField">
                                     <small id="totalPrice" style="color: #66BB6A; font-weight: bold;">@((Math.Truncate((orders[k].Price * orders[k].Stock) * 100) / 100).ToString("#####.##"))&nbsp;Lei</small>
                                 </td>
