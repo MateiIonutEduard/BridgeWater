@@ -121,3 +121,11 @@ function OnMouseOver() {
 function OnMouseExit() {
     $('#trash').css('color', '#DC4C64');
 }
+
+function OnTrashOver() {
+    $('#remove').css('color', 'white');
+}
+
+function OnTrashOut() {
+    $('#remove').css('color', '#DC4C64');
+}

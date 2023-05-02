@@ -54,7 +54,7 @@
 									<span class="text-warn">Inchide Contul! </span>
 								</div>
 								<div class="col-6" style="margin-top: 5%; margin-bottom: 5%;">
-									<button class="btn btn-outline-danger btn-sm" onmouseover="OnMouseOver()" onmouseout="OnMouseExit()"><i class="fa fa-trash" id="trash" aria-hidden="true"></i>&nbsp;&nbsp;Elimina</button>
+									<a class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#warnUser" onmouseover="OnMouseOver()" onmouseout="OnMouseExit()"><i class="fa fa-trash" id="trash" aria-hidden="true"></i>&nbsp;&nbsp;Elimina</a>
 								</div>
 							</div><br/>
 							<div class="row">
@@ -69,6 +69,25 @@
 						<div class="col-2"></div>
 					</div>
 				</form>
+				<div class="modal fade" id="warnUser" tabindex="-1" aria-labelledby="warnUserLabel" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="warnUserLabel">Atentie!</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								Sunteti sigur ca doriti sa inchideti contul?
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-outline-success btn-sm" data-bs-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i>&nbsp;&nbsp;Anulati</button>
+								<form action="/Account/Remove" method="post">
+									<button type="submit" class="btn btn-outline-danger btn-sm" onmouseover="OnTrashOver()" onmouseout="OnTrashOut()"><i class="fa fa-trash" id="remove" aria-hidden="true"></i>&nbsp;&nbsp;Elimina</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="col-4"></div>
 		</div>
