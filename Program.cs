@@ -37,6 +37,9 @@ namespace BridgeWater
             builder.Services.AddSingleton<IAdminSettings>(sp =>
                 sp.GetRequiredService<IOptions<AdminSettings>>().Value);
 
+            // declares browser support service
+            builder.Services.AddSingleton<IBrowserSupportService, BrowserSupportService>();
+
             // now, it is time, to declare admin service, as singleton
             builder.Services.AddSingleton<IAdminService, AdminService>();
 
