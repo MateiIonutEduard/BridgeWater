@@ -41,6 +41,12 @@ namespace BridgeWater.Controllers
             int UserId = Convert.ToInt32(userId);
             Account account = await accountService.GetAccountAsync(UserId);
 
+            bool failCode = HttpContext.Request.Query.ContainsKey("FailCode") ? 
+                Convert.ToBoolean(HttpContext.Request.Query["FailCode"]) : false;
+
+			if (!failCode)
+                HttpContext.Session.Clear();
+
 			ViewData["state"] = account;
 			return View("Views/Account/Preferences.cshtml", ViewData["state"]);
 		}
@@ -58,7 +64,8 @@ namespace BridgeWater.Controllers
             if (accountResponseModel.status < 0)
             {
                 // password does not match
-                return Redirect("/Account/Preferences/?FailCode=true");
+                HttpContext.Session.SetString("confirmPassword", accountRequestModel.confirmPassword);
+				return Redirect("/Account/Preferences/?FailCode=true");
             }
             /* User are not logged in */
             else if (accountResponseModel.status == 0)
