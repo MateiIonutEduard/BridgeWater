@@ -1,0 +1,95 @@
+﻿@using BridgeWater.Data;
+@inject IHttpContextAccessor Accessor;
+@{
+	#pragma warning disable
+	ViewData["Title"] = "Preferinte";
+	bool errorThrow = Context.Request.Query.ContainsKey("FailCode") ? Convert.ToBoolean(Context.Request.Query["FailCode"]) : false;
+	Account? account = ViewData["state"] as Account;
+	string confirmPassword = errorThrow ? Accessor.HttpContext.Session.GetString("confirmPassword") : account.Password;
+	string borderStyle = errorThrow ? "border: 1px #d45148 solid;" : "";
+}
+
+@if(account != null)
+{
+	<div class="container">
+		<div class="row">
+			<div class="col-4"></div>
+			<div class="col-4">
+				<form action="/Account/Preferences" method="post" enctype="multipart/form-data">
+					<div class="row" style="margin-top: 40%; background-color: #eee7d9 !important; padding-top: 12%;">
+						<div class="col-2"></div>
+						<div class="col-8">
+							<div class="form-group">
+								<label for="username">Nume Utilizator</label>
+								<input type="text" class="form-control" id="username" name="username" value="@account.Username" placeholder="Username" required />
+							</div><br />
+							<div class="form-group">
+								<label for="address">Adresa</label><br />
+								<input type="email" class="form-control form-control-sm" id="address" name="address" value="@account.Address" placeholder="Address" required/>
+							</div><br />
+							<div class="form-group">
+								<label for="password">Parola</label><br />
+								<input type="password" class="form-control form-control-sm" value="@account.Password" id="password" name="password" placeholder="Password" required/>
+							</div><br/>
+							<div class="form-group">
+								<label for="password">Parola Noua</label><br />
+								<input type="password" class="form-control form-control-sm" style="@borderStyle" value="@confirmPassword" id="confirmPassword" name="confirmPassword" placeholder="Password" required />
+								@if (errorThrow)
+								{
+									<span style="color: #b32424; margin-left: 10%;"><i class="fa fa-exclamation-circle" style="color: #e04848 !important;" aria-hidden="true"></i>&nbsp;&nbsp;Parolele nu se potrivesc!</span>
+								}
+							</div><br />
+							<div class="form-group">
+								<label for="password">Incarca Imagine</label><br />
+								<input type="file" class="form-control form-control-sm" value="@account.Password" id="avatar" name="avatar" />
+							</div><br />
+							<div class="form-group" id="adminPanel">
+								@Html.CheckBox("admin", account.IsAdmin)
+								<label id="adminLabel" class="form-check-label" for="admin">
+									Cont Administrator?
+								</label>
+							</div><br/>
+							<div class="row" id="dangerZone">
+								<div class="col-6" style="margin-top: 5%; margin-bottom: 5%;">
+									<span class="text-warn">Inchide Contul! </span>
+								</div>
+								<div class="col-6" style="margin-top: 5%; margin-bottom: 5%;">
+									<a class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#warnUser" onmouseover="OnMouseOver()" onmouseout="OnMouseExit()"><i class="fa fa-trash" id="trash" aria-hidden="true"></i>&nbsp;&nbsp;Elimina</a>
+								</div>
+							</div><br/>
+							<div class="row">
+								<div class="col-6">
+									<button id="save" class="btn btn-success btn-sm" type="submit">Salvati</button>
+								</div>
+								<div class="col-6">
+									<a class="btn btn-secondary btn-sm" href="/Home/">Anulare</a>
+								</div>
+							</div><br/>
+						</div>
+						<div class="col-2"></div>
+					</div>
+				</form>
+				<div class="modal fade" id="warnUser" tabindex="-1" aria-labelledby="warnUserLabel" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="warnUserLabel">Atentie!</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								Sunteti sigur ca doriti sa inchideti contul?
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-outline-success btn-sm" data-bs-dismiss="modal"><i class="fa fa-times" aria-hidden="true"></i>&nbsp;&nbsp;Anulati</button>
+								<form action="/Account/Remove" method="post">
+									<button type="submit" class="btn btn-outline-danger btn-sm" onmouseover="OnTrashOver()" onmouseout="OnTrashOut()"><i class="fa fa-trash" id="remove" aria-hidden="true"></i>&nbsp;&nbsp;Elimina</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-4"></div>
+		</div>
+	</div>
+}

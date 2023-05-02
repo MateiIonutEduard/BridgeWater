@@ -29,9 +29,16 @@
     {
         int userId = Convert.ToInt32(uid);
         OrderSearchFilter? filter = ViewData["filter"] as OrderSearchFilter;
-        var productOrderViewList = await orderService.GetProductOrdersAsync(filter, userId, page);
 
+        if (filter == null)
+        {
+            filter = new OrderSearchFilter();
+            filter.IsCanceled = false;
+        }
+
+        var productOrderViewList = await orderService.GetProductOrdersAsync(filter, userId, page);
         orders.AddRange(productOrderViewList.orderViewModels);
+
         totalResults = productOrderViewList.results;
         totalPages = productOrderViewList.pages;
 
@@ -108,12 +115,12 @@
                                 <td id="productField">
                                     <small>@orders[k].ProductName</small>
                                 </td>
-                                <td id="productField"><small id="quantity" onmouseover="OverQuantity(@(k + 1))" onmouseout="LeaveQuantity(@(k + 1))" onclick="ModifyQuantity(@(k + 1), @orders[k].Stock, @orders[k].Price)" title="Modificati Cantitatea">&nbsp;@orders[k].Stock</small></td>
+                                <td id="productField"><small id="quantity" onmouseover="OverQuantity(@(k + 1), @orders[k].IsCanceled.ToString().ToLower())" onmouseout="LeaveQuantity(@(k + 1), @orders[k].IsCanceled.ToString().ToLower())" onclick="ModifyQuantity(@orders[k].IsCanceled.ToString().ToLower(), @(k + 1), @orders[k].Stock, @orders[k].Price)" title="Modificati Cantitatea">&nbsp;@orders[k].Stock</small></td>
                                 <td id="productField">
                                     <small id="totalPrice" style="color: #66BB6A; font-weight: bold;">@((Math.Truncate((orders[k].Price * orders[k].Stock) * 100) / 100).ToString("#####.##"))&nbsp;Lei</small>
                                 </td>
                                 <td id="productField">
-                                    @if(!orders[k].IsCanceled)
+                                    @if(orders[k].IsCanceled)
                                     {
                                         <span class="fa fa-check text-success" style="margin-left: 35%;"></span>
                                     }

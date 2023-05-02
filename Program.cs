@@ -3,6 +3,7 @@ using BridgeWater.Models;
 using BridgeWater.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace BridgeWater
@@ -36,6 +37,9 @@ namespace BridgeWater
             builder.Services.AddSingleton<IAdminSettings>(sp =>
                 sp.GetRequiredService<IOptions<AdminSettings>>().Value);
 
+            // declares browser support service
+            builder.Services.AddSingleton<IBrowserSupportService, BrowserSupportService>();
+
             // now, it is time, to declare admin service, as singleton
             builder.Services.AddSingleton<IAdminService, AdminService>();
 
@@ -65,7 +69,17 @@ namespace BridgeWater
                     config.LoginPath = "/Account";
                 });
 
-            builder.Services.AddControllersWithViews();
+            // declares session service
+            builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+			/* set Session Timeout */
+			builder.Services.AddSession(options =>
+			{
+				options.IdleTimeout = TimeSpan.FromMinutes(5);
+			});
+
+
+			builder.Services.AddControllersWithViews();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -79,6 +93,7 @@ namespace BridgeWater
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseSession();
 
             app.UseAuthentication();
             app.UseAuthorization();

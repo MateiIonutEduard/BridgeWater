@@ -20,12 +20,139 @@ namespace BridgeWater.Services
             this.bridgeContext = bridgeContext;
         }
 
+        public async Task<AccountResponseModel> UpdateAccountPreferencesAsync(AccountRequestModel accountRequestModel)
+        {
+            Account? account = await bridgeContext.Account
+                .FirstOrDefaultAsync(e => e.Id == accountRequestModel.Id.Value);
+
+            AccountResponseModel accountResponseModel = new AccountResponseModel();
+            if (accountRequestModel.password.CompareTo(accountRequestModel.confirmPassword) != 0)
+            {
+                // passwords do not match
+                accountResponseModel.status = -1;
+                return accountResponseModel;
+            }
+
+            // account exists, so update it
+            if (account != null)
+            {
+                string encryptedPassword = cryptoService.Encrypt(accountRequestModel.password);
+                string avatarPath = "./Storage/Account/avatar.png";
+                bool updateAvatar = false;
+
+                // copy avatar image first
+                if (accountRequestModel.avatar != null)
+                {
+                    avatarPath = $"./Storage/Account/{accountRequestModel.avatar.FileName}";
+                    MemoryStream ms = new MemoryStream();
+
+                    /* save avatar logo at disk, when hash 
+                       functions have different values. */
+                    await accountRequestModel.avatar.CopyToAsync(ms);
+                    byte[] oldData = await File.ReadAllBytesAsync(account.Avatar);
+
+                    string lhash = cryptoService.ComputeHash(oldData);
+                    string rhash = cryptoService.ComputeHash(ms.ToArray());
+
+                    if(lhash.CompareTo(rhash) != 0)
+                    {
+                        // remove if avatar is not default image
+                        if (!account.Avatar.EndsWith("avatar.png"))
+                            File.Delete(account.Avatar);
+
+                        // write new image file at disk
+                        System.IO.File.WriteAllBytes(avatarPath, ms.ToArray());
+                        updateAvatar = true;
+                    }
+                }
+
+                account.Address = accountRequestModel.address;
+                account.Username = accountRequestModel.username;
+
+                account.Password = encryptedPassword;
+                account.IsAdmin = accountRequestModel.admin;
+
+                // update success
+                if(updateAvatar) account.Avatar = avatarPath;
+                await bridgeContext.SaveChangesAsync();
+
+                accountResponseModel.id = account.Id;
+                accountResponseModel.username = account.Username;
+                
+                accountResponseModel.admin = accountRequestModel.admin;
+                accountResponseModel.status = 1;
+            }
+            else
+            {
+                // account does not exists!
+                accountResponseModel.status = 0;
+                return accountResponseModel;
+            }
+
+            return accountResponseModel;
+        }
+
+        public async Task<bool> RemoveAccountAsync(int userId)
+        {
+            Account? account = await bridgeContext.Account
+                .FirstOrDefaultAsync(e => e.Id == userId);
+
+            if(account != null)
+            {
+                List<Post> posts = await bridgeContext.Post.Where(e => e.AccountId == userId)
+                    .ToListAsync();
+
+                // remove all post rating of this account
+                bridgeContext.Post.RemoveRange(posts);
+                await bridgeContext.SaveChangesAsync();
+
+                List<Order> orders = await bridgeContext.Order.Where(e => e.AccountId == userId)
+                    .ToListAsync();
+
+                for(int k = 0; k < orders.Count; k++)
+                {
+                    Product? product = await bridgeContext.Product
+                        .FirstOrDefaultAsync(e => e.Id == orders[k].ProductOrderId);
+
+                    // update product quantity before removes
+                    if ((orders[k].IsCanceled == null) || (orders[k].IsCanceled != null && !orders[k].IsCanceled.Value))
+                    {
+                        if(product != null)
+                        {
+                            product.Stock += orders[k].Stock;
+                            bridgeContext.Product.Remove(product);
+                            await bridgeContext.SaveChangesAsync();
+                        }
+                    }
+                    else
+                    {
+                        // remove without change quantity, because was updated in the past 
+                        bridgeContext.Product.Remove(product);
+                        await bridgeContext.SaveChangesAsync();
+                    }
+
+                }
+
+                // remove if avatar is not default image
+                if (!account.Avatar.EndsWith("avatar.png"))
+                    File.Delete(account.Avatar);
+
+                // now remove account entity from database
+                bridgeContext.Account.Remove(account);
+                await bridgeContext.SaveChangesAsync();
+            }
+
+            // account does not exists
+            return false;
+        }
+
         public async Task<Account?> GetAccountAsync(int id)
         {
             /* get user account */
             Account? account = await bridgeContext.Account
                 .FirstOrDefaultAsync(u => u.Id == id);
 
+            account.Password = cryptoService.Decrypt(account.Password);
             return account;
         }
 

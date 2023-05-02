@@ -6,5 +6,6 @@ namespace BridgeWater.Services
     {
         string key { get; set; }
         string salt { get; set; }
-    }
+		bool? EnableBrowserSupport { get; set; }
+	}
 }

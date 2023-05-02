@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using System.Text;
 
 namespace BridgeWater.Services
 {
@@ -8,6 +9,22 @@ namespace BridgeWater.Services
 
         public CryptoService(IAppSettings appSettings)
         { this.appSettings = appSettings; }
+
+        public string ComputeHash(byte[] buffer)
+        {
+            using (SHA256 sha256Hash = SHA256.Create())
+            {  
+                byte[] bytes = sha256Hash.ComputeHash(buffer);
+
+                // convert byte array to string   
+                StringBuilder builder = new StringBuilder();
+
+                for (int i = 0; i < bytes.Length; i++)
+                    builder.Append(bytes[i].ToString("X2"));
+
+                return builder.ToString();
+            }
+        }
 
         public string Encrypt(string data)
         {

@@ -1,0 +1,27 @@
+[
+    {
+        /* May 25, 2021 */
+        "Name": "Chrome",
+        "Version": "91.0.4472"
+    },
+    {
+        /* May 27, 2021 */
+        "Name": "Edge",
+        "Version": "91.0.864.37"
+    },
+    {
+        /* May 5, 2021 */
+        "Name": "Firefox",
+        "Version": "88.0.1"
+    },
+    {
+        /* May 24, 2021 */
+        "Name": "WebKit",
+        "Version": "611.2.7.1.4"
+    },
+    {
+        /* May 4, 2021 */
+        "Name": "Safari",
+        "Version": "611.1.21.161.7"
+    }
+]
