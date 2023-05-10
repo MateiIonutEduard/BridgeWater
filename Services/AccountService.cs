@@ -259,6 +259,8 @@ namespace BridgeWater.Services
 
                 accountRequestModel.id = account.Id;
                 accountRequestModel.status = 1;
+
+                accountRequestModel.admin = account.IsAdmin;
                 return accountRequestModel;
             }
 

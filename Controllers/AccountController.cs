@@ -163,13 +163,15 @@ namespace BridgeWater.Controllers
         {
             AccountResponseModel accountResponseModel = await accountService.SendWebcodeAsync(address);
             if(accountResponseModel.status == -1) Redirect("/Account/Signup");
-            return Redirect("/Recover/?step=2");
+            return Redirect("/Account/Recover/?step=2");
         }
 
         [HttpPost]
         public async Task<IActionResult> Verify(string webcode)
         {
-
+            AccountResponseModel accountResponseModel = await accountService.GetAccountByWebcodeAsync(webcode);
+            if (accountResponseModel != null) return Redirect("/Account/Recover/?step=3");
+            else return Redirect("/Account/");
         }
 
         public async Task<IActionResult> Signout()

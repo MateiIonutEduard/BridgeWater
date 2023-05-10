@@ -37,7 +37,7 @@
                             <h2 class="text-center">Codul de securitate a fost trimis!</h2><br/>
                             <p>Va rugam sa introduceti mai jos codul de securitate, pentru a putea reseta parola.</p>
                             <div class="panel-body">
-                                <form action="/Account/Send" role="form" autocomplete="off" class="form" method="post">
+                                <form action="/Account/Verify" role="form" autocomplete="off" class="form" method="post">
                                     <div class="form-group">
                                         <div class="input-group">
                                             <span class="input-group-addon"><i class="fa fa-code text-primary"></i>&nbsp;</span>
@@ -52,7 +52,28 @@
                         }
                         else
                         {
-                            
+                            <form action="" method="post">
+                                <h2 class="formTitle">
+                                    Actualizare Parola
+                                </h2>
+                                <br />
+                                <div class="form-group">
+                                        <label class="inputLabel" for="password">Noua Parola</label>
+                                        <input type="password" class="form-control form-control-sm" id="password" name="password" required="">
+                                </div>
+                                <br/>
+                                <div class="form-group">
+                                        <label class="inputLabel" for="confirmPassword">Confirmare Parola</label>
+                                        <input type="password" class="form-control form-control-sm" id="confirmPassword" name="confirmPassword">
+                                </div>
+                                <br />
+                                <div class="form-group">
+                                    <button type="submit" id="submitButton" onclick="validateSignupForm()" class="btn btn-primary">
+                                        <span>Continue</span>
+                                        <span id="loader" style="display: none;"></span>
+                                    </button>
+                                </div><br/>
+                            </form>
                         }
                     </div>
                 </div>
