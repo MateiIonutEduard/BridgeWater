@@ -39,7 +39,7 @@ namespace BridgeWater.Services
                     from p in await bridgeContext.Product.ToListAsync()
                     join o in await bridgeContext.Order.ToListAsync()
                     on p.Id equals o.ProductOrderId
-                    where orderSearchFilter.IsCanceled.Value == (o.IsCanceled != null ? o.IsCanceled.Value : false)
+                    where o.AccountId == userId && orderSearchFilter.IsCanceled.Value == (o.IsCanceled != null ? o.IsCanceled.Value : false)
                     select new OrderViewModel
                     {
                         Id = o.Id,
