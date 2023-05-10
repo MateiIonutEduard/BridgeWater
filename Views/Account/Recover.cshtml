@@ -1,6 +1,8 @@
 ﻿@{
     ViewData["Title"] = "Recuperare Cont";
     int step = Context.Request.Query.ContainsKey("step") ? Convert.ToInt32(Context.Request.Query["step"]) : 1;
+    int? uid = Context.Request.Query.ContainsKey("uid") ? Convert.ToInt32(Context.Request.Query["uid"]) : null;
+    bool throwError = Context.Request.Query.ContainsKey("error") ? Convert.ToBoolean(Context.Request.Query["error"]) : false;
 }
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script type="text/javascript" src="~/js/recover.js"></script>
@@ -52,21 +54,29 @@
                         }
                         else
                         {
-                            <form action="" method="post">
+                            <form action="/Account/UpdatePassword" method="post">
                                 <h2 class="formTitle">
                                     Actualizare Parola
                                 </h2>
                                 <br />
                                 <div class="form-group">
-                                        <label class="inputLabel" for="password">Noua Parola</label>
-                                        <input type="password" class="form-control form-control-sm" id="password" name="password" required="">
+                                    <label class="inputLabel" for="password">Noua Parola</label>
+                                    <input type="password" class="form-control form-control-sm" id="password" name="password" placeholder="Parola Noua" required>
                                 </div>
                                 <br/>
                                 <div class="form-group">
-                                        <label class="inputLabel" for="confirmPassword">Confirmare Parola</label>
-                                        <input type="password" class="form-control form-control-sm" id="confirmPassword" name="confirmPassword">
+                                    <label class="inputLabel" for="confirmPassword">Confirmare Parola</label>
+                                    <input type="password" class="form-control form-control-sm" id="confirmPassword" name="confirmPassword" placeholder="Confirmare Parola" required><br/>
+                                    @if (throwError)
+                                    {
+                                        <span style="color: #c75555;"><i class="fa fa-exclamation-circle text-danger"></i>&nbsp;&nbsp;Parolele nu corespund!</span>
+                                    }
                                 </div>
                                 <br />
+                                @if(uid != null)
+                                {
+                                    <input type="hidden" value="@uid" id="id" name="id"/>
+                                }
                                 <div class="form-group">
                                     <button type="submit" id="submitButton" onclick="validateSignupForm()" class="btn btn-primary">
                                         <span>Continue</span>

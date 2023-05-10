@@ -247,6 +247,39 @@ namespace BridgeWater.Services
             return accountResponseModel;
         }
 
+        public async Task<AccountResponseModel> UpdateAccountPasswordAsync(AccountRequestModel accountRequestModel)
+        {
+            AccountResponseModel accountResponseModel = new AccountResponseModel();
+
+            // passwords does not match
+            if (accountRequestModel.password.CompareTo(accountRequestModel.confirmPassword) != 0)
+                accountResponseModel.status = -1;
+            else
+            {
+                Account? account = await bridgeContext.Account
+                    .FirstOrDefaultAsync(e => e.Id == accountRequestModel.Id);
+
+                if (account != null)
+                {
+                    // update account info
+                    accountResponseModel.id = account.Id;
+                    accountResponseModel.username = account.Username;
+                    accountResponseModel.admin = account.IsAdmin;
+
+                    // update password successfully
+                    account.Password = cryptoService.Encrypt(accountRequestModel.password);
+                    await bridgeContext.SaveChangesAsync();
+                    accountResponseModel.status = 1;
+                }
+                else
+                    /* account not found */
+                    accountResponseModel.status = 0;
+            }
+
+            // returns response model to maintains the logic
+            return accountResponseModel;
+        }
+
         public async Task<AccountResponseModel> GetAccountByWebcodeAsync(string webcode)
         {
             Account? account = await bridgeContext.Account
@@ -254,14 +287,14 @@ namespace BridgeWater.Services
 
             if(account != null)
             {
-                AccountResponseModel accountRequestModel = new AccountResponseModel();
-                accountRequestModel.username = account.Username;
+                AccountResponseModel accountResponseModel = new AccountResponseModel();
+                accountResponseModel.username = account.Username;
 
-                accountRequestModel.id = account.Id;
-                accountRequestModel.status = 1;
+                accountResponseModel.id = account.Id;
+                accountResponseModel.status = 1;
 
-                accountRequestModel.admin = account.IsAdmin;
-                return accountRequestModel;
+                accountResponseModel.admin = account.IsAdmin;
+                return accountResponseModel;
             }
 
             return null;

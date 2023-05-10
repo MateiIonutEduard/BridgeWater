@@ -170,8 +170,39 @@ namespace BridgeWater.Controllers
         public async Task<IActionResult> Verify(string webcode)
         {
             AccountResponseModel accountResponseModel = await accountService.GetAccountByWebcodeAsync(webcode);
-            if (accountResponseModel != null) return Redirect("/Account/Recover/?step=3");
+            if (accountResponseModel != null) return Redirect($"/Account/Recover/?step=3&uid={accountResponseModel.id}");
             else return Redirect("/Account/");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdatePassword(AccountRequestModel accountRequestModel)
+        {
+            AccountResponseModel accountResponseModel = await accountService.UpdateAccountPasswordAsync(accountRequestModel);
+
+            if (accountResponseModel.status == 1)
+            {
+                var claims = new Claim[]
+                {
+                    new Claim("id", accountResponseModel.id.Value.ToString()),
+                    new Claim(ClaimTypes.Name, accountResponseModel.username),
+                    new Claim("admin", accountResponseModel.admin.Value.ToString())
+                };
+
+                var identity = new ClaimsIdentity(claims, "User Identity");
+                var userPrincipal = new ClaimsPrincipal(new[] { identity });
+
+                // go to home page
+                await HttpContext.SignInAsync(userPrincipal);
+                return Redirect("/Home/");
+            }
+            else if (accountResponseModel.status == -1)
+            {
+                int uid = accountRequestModel.Id.Value;
+                return Redirect($"/Account/Recover/?step=3&uid={uid}&error=true");
+            }
+            else
+                /* probably that appears an unknown error, so go to account login page */
+                return Redirect("/Account/");
         }
 
         public async Task<IActionResult> Signout()
