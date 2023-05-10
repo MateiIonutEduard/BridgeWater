@@ -12,6 +12,7 @@ namespace BridgeWater.Data
         public string Address { get; set; }
         public string Avatar { get; set; }
         public bool IsAdmin { get; set; }
+        public string? Webcode { get; set; }
         [ForeignKey("AccountId")]
         public virtual ICollection<Order> Orders { get; set; }
         [ForeignKey("AccountId")]
