@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Net;
 using Amazon.Runtime.Internal.Endpoints.StandardLibrary;
 using BridgeWater.Data;
 using BridgeWater.Models;
@@ -246,7 +247,25 @@ namespace BridgeWater.Services
             return accountResponseModel;
         }
 
-        public async Task<AccountResponseModel> RecoverPasswordAsync(string address)
+        public async Task<AccountResponseModel> GetAccountByWebcodeAsync(string webcode)
+        {
+            Account? account = await bridgeContext.Account
+                .FirstOrDefaultAsync(e => e.Webcode.CompareTo(webcode) == 0);
+
+            if(account != null)
+            {
+                AccountResponseModel accountRequestModel = new AccountResponseModel();
+                accountRequestModel.username = account.Username;
+
+                accountRequestModel.id = account.Id;
+                accountRequestModel.status = 1;
+                return accountRequestModel;
+            }
+
+            return null;
+        }
+
+        public async Task<AccountResponseModel> SendWebcodeAsync(string address)
         {
             Account? account = await bridgeContext.Account
                 .FirstOrDefaultAsync(e => e.Address.CompareTo(address) == 0);
@@ -255,12 +274,14 @@ namespace BridgeWater.Services
 
             if(account != null)
             {
-                string password = cryptoService.Decrypt(account.Password);
+                string webcode = Guid.NewGuid().ToString();
+                account.Webcode = webcode;
+                await bridgeContext.SaveChangesAsync();
 
                 string body = $@"
                     Hi {account.Username}!<br> 
                     <p style='color: #272a35;'>
-                        Your password is <b style='color: #5f9ea0 !important;'>{password}</b>.<br>
+                        Your webcode is <b style='color: #5f9ea0 !important;'>{webcode}</b>.<br>
                         Have a nice day!
                     </p><br/>
                     <p style='color: #4a606d;'>

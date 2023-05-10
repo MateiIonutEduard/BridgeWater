@@ -7,9 +7,11 @@ namespace BridgeWater.Services
     {
         Task<Account?> GetAccountAsync(int id);
         Task<bool> RemoveAccountAsync(int userId);
-		Task<AccountResponseModel> UpdateAccountPreferencesAsync(AccountRequestModel accountRequestModel);
+        Task<AccountResponseModel> GetAccountByWebcodeAsync(string webcode);
+
+        Task<AccountResponseModel> UpdateAccountPreferencesAsync(AccountRequestModel accountRequestModel);
         Task<AccountResponseModel> SignInAsync(AccountRequestModel accountRequestModel);
         Task<AccountResponseModel> SignUpAsync(AccountRequestModel accountRequestModel);
-        Task<AccountResponseModel> RecoverPasswordAsync(string address);
+        Task<AccountResponseModel> SendWebcodeAsync(string address);
     }
 }

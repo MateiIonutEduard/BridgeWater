@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Recuperare Cont";
+    int step = Context.Request.Query.ContainsKey("step") ? Convert.ToInt32(Context.Request.Query["step"]) : 1;
 }
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script type="text/javascript" src="~/js/recover.js"></script>
@@ -12,23 +13,47 @@
                 <div class="panel-body">
                     <div class="text-center">
                         <h3><i class="fa fa-lock fa-4x text-info"></i></h3>
-                        <h2 class="text-center">Ati uitat parola?</h2>
-                        <p>Veti primi un email cu parola in scurt timp.</p>
-                        <div class="panel-body">
-                            <form action="/Account/Send" role="form" autocomplete="off" class="form" method="post">
-                                <div class="form-group">
-                                    <div class="input-group">
-                                        <span class="input-group-addon"><i class="fa fa-envelope-o text-primary"></i>&nbsp;</span>
-                                        <input id="address" name="address" placeholder="email address" class="form-control" type="email">
+                        @if (step == 1)
+                        {
+                            <h2 class="text-center">Ati uitat parola?</h2>
+                            <p>Veti primi un email cu codul de securitate in scurt timp.</p>
+                            <div class="panel-body">
+                                <form action="/Account/Send" role="form" autocomplete="off" class="form" method="post">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fa fa-envelope-o text-primary"></i>&nbsp;</span>
+                                            <input id="address" name="address" placeholder="email address" class="form-control" type="email">
+                                        </div>
+                                    </div><br />
+                                    <div class="form-group">
+                                        <input name="recover-submit" style="margin-bottom: 10%;" class="btn btn-lg btn-primary btn-block" value="Trimite" type="submit">
                                     </div>
-                                </div><br />
-                                <div class="form-group">
-                                    <input name="recover-submit" style="margin-bottom: 10%;" class="btn btn-lg btn-primary btn-block" value="Trimite" type="submit">
-                                </div>
-                                <input type="hidden" class="hide" name="token" id="token" value="">
-                            </form>
-
-                        </div>
+                                    <input type="hidden" class="hide" name="token" id="token" value="">
+                                </form>
+                            </div>
+                        }
+                        else if(step == 2)
+                        {
+                            <h2 class="text-center">Codul de securitate a fost trimis!</h2><br/>
+                            <p>Va rugam sa introduceti mai jos codul de securitate, pentru a putea reseta parola.</p>
+                            <div class="panel-body">
+                                <form action="/Account/Send" role="form" autocomplete="off" class="form" method="post">
+                                    <div class="form-group">
+                                        <div class="input-group">
+                                            <span class="input-group-addon"><i class="fa fa-code text-primary"></i>&nbsp;</span>
+                                            <input id="webcode" name="webcode" placeholder="Webcode" class="form-control" type="text">
+                                        </div>
+                                    </div><br />
+                                    <div class="form-group">
+                                        <input name="recover-submit" style="margin-bottom: 10%;" class="btn btn-lg btn-primary btn-block" value="Verificare" type="submit">
+                                    </div>
+                                </form>
+                            </div>
+                        }
+                        else
+                        {
+                            
+                        }
                     </div>
                 </div>
             </div>
