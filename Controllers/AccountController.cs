@@ -198,6 +198,9 @@ namespace BridgeWater.Controllers
             else if (accountResponseModel.status == -1)
             {
                 int uid = accountRequestModel.Id.Value;
+                HttpContext.Session.SetString("password", accountRequestModel.password);
+
+                HttpContext.Session.SetString("confirmPassword", accountRequestModel.confirmPassword);
                 return Redirect($"/Account/Recover/?step=3&uid={uid}&error=true");
             }
             else
