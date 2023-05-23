@@ -28,6 +28,11 @@ namespace BridgeWater.Controllers
             return View();
         }
 
+        public IActionResult Results()
+        {
+            return View();
+        }
+
         [HttpPost]
         public IActionResult SearchProducts(string? name)
         {
