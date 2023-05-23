@@ -28,6 +28,14 @@ namespace BridgeWater.Controllers
             return View();
         }
 
+        [HttpPost]
+        public IActionResult SearchProducts(string? name)
+        {
+            /* Search products list by using name filter */
+            if (!string.IsNullOrEmpty(name)) return Redirect($"/Home/Results/?name={name}");
+            else return Redirect("/");
+        }
+
         [HttpPost, Authorize]
         public async Task<IActionResult> Create(ProductModel productModel)
         {
