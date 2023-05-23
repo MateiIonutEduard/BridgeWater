@@ -5,7 +5,7 @@
 
 @{
 #pragma warning disable
-    ViewData["Title"] = "Toate Produsele";
+    ViewData["Title"] = "Rezultate Cautare";
     ViewData["ActionName"] = "/Home/SearchProducts";
     int? type = Context.Request.Query.Keys.Contains("type") ? Convert.ToInt32(Context.Request.Query["type"]) : null;
     int? page = Context.Request.Query.Keys.Contains("page") ? Convert.ToInt32(Context.Request.Query["page"]) : null;

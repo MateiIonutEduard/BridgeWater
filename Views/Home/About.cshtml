@@ -6,6 +6,7 @@
 
 @{
     #pragma warning disable
+    ViewData["ActionName"] = "/Home/SearchProducts";
     int? id = Context.Request.Query.Keys.Contains("id") ? Convert.ToInt32(Context.Request.Query["id"]) : null;
     string? userId = Context.User?.Claims?.FirstOrDefault(u => u.Type == "id")?.Value;
     bool canShowRating = userId != null && id != null;
