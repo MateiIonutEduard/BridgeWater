@@ -32,6 +32,30 @@ namespace BridgeWater.Services
             return hash.ToArray();
         }
 
+        public async Task<Plant[]> GetProductsByNameAsync(string? name, string? category)
+        {
+            List<Plant>? plants = new List<Plant>();
+
+            if(!string.IsNullOrEmpty(name))
+            {
+                var product = await products.Find(p => p.name.ToLower().StartsWith(name.ToLower()))
+                    .ToListAsync();
+
+                // add these products if list is not empty or null
+                if (product != null && product.Count > 0)
+                    plants.AddRange(product);
+            }
+
+            if(!string.IsNullOrEmpty(category))
+            {
+                // removes from them if require specific category
+                plants = plants.Where(p => p.category.CompareTo(category) == 0)
+                    .ToList();
+            }
+
+            return plants.ToArray();
+        }
+
         public async Task<Plant[]> GetProductsByCategoryAsync(string? category)
         {
             var product = await products.Find(p => p.category.CompareTo(category) == 0)

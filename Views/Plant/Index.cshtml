@@ -3,6 +3,7 @@
 
 @{
     #pragma warning disable
+    ViewData["ActionName"] = "/Plant/SearchPlants";
     string?[] categories = plantService.GetCategories();
     string index = Context.Request.Query["id"];
     if (string.IsNullOrEmpty(index)) index = "1";
