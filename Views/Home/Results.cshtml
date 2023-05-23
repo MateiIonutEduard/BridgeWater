@@ -1,5 +1,231 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using System.Web;
+@using BridgeWater.Data;
+@using BridgeWater.Services;
+@inject IProductService productService;
+
 @{
+#pragma warning disable
+    ViewData["Title"] = "Toate Produsele";
+    ViewData["ActionName"] = "/Home/SearchProducts";
+    int? type = Context.Request.Query.Keys.Contains("type") ? Convert.ToInt32(Context.Request.Query["type"]) : null;
+    int? page = Context.Request.Query.Keys.Contains("page") ? Convert.ToInt32(Context.Request.Query["page"]) : null;
+    string? name = Context.Request.Query.Keys.Contains("name") ? Context.Request.Query["name"].ToString() : null;
+
+    if (type == 0) type = null;
+    Category[] categories = await productService.GetCategoriesAsync();
+    ProductResultModel result = await productService.GetProductsByNameAsync(name, page);
+
+    ProductViewModel[] products = result.ProductViewModels;
+    string mainCategory = type != null && type.Value > 0 ? categories[type.Value - 1].Name : "Toate Produsele";
+
+    string? admin = Context.User?.Claims.FirstOrDefault(u => u.Type == "admin")?.Value;
+    bool CanRemove = !string.IsNullOrEmpty(admin) ? Convert.ToBoolean(admin) : false;
+
+    List<Category> list = new List<Category>();
+    Category firstCategory = new Category();
+
+    firstCategory.Name = "Toate Produsele";
+    int index = type != null ? type.Value : 0;
+
+    list.Add(firstCategory);
+    list.AddRange(categories);
+
+    int nextPage = 0;
+    int previousPage = page != null ? page.Value - 1 : 1;
+    int mainPage = page != null ? page.Value : 1;
+
+    if (previousPage <= 0)
+    {
+        previousPage = 1;
+
+        if (previousPage < result.Pages)
+            nextPage = 2;
+    }
+
+    if (mainPage <= result.Pages - 1)
+        nextPage = mainPage + 1;
 }
+
+<section style="background-color: #f1e3e3;">
+    <br /><br />
+    <div class="row">
+        <div class="col-2"></div>
+        <div class="col-8">
+            <form action="/Home/ByCategory" method="post">
+                <div class="d-flex bd-highlight" style="margin-left: 10%;">
+                    <div class="p-2 flex-fill bd-highlight">
+                        <nav aria-label="breadcrumb" id="navy">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a id="home" href="/Home/">Acasa</a></li>
+                                <li class="breadcrumb-item active" id="productNav" aria-current="page">Produse</li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <div class="p-2 flex-fill bd-highlight">
+                        <select class="form-select bg-secondary" id="category" name="category" aria-label="@list[index].Name">
+                            <option id="CategoryItem" value="@list[index].Id" selected>@list[index].Name</option>
+                            @for (int k = 0; k < list.Count; k++)
+                            {
+                                if (index != k)
+                                {
+                                    <option id="CategoryItem" value="@list[k].Id">@list[k].Name</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="p-2 flex-fill bd-highlight">
+                        <button id="searchByCategory" class="btn btn-primary">
+                            <i class="fa fa-search" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            @if (products != null && products.Length > 0)
+            {
+                <table class="table table-light table-hover" id="products" style="margin-left: 10%; width: 80%;">
+                    <thead>
+                        <tr>
+                            <th style="background-color: #506983; color: white;">#</th>
+                            <th style="background-color: #506983; color: white;">Nume Produs</th>
+                            <th style="background-color: #506983; color: white;">Recenzii</th>
+                            <th style="background-color: #506983; color: white;">Pretul</th>
+                            <th style="background-color: #506983; color: white;">Actiuni</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (ProductViewModel product in products)
+                        {
+                            <tr>
+                                <td id="productField">
+                                    <a href="/Home/About/?id=@product.Id">
+                                        <img src="/Home/Show/?id=@product.Id&logo=true" alt="@product.Name" width="64" height="64" />
+                                    </a>
+                                </td>
+                                <td id="productField">
+                                    <small>@product.Name</small>
+                                </td>
+                                <td id="productField"><span class="fa fa-star" style="color: orange;"><small style="color: #404041;">&nbsp;@product.Stars.ToString("0.##")</small></span></td>
+                                <td id="productField">
+                                    <small style="color: #66BB6A; font-weight: bold;">@((Math.Truncate(product.Price * 100) / 100).ToString("#####.##"))</small>
+                                </td>
+                                <td id="productField">
+                                    <div class="row">
+                                        <div class="col-4"></div>
+                                        <div class="col-2">
+                                            <a class="btn btn-sm" href="/Home/About/?id=@product.Id" title="Vizualizare">
+                                                <i class="fa fa-eye" aria-hidden="true"></i>
+                                            </a>
+                                        </div>
+                                        <div class="col-2">
+                                            @if (CanRemove)
+                                            {
+                                                <button type="button" class="btn btn-sm" title="Elimina Produsul" data-bs-toggle="modal" data-bs-target="#removeProductModal">
+                                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                                </button>
+                                                <div class="modal fade" id="removeProductModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+                                                    <div class="modal-dialog modal-dialog-centered">
+                                                        <div class="modal-content">
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="productModalLabel">Elimina Produs</h5>
+                                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                            </div>
+                                                            <div class="modal-body">
+                                                                <p>Sunteti sigur, ca va doriti sa eliminati complet acest produs?</p>
+                                                            </div>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-sm btn-success" data-bs-dismiss="modal">
+                                                                    <i class="fa fa-times" aria-hidden="true"></i>&nbsp;Anulare
+                                                                </button>
+                                                                <form action="/Home/RemoveProduct" method="post">
+                                                                    <input type="hidden" id="productId" name="productId" value="@product.Id" />
+                                                                    <button type="submit" class="btn btn-sm btn-danger" title="Elimina Produsul">
+                                                                        <i class="fa fa-trash" style="color: white;" aria-hidden="true"></i>&nbsp;Elimina
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                        <div class="col-4"></div>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="row" style="margin-left: 10%; margin-bottom: 4%;">
+                    <div class="col-4">
+                        <span style="font-weight: bold; color: #997878;">Total <small style="font-weight: bold; color: #6970c5 !important;">@result.Results</small> rezultate</span>
+                    </div>
+                    <div class="col-8">
+                        @if (result.Pages > 1)
+                        {
+                            @if (type != null)
+                            {
+                                <nav id="navigation">
+                                    <ul class="pagination">
+                                        @if (mainPage > 1)
+                                        {
+                                            <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@previousPage">&lt;&lt;</a></li>
+                                            <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@previousPage">@previousPage</a></li>
+                                        }
+                                        <li class="page-item active"><a class="page-link" style="color: #ffa571 !important;">@mainPage</a></li>
+
+                                        @if (nextPage <= result.Pages && mainPage < result.Pages)
+                                        {
+                                            <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@nextPage">@nextPage</a></li>
+                                        }
+
+                                        @if (nextPage <= result.Pages && mainPage < result.Pages)
+                                        {
+                                            <li class="page-item"><a class="page-link" href="/Home/?type=@type.Value&page=@nextPage">&gt;&gt;</a></li>
+                                        }
+                                    </ul>
+                                </nav>
+                                <br />
+                                <br />
+                            }
+                            else
+                            {
+                                <nav id="navigation">
+                                    <ul class="pagination">
+                                        @if (mainPage > 1)
+                                        {
+                                            <li class="page-item"><a class="page-link" href="/Home/?page=@previousPage">&lt;&lt;</a></li>
+                                            <li class="page-item"><a class="page-link" href="/Home/?page=@previousPage">@previousPage</a></li>
+                                        }
+                                        <li class="page-item active"><a class="page-link" style="color: #ffa571 !important;">@mainPage</a></li>
+
+                                        @if (nextPage <= result.Pages && mainPage < result.Pages)
+                                        {
+                                            <li class="page-item"><a class="page-link" href="/Home/?page=@nextPage">@nextPage</a></li>
+                                        }
+
+                                        @if (nextPage <= result.Pages && mainPage < result.Pages)
+                                        {
+                                            <li class="page-item"><a class="page-link" href="/Home/?page=@nextPage">&gt;&gt;</a></li>
+                                        }
+                                    </ul>
+                                </nav>
+                                <br />
+                                <br />
+                            }
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning" role="alert">
+                    <h4 class="alert-heading">Nu exista produse disponibile</h4>
+                    <p>Momentan, nu au fost adaugate produse, pentru aceasta categorie ori se efectueaza lucrari de mentenanta.<br />Ne cerem scuze pentru inconvenient, vom analiza problema care a aparut, de aceea va rugam sa reveniti mai tarziu.</p>
+                    <hr>
+                    <p class="mb-0">In curand, administratorii vor analiza daca a aparut o problema in privinta produselor disponibile.</p>
+                </div>
+            }
+        </div>
+        <div class="col-2"></div>
+    </div>
+</section>
