@@ -17,6 +17,14 @@
 }
 
 <div class="container">
+    @if (!string.IsNullOrEmpty(name))
+    {
+        <div class="row">
+            <div class="col-12">
+                <div class="alert alert-warning"><a href="/Plant/" class="text-danger"><i class="fa fa-times" id="deny" aria-hidden="true"></i></a> Eliminati rezultatele cautarii...</div>
+            </div>
+        </div>
+    }
     <div class="row bg-secondary">
         <div class="col-4">
             <h3 class="text-light">Toate plantele</h3>
