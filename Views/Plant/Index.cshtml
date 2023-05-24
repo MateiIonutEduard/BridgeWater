@@ -6,10 +6,13 @@
     ViewData["ActionName"] = "/Plant/SearchPlants";
     string?[] categories = plantService.GetCategories();
     string index = Context.Request.Query["id"];
+    string? name = Context.Request.Query.ContainsKey("name") ? Context.Request.Query["name"].ToString() : null;
     if (string.IsNullOrEmpty(index)) index = "1";
 
+    Plant[] plants = new Plant[0];
     string? category = categories[Convert.ToInt32(index) - 1];
-    Plant[] plants = await plantService.GetProductsByCategoryAsync(category);
+    if (string.IsNullOrEmpty(name)) plants = await plantService.GetProductsByCategoryAsync(category);
+    else plants = await plantService.GetProductsByNameAsync(name, null);
     ViewData["Title"] = "Toate plantele";
 }
 
