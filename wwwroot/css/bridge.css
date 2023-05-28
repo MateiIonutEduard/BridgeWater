@@ -408,3 +408,14 @@ input[type=number]::-webkit-outer-spin-button {
 #save {
     margin-left: 30%;
 }
+
+#dismiss {
+    margin-left: 1%;
+    margin-bottom: 4%;
+    width: 98%;
+}
+
+#deny:hover {
+    color: #ed6863;
+    font-size: 18px;
+}

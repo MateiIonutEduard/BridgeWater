@@ -36,6 +36,19 @@
                         </li>
                     </ul>
                 </div>
+                @if (!string.IsNullOrEmpty(ViewData["ActionName"]?.ToString()))
+                {
+                    <form action="@ViewData["ActionName"]" method="post" style="margin-right: 44%;">
+                        <div class="row">
+                            <div class="col-10">
+                                <input class="form-control mr-sm-2" type="search" id="name" name="name" placeholder="⌕ Cautare" aria-label="Cautare">
+                            </div>
+                            <div class="col-2">
+                                <button title="Cauta" class="btn btn-outline-success my-2 my-sm-0" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                }
                 @using BridgeWater.Services;
                 @inject IBrowserSupportService browserSupportService;
                 @{

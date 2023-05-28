@@ -156,6 +156,97 @@ namespace BridgeWater.Services
             return product;
         }
 
+        public async Task<ProductResultModel> GetProductsByNameAsync(string? name, int? page)
+        {
+            int index = (page != null && page.Value >= 1) ? page.Value - 1 : 0;
+            List<ProductViewModel> products = new List<ProductViewModel>();
+            int frames, TotalPages = 1;
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                frames = await bridgeContext.Product.Where(p => p.Name.ToLower().StartsWith(name.ToLower()))
+                    .CountAsync();
+
+                TotalPages = frames >> 3;
+                if ((frames & 0x7) != 0) TotalPages++;
+
+
+                products = await bridgeContext.Product
+                    .Where(p => p.Name.ToLower().StartsWith(name.ToLower())).OrderBy(p => p.Id).Skip(8 * index).Take(8)
+                    .Select(p => new ProductViewModel
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Description = p.Description,
+                        TechInfo = p.TechInfo,
+                        Price = p.Price,
+                        Stock = p.Stock
+                    }).ToListAsync();
+
+
+                for (int k = 0; k < products.Count; k++)
+                {
+                    Post[] posts = await bridgeContext.Post.Where(e => e.ProductId == products[k].Id && (e.IsDeleted == null || (e.IsDeleted != null && !e.IsDeleted.Value)))
+                        .ToArrayAsync();
+
+                    double RatingStars = 0;
+
+                    if (posts.Length > 0)
+                    {
+                        int? stars = posts.Sum(e => e.Rating);
+                        RatingStars = (double)stars.Value / posts.Length;
+                    }
+
+                    products[k].Stars = RatingStars;
+                }
+            }
+            else
+            {
+                frames = await bridgeContext.Product.CountAsync();
+
+                TotalPages = frames >> 3;
+                if ((frames & 0x7) != 0) TotalPages++;
+
+
+                products = (await bridgeContext.Product
+                    .ToListAsync()).OrderBy(p => p.Id).Skip(8 * index).Take(8)
+                    .Select(p => new ProductViewModel
+                    {
+                        Id = p.Id,
+                        Name = p.Name,
+                        Description = p.Description,
+                        TechInfo = p.TechInfo,
+                        Price = p.Price,
+                        Stock = p.Stock
+                    }).ToList();
+
+                for (int k = 0; k < products.Count; k++)
+                {
+                    Post[] posts = await bridgeContext.Post.Where(e => e.ProductId == products[k].Id && (e.IsDeleted == null || (e.IsDeleted != null && !e.IsDeleted.Value)))
+                        .ToArrayAsync();
+
+                    double RatingStars = 0;
+
+                    if (posts.Length > 0)
+                    {
+                        int? stars = posts.Sum(e => e.Rating);
+                        RatingStars = (double)stars.Value / posts.Length;
+                    }
+
+                    products[k].Stars = RatingStars;
+                }
+            }
+
+            ProductResultModel productResultModel = new ProductResultModel
+            {
+                Pages = TotalPages,
+                Results = frames,
+                ProductViewModels = products.ToArray()
+            };
+
+            return productResultModel;
+        }
+
         public async Task<ProductResultModel> GetProductsByCategoryAsync(int? categoryId, int? page)
         {
             int index = (page != null && page.Value >= 1) ? page.Value - 1 : 0;

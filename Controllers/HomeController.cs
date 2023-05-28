@@ -3,8 +3,10 @@ using BridgeWater.Models;
 using BridgeWater.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Diagnostics;
 using System.Security.Cryptography;
+#pragma warning disable
 
 namespace BridgeWater.Controllers
 {
@@ -26,6 +28,29 @@ namespace BridgeWater.Controllers
         public IActionResult Create()
         {
             return View();
+        }
+
+        public IActionResult Results()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SearchProducts(string? name)
+        {
+            /* Search products list by using name filter */
+            ProductResultModel result = await productService.GetProductsByNameAsync(name, null);
+            if (!string.IsNullOrEmpty(name))
+            {
+                if (result.Results > 1)
+                    return Redirect($"/Home/Results/?name={name}");
+                else 
+                if (result.Results == 1)
+                    return Redirect($"/Home/About/?id={result.ProductViewModels[0].Id}");
+                else
+                    return Redirect("/");
+            }
+            else return Redirect("/");
         }
 
         [HttpPost, Authorize]

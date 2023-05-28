@@ -3,6 +3,7 @@
 
 @{
     #pragma warning disable
+    ViewData["ActionName"] = "/Plant/SearchPlants";
     string id = Context.Request.Query["id"];
     Plant plant = await plantService.GetProductAsync(id);
     if (plant != null) ViewData["Title"] = plant.name;
