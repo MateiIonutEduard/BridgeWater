@@ -79,7 +79,43 @@ namespace BridgeWater.Services
 
             // user post exists
             return -1;
-        } 
+        }
+
+        public async Task<int> CreateReplyPostAsync(PostRatingModel postRatingModel)
+        {
+            Post? post = await bridgeContext.Post
+                .FirstOrDefaultAsync(e => e.AccountId == postRatingModel.accountId && e.ReplyTo == postRatingModel.replyTo
+                    && (e.IsDeleted != null ? !e.IsDeleted.Value : false)
+                );
+
+            if (post == null)
+            {
+                if (!string.IsNullOrEmpty(postRatingModel.body))
+                {
+                    post = new Post
+                    {
+                        Body = postRatingModel.body,
+                        Rating = null,
+                        AccountId = postRatingModel.accountId,
+                        ProductId = postRatingModel.productId,
+                        ReplyTo = postRatingModel.replyTo,
+                        CreatedAt = DateTime.UtcNow,
+                        IsDeleted = false
+                    };
+
+                    // save account post
+                    bridgeContext.Post.Add(post);
+                    await bridgeContext.SaveChangesAsync();
+                    return 1;
+                }
+
+                // invalid post
+                return 0;
+            }
+
+            // user post exists
+            return -1;
+        }
 
         public async Task<bool> RemovePostAsync(int accountId, int postRatingId)
         {
