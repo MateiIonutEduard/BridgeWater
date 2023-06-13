@@ -5,9 +5,14 @@ var PricePerUnit = 0;
 
 $(document).ready(function () {
     $('#body').summernote();
+    $('#reply').summernote();
     $('#description').summernote();
     $('#techInfo').summernote();
 });
+
+function ActivateReply(accountId) {
+    $(`#replyBox_${accountId}`).css('display', 'block');
+}
 
 // fill stars on click, store index
 function RateUs(id) {

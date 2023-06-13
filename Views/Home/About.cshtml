@@ -198,7 +198,7 @@
                                         <div class="col-6">
                                             @if(!string.IsNullOrEmpty(userId) && post.accountId != Convert.ToInt32(userId))
                                             {
-                                                <a title="Comentati" style="margin-left: 90%;" class="btn btn-sm">
+                                                <a onclick="ActivateReply(@post.accountId)" title="Comentati" style="margin-left: 90%;" class="btn btn-sm">
                                                     <span class="fa fa fa-reply" style="color: #5cb85c;"></span>
                                                 </a>
                                             }
@@ -215,6 +215,12 @@
                                     </div>
                                 </div>
                             </div>
+                            <form id="replyBox_@(post.accountId)" style="width: 92%; margin-left: 4%; display: none;">
+                                <textarea class="form-control" id="reply" name="reply" style="height: 300px;" rows="10" cols="100"></textarea><br />
+                                <button title="Trimiteti" type="submit" class="btn btn-primary btn-sm">
+                                    <span class="fa fa-send" style="color: #f7f7f7;"></span>
+                                </button>
+                            </form>
                         }
                     </div>
                 <div class="col-3"></div>
