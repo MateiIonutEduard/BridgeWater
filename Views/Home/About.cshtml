@@ -215,12 +215,18 @@
                                     </div>
                                 </div>
                             </div>
-                            <form id="replyBox_@(post.accountId)" style="width: 92%; margin-left: 4%; display: none;">
-                                <textarea class="form-control" id="reply" name="reply" style="height: 300px;" rows="10" cols="100"></textarea><br />
-                                <button title="Trimiteti" type="submit" class="btn btn-primary btn-sm" style="margin-left: 94%;">
-                                    <span class="fa fa-send" style="color: #f7f7f7;"></span>
-                                </button>
-                            </form>
+                            @if (!string.IsNullOrEmpty(userId))
+                            {
+                                <form id="replyBox_@(post.accountId)" style="width: 92%; margin-left: 4%; display: none;">
+                                    <input type="hidden" id="ReplyTo" name="ReplyTo" value="@post.id"/>
+                                    <input type="hidden" id="FromMe" name="FromMe" value="@userId" />
+                                    <input type="hidden" id="productId" name="productId" value="@id" />
+                                    <textarea class="form-control" id="reply" name="reply" style="height: 300px;" rows="10" cols="100"></textarea><br />
+                                    <button title="Trimiteti" type="submit" class="btn btn-primary btn-sm" style="margin-left: 94%;">
+                                        <span class="fa fa-send" style="color: #f7f7f7;"></span>
+                                    </button>
+                                </form>
+                            }
                         }
                     </div>
                 <div class="col-3"></div>
