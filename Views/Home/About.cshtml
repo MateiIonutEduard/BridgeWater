@@ -196,11 +196,17 @@
                                             <span class="time-right">@post.createdAt?.ToString("dd/MM/yyyy hh:mm tt")</span>
                                         </div>
                                         <div class="col-6">
-                                            @if(!string.IsNullOrEmpty(userId) && userId.CompareTo(post.accountId.ToString()) == 0)
+                                            @if(!string.IsNullOrEmpty(userId) && post.accountId != Convert.ToInt32(userId))
+                                            {
+                                                <a title="Comentati" style="margin-left: 90%;" class="btn btn-sm">
+                                                    <span class="fa fa fa-reply" style="color: #5cb85c;"></span>
+                                                </a>
+                                            }
+                                            @if (!string.IsNullOrEmpty(userId) && userId.CompareTo(post.accountId.ToString()) == 0)
                                             {
                                                 <form action="/Home/RemovePost" method="post">
                                                     <input type="hidden" id="pid" name="pid" value="@post.id" />
-                                                    <button style="margin-left: 90%;" class="btn btn-sm" type="submit">
+                                                    <button title="Stergeti" style="margin-left: 90%;" class="btn btn-sm" type="submit">
                                                         <span class="fa fa-trash" style="color: #DC4C64;"></span>
                                                     </button>
                                                 </form>
