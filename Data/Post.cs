@@ -9,6 +9,7 @@ namespace BridgeWater.Data
         public int? Rating { get; set; }
         public DateTime CreatedAt { get; set; }
         public bool? IsDeleted { get; set; }
+        public int? ReplyTo { get; set; }
         public int AccountId { get; set; }
         public Account Account { get; set; }
         public int ProductId { get; set; }
