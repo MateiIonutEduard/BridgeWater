@@ -5,7 +5,6 @@ var PricePerUnit = 0;
 
 $(document).ready(function () {
     $('#body').summernote();
-    $('#reply').summernote();
     $('#description').summernote();
     $('#techInfo').summernote();
 });
