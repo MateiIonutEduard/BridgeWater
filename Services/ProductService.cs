@@ -117,9 +117,55 @@ namespace BridgeWater.Services
                         rating = p.Rating,
                         username = a.Username,
                         accountId = p.AccountId,
+                        depth = p.ReplyTo,
                         createdAt = p.CreatedAt
                     }
                 ).ToArray();
+
+                Queue<PostRatingViewModel> stack = new Queue<PostRatingViewModel>();
+                List<PostRatingViewModel> list = new List<PostRatingViewModel>();
+
+                bool[] v = new bool[posts.Length];
+                for (int i = 0; i < v.Length; i++) v[i] = false;
+
+                for (int i = 0; i < posts.Length; i++)
+                {
+                    if (!posts[i].depth.HasValue)
+                    {
+                        posts[i].depth = 0;
+                        v[i] = true;
+                        stack.Enqueue(posts[i]);
+                    }
+                }
+
+                while(stack.Count > 0)
+                {
+                    PostRatingViewModel parent = stack.Dequeue();
+                    bool exists = false;
+
+                    for(int i = 0; i < list.Count; i++)
+                    {
+                        if (list[i].id == parent.id)
+                        {
+                            exists = true;
+                            break;
+                        }
+                    }
+
+                    if(!exists) list.Add(parent);
+
+                    for(int j = 0; j < posts.Length; j++)
+                    {
+                        if(parent.id == posts[j].depth && !v[j] && posts[j].depth != null)
+                        {
+                            v[j] = true;
+                            list.Add(posts[j]);
+                            posts[j].depth = parent.depth++;
+                            stack.Enqueue(posts[j]);
+                        }
+                    }
+                }
+
                 double RatingStars = 0;
                 
                 if(posts.Length > 0)
@@ -137,7 +183,7 @@ namespace BridgeWater.Services
                     Category = category!.Name,
                     TechInfo = product.TechInfo,
                     Stars = RatingStars,
-                    postRatingViewModels = posts,
+                    postRatingViewModels = list.ToArray(),
                     Price = product.Price,
                     Stock = product.Stock
                 };
