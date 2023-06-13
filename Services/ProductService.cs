@@ -160,7 +160,7 @@ namespace BridgeWater.Services
                         {
                             v[j] = true;
                             list.Add(posts[j]);
-                            posts[j].depth = parent.depth++;
+                            posts[j].depth = parent.depth + 1;
                             stack.Enqueue(posts[j]);
                         }
                     }
