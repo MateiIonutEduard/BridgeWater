@@ -9,6 +9,10 @@ $(document).ready(function () {
     $('#techInfo').summernote();
 });
 
+function ActivateReply(accountId) {
+    $(`#replyBox_${accountId}`).css('display', 'block');
+}
+
 // fill stars on click, store index
 function RateUs(id) {
     for (var j = 1; j <= 5; j++)

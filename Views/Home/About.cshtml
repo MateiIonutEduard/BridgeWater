@@ -168,7 +168,8 @@
                         <h2 class="posts">Toate aprecierile (<small style="color: #7a4444;">@productViewModel.postRatingViewModels.Length</small>)</h2><br />
                         @foreach(PostRatingViewModel post in productViewModel.postRatingViewModels)
                         {
-                            <div class="container">
+                            string style = post.depth > 0 ? $"margin-left: {post.depth * 8}%;" : "";
+                            <div class="container" style="@style">
                                 <div class="post">
                                     <div class="row">
                                         <div class="col-6">
@@ -196,11 +197,17 @@
                                             <span class="time-right">@post.createdAt?.ToString("dd/MM/yyyy hh:mm tt")</span>
                                         </div>
                                         <div class="col-6">
-                                            @if(!string.IsNullOrEmpty(userId) && userId.CompareTo(post.accountId.ToString()) == 0)
+                                            @if(!string.IsNullOrEmpty(userId) && await postService.CheckIfCanRepply(userId, post.id.Value))
+                                            {
+                                                <a onclick="ActivateReply(@post.accountId)" title="Comentati" style="margin-left: 90%;" class="btn btn-sm">
+                                                    <span class="fa fa fa-reply" style="color: #5cb85c;"></span>
+                                                </a>
+                                            }
+                                            @if (!string.IsNullOrEmpty(userId) && userId.CompareTo(post.accountId.ToString()) == 0)
                                             {
                                                 <form action="/Home/RemovePost" method="post">
                                                     <input type="hidden" id="pid" name="pid" value="@post.id" />
-                                                    <button style="margin-left: 90%;" class="btn btn-sm" type="submit">
+                                                    <button title="Stergeti" style="margin-left: 90%;" class="btn btn-sm" type="submit">
                                                         <span class="fa fa-trash" style="color: #DC4C64;"></span>
                                                     </button>
                                                 </form>
@@ -209,6 +216,18 @@
                                     </div>
                                 </div>
                             </div>
+                            @if (!string.IsNullOrEmpty(userId))
+                            {
+                                <form action="/Home/SendPostReply" id="replyBox_@(post.accountId)" style="width: 92%; margin-left: 4%; display: none;" method="post">
+                                    <input type="hidden" id="ReplyTo" name="ReplyTo" value="@post.id"/>
+                                    <input type="hidden" id="FromMe" name="FromMe" value="@userId" />
+                                    <input type="hidden" id="productId" name="productId" value="@id" />
+                                    <textarea class="form-control" id="body" name="body" style="height: 300px;" rows="10" cols="100"></textarea><br />
+                                    <button title="Trimiteti" type="submit" class="btn btn-primary btn-sm" style="margin-left: 94%;">
+                                        <span class="fa fa-send" style="color: #f7f7f7;"></span>
+                                    </button>
+                                </form>
+                            }
                         }
                     </div>
                 <div class="col-3"></div>
