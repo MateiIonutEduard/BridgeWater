@@ -122,7 +122,7 @@ namespace BridgeWater.Services
                     }
                 ).ToArray();
 
-                Queue<PostRatingViewModel> stack = new Queue<PostRatingViewModel>();
+                Queue<PostRatingViewModel> queue = new Queue<PostRatingViewModel>();
                 List<PostRatingViewModel> list = new List<PostRatingViewModel>();
 
                 bool[] v = new bool[posts.Length];
@@ -134,13 +134,13 @@ namespace BridgeWater.Services
                     {
                         posts[i].depth = 0;
                         v[i] = true;
-                        stack.Enqueue(posts[i]);
+                        queue.Enqueue(posts[i]);
                     }
                 }
 
-                while(stack.Count > 0)
+                while(queue.Count > 0)
                 {
-                    PostRatingViewModel parent = stack.Dequeue();
+                    PostRatingViewModel parent = queue.Dequeue();
                     bool exists = false;
 
                     for(int i = 0; i < list.Count; i++)
@@ -161,7 +161,7 @@ namespace BridgeWater.Services
                             v[j] = true;
                             list.Add(posts[j]);
                             posts[j].depth = parent.depth + 1;
-                            stack.Enqueue(posts[j]);
+                            queue.Enqueue(posts[j]);
                         }
                     }
                 }
