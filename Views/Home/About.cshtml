@@ -196,7 +196,7 @@
                                             <span class="time-right">@post.createdAt?.ToString("dd/MM/yyyy hh:mm tt")</span>
                                         </div>
                                         <div class="col-6">
-                                            @if(!string.IsNullOrEmpty(userId) && post.accountId != Convert.ToInt32(userId))
+                                            @if(!string.IsNullOrEmpty(userId) && await postService.CheckIfCanRepply(userId, post.id.Value))
                                             {
                                                 <a onclick="ActivateReply(@post.accountId)" title="Comentati" style="margin-left: 90%;" class="btn btn-sm">
                                                     <span class="fa fa fa-reply" style="color: #5cb85c;"></span>

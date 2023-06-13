@@ -18,6 +18,25 @@ namespace BridgeWater.Services
 
             return post;
         }
+
+        public async Task<bool> CheckIfCanRepply(string userId, int postId)
+        {
+            int uid = Convert.ToInt32(userId);
+
+            /* old comment */
+            Post? oldPost = await bridgeContext.Post
+                .FirstOrDefaultAsync(e => e.Id == postId && e.AccountId == uid);
+
+            // if you are the author
+            if (oldPost != null) return false;
+
+            Post? post = await bridgeContext.Post
+                .FirstOrDefaultAsync(e => e.ReplyTo == postId && e.AccountId == uid);
+
+            /* if post comment exists */
+            return (post == null);
+        }
+
         public async Task<bool> HasPostRatingAsync(int accountId, int productId)
         {
             // check if post rating already exists and it is not canceled
