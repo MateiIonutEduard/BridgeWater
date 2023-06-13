@@ -217,7 +217,7 @@
                             </div>
                             @if (!string.IsNullOrEmpty(userId))
                             {
-                                <form id="replyBox_@(post.accountId)" style="width: 92%; margin-left: 4%; display: none;">
+                                <form action="/Home/SendPostReply" id="replyBox_@(post.accountId)" style="width: 92%; margin-left: 4%; display: none;" method="post">
                                     <input type="hidden" id="ReplyTo" name="ReplyTo" value="@post.id"/>
                                     <input type="hidden" id="FromMe" name="FromMe" value="@userId" />
                                     <input type="hidden" id="productId" name="productId" value="@id" />

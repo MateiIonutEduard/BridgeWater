@@ -85,6 +85,25 @@ namespace BridgeWater.Controllers
         }
 
         [HttpPost, Authorize]
+        public async Task<IActionResult> SendPostReply(PostRatingModel postRatingModel)
+        {
+            string? userId = HttpContext.User?.Claims?
+                .FirstOrDefault(u => u.Type == "id")?.Value;
+
+            if (userId != null)
+            {
+                // Creates new post with rating
+                int AccountId = Convert.ToInt32(userId);
+                postRatingModel.accountId = AccountId;
+
+                await postService.CreateReplyPostAsync(postRatingModel);
+                return Redirect($"/Home/About/?id={postRatingModel.productId}");
+            }
+            else
+                return Redirect("/Account/");
+        }
+
+        [HttpPost, Authorize]
         public async Task<IActionResult> RemovePost(int pid)
         {
             string? userId = HttpContext.User?.Claims?
