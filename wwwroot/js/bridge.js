@@ -9,8 +9,9 @@ $(document).ready(function () {
     $('#techInfo').summernote();
 });
 
-function ActivateReply(accountId) {
-    $(`#replyBox_${accountId}`).css('display', 'block');
+function ActivateReply(postId) {
+    $(`#body_${postId}`).summernote();
+    $(`#replyBox_${postId}`).css('display', 'block');
 }
 
 // fill stars on click, store index
