@@ -3,7 +3,7 @@
 
 @inject IProductService productService;
 @inject IPostService postService;
-
+@model PostRatingModel;
 @{
     #pragma warning disable
     ViewData["ActionName"] = "/Home/SearchProducts";
@@ -168,7 +168,7 @@
                         <h2 class="posts">Toate aprecierile (<small style="color: #7a4444;">@productViewModel.postRatingViewModels.Length</small>)</h2><br />
                         @foreach(PostRatingViewModel post in productViewModel.postRatingViewModels)
                         {
-                            string style = post.depth > 0 ? $"margin-left: {post.depth * 8}%;" : "";
+                            string style = post.depth > 0 ? $"margin-left: {post.depth * 30}px;" : "";
                             <div class="container" style="@style">
                                 <div class="post">
                                     <div class="row">
@@ -199,7 +199,7 @@
                                         <div class="col-6">
                                             @if(!string.IsNullOrEmpty(userId) && await postService.CheckIfCanRepply(userId, post.id.Value))
                                             {
-                                                <a onclick="ActivateReply(@post.accountId)" title="Comentati" style="margin-left: 90%;" class="btn btn-sm">
+                                                <a onclick="ActivateReply(@post.id)" title="Comentati" style="margin-left: 90%;" class="btn btn-sm">
                                                     <span class="fa fa fa-reply" style="color: #5cb85c;"></span>
                                                 </a>
                                             }
@@ -216,16 +216,24 @@
                                     </div>
                                 </div>
                             </div>
-                            @if (!string.IsNullOrEmpty(userId))
+                            @if (!string.IsNullOrEmpty(userId) && await postService.CheckIfCanRepply(userId, post.id.Value))
                             {
-                                <form action="/Home/SendPostReply" id="replyBox_@(post.accountId)" style="width: 92%; margin-left: 4%; display: none;" method="post">
+                                <form action="/Home/SendPostReply" id="replyBox_@(post.id)" style="width: 92%; margin-left: @((post.depth + 1) * 30)px; display: none;" method="post">
                                     <input type="hidden" id="ReplyTo" name="ReplyTo" value="@post.id"/>
                                     <input type="hidden" id="FromMe" name="FromMe" value="@userId" />
                                     <input type="hidden" id="productId" name="productId" value="@id" />
-                                    <textarea class="form-control" id="body" name="body" style="height: 300px;" rows="10" cols="100"></textarea><br />
-                                    <button title="Trimiteti" type="submit" class="btn btn-primary btn-sm" style="margin-left: 94%;">
-                                        <span class="fa fa-send" style="color: #f7f7f7;"></span>
-                                    </button>
+                                    <textarea class="form-control" id="body_@(post.id)" name="body_@(post.id)" asp-for="body" style="height: 300px;" rows="10" cols="100"></textarea><br />
+                                    <div class="row">
+                                        <div class="col-7"></div>
+                                        <div class="col-4" id="postGroupBox">
+                                            <a title="Anulare" onclick="CancelReply(@post.id)" onmouseover="OnCancelReply(@post.id)" onmouseout="OnMouseOutReply(@post.id)" style="margin-left: 10px;" class="btn btn-outline-danger btn-sm">
+                                                <span id="canceled_@(post.id)" class="fa fa-remove" style="color:#d9534f;"></span>
+                                            </a>
+                                            <button title="Trimiteti" type="submit" class="btn btn-primary btn-sm" style="margin-left: 94%;">
+                                                <span class="fa fa-send" style="color: #f7f7f7;"></span>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </form>
                             }
                         }

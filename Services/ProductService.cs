@@ -122,25 +122,49 @@ namespace BridgeWater.Services
                     }
                 ).ToArray();
 
-                Queue<PostRatingViewModel> stack = new Queue<PostRatingViewModel>();
-                List<PostRatingViewModel> list = new List<PostRatingViewModel>();
+                /* initial position index */
+                int[] index = new int[posts.Length];
 
+                /* visited nodes */
                 bool[] v = new bool[posts.Length];
-                for (int i = 0; i < v.Length; i++) v[i] = false;
 
                 for (int i = 0; i < posts.Length; i++)
                 {
-                    if (!posts[i].depth.HasValue)
+                    index[i] = i;
+                    v[i] = false;
+                }
+
+                /* sort post comments list by creation date ascending */
+                for(int i = 0; i < posts.Length; i++)
+                {
+                    for(int j = 0; j < posts.Length; j++)
                     {
-                        posts[i].depth = 0;
-                        v[i] = true;
-                        stack.Enqueue(posts[i]);
+                        if (posts[index[i]].createdAt.Value.CompareTo(posts[index[j]].createdAt.Value) < 0)
+                        {
+                            int t = index[i];
+                            index[i] = index[j];
+                            index[j] = t;
+                        }
                     }
                 }
 
-                while(stack.Count > 0)
+                Queue<PostRatingViewModel> queue = new Queue<PostRatingViewModel>();
+                List<PostRatingViewModel> list = new List<PostRatingViewModel>();
+
+                for (int i = 0; i < posts.Length; i++)
                 {
-                    PostRatingViewModel parent = stack.Dequeue();
+                    if (!posts[index[i]].depth.HasValue)
+                    {
+                        posts[index[i]].depth = 0;
+                        v[index[i]] = true;
+                        queue.Enqueue(posts[index[i]]);
+                    }
+                }
+
+                /* traverses the tree using breadth-first search */
+                while (queue.Count > 0)
+                {
+                    PostRatingViewModel parent = queue.Dequeue();
                     bool exists = false;
 
                     for(int i = 0; i < list.Count; i++)
@@ -156,12 +180,12 @@ namespace BridgeWater.Services
 
                     for(int j = 0; j < posts.Length; j++)
                     {
-                        if(parent.id == posts[j].depth && !v[j] && posts[j].depth != null)
+                        if(parent.id == posts[index[j]].depth && !v[index[j]] && posts[index[j]].depth != null)
                         {
-                            v[j] = true;
-                            list.Add(posts[j]);
-                            posts[j].depth = parent.depth + 1;
-                            stack.Enqueue(posts[j]);
+                            v[index[j]] = true;
+                            list.Add(posts[index[j]]);
+                            posts[index[j]].depth = parent.depth + 1;
+                            queue.Enqueue(posts[index[j]]);
                         }
                     }
                 }

@@ -2,6 +2,7 @@
 var childIndex = 0;
 var MaxQuantity = 0;
 var PricePerUnit = 0;
+let ReplyIndex = -1;
 
 $(document).ready(function () {
     $('#body').summernote();
@@ -9,8 +10,25 @@ $(document).ready(function () {
     $('#techInfo').summernote();
 });
 
-function ActivateReply(accountId) {
-    $(`#replyBox_${accountId}`).css('display', 'block');
+function CancelReply(postId) {
+    ReplyIndex = -1;
+    $(`#replyBox_${postId}`).css('display', 'none');
+}
+
+function OnCancelReply(postId) {
+    $(`#canceled_${postId}`).css('color', 'white');
+}
+
+function OnMouseOutReply(postId) {
+    $(`#canceled_${postId}`).css('color', '#d9534f');
+}
+
+function ActivateReply(postId) {
+    if (ReplyIndex < 0) {
+        ReplyIndex = postId;
+        $(`#body_${postId}`).summernote();
+        $(`#replyBox_${postId}`).css('display', 'block');
+    }
 }
 
 // fill stars on click, store index

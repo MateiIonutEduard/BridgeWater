@@ -96,6 +96,15 @@ namespace BridgeWater.Controllers
                 int AccountId = Convert.ToInt32(userId);
                 postRatingModel.accountId = AccountId;
 
+                if(string.IsNullOrEmpty(postRatingModel.body))
+                {
+                    string? key = HttpContext.Request.Form.Keys
+                        .FirstOrDefault(key => key.StartsWith("body"));
+
+                    if (!string.IsNullOrEmpty(key))
+                        postRatingModel.body = HttpContext.Request.Form[key];
+                }
+
                 await postService.CreateReplyPostAsync(postRatingModel);
                 return Redirect($"/Home/About/?id={postRatingModel.productId}");
             }
