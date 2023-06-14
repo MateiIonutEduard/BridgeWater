@@ -134,7 +134,7 @@ namespace BridgeWater.Services
                     v[i] = false;
                 }
 
-                /* sort post comments list by creation date */
+                /* sort post comments list by creation date ascending */
                 for(int i = 0; i < posts.Length; i++)
                 {
                     for(int j = 0; j < posts.Length; j++)
