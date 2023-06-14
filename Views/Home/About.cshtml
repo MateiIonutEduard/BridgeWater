@@ -168,7 +168,7 @@
                         <h2 class="posts">Toate aprecierile (<small style="color: #7a4444;">@productViewModel.postRatingViewModels.Length</small>)</h2><br />
                         @foreach(PostRatingViewModel post in productViewModel.postRatingViewModels)
                         {
-                            string style = post.depth > 0 ? $"margin-left: {post.depth * 8}%;" : "";
+                            string style = post.depth > 0 ? $"margin-left: {post.depth * 30}px;" : "";
                             <div class="container" style="@style">
                                 <div class="post">
                                     <div class="row">
