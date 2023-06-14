@@ -2,6 +2,7 @@
 var childIndex = 0;
 var MaxQuantity = 0;
 var PricePerUnit = 0;
+let ReplyIndex = -1;
 
 $(document).ready(function () {
     $('#body').summernote();
@@ -10,6 +11,7 @@ $(document).ready(function () {
 });
 
 function CancelReply(postId) {
+    ReplyIndex = -1;
     $(`#replyBox_${postId}`).css('display', 'none');
 }
 
@@ -22,8 +24,11 @@ function OnMouseOutReply(postId) {
 }
 
 function ActivateReply(postId) {
-    $(`#body_${postId}`).summernote();
-    $(`#replyBox_${postId}`).css('display', 'block');
+    if (ReplyIndex < 0) {
+        ReplyIndex = postId;
+        $(`#body_${postId}`).summernote();
+        $(`#replyBox_${postId}`).css('display', 'block');
+    }
 }
 
 // fill stars on click, store index
