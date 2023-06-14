@@ -223,9 +223,17 @@
                                     <input type="hidden" id="FromMe" name="FromMe" value="@userId" />
                                     <input type="hidden" id="productId" name="productId" value="@id" />
                                     <textarea class="form-control" id="body_@(post.id)" name="body_@(post.id)" asp-for="body" style="height: 300px;" rows="10" cols="100"></textarea><br />
-                                    <button title="Trimiteti" type="submit" class="btn btn-primary btn-sm" style="margin-left: 94%;">
-                                        <span class="fa fa-send" style="color: #f7f7f7;"></span>
-                                    </button>
+                                    <div class="row">
+                                        <div class="col-7"></div>
+                                        <div class="col-4" id="postGroupBox">
+                                            <a title="Anulare" onclick="CancelReply(@post.id)" onmouseover="OnCancelReply(@post.id)" onmouseout="OnMouseOutReply(@post.id)" style="margin-left: 10px;" class="btn btn-outline-danger btn-sm">
+                                                <span id="canceled_@(post.id)" class="fa fa-remove" style="color:#d9534f;"></span>
+                                            </a>
+                                            <button title="Trimiteti" type="submit" class="btn btn-primary btn-sm" style="margin-left: 94%;">
+                                                <span class="fa fa-send" style="color: #f7f7f7;"></span>
+                                            </button>
+                                        </div>
+                                    </div>
                                 </form>
                             }
                         }

@@ -9,6 +9,18 @@ $(document).ready(function () {
     $('#techInfo').summernote();
 });
 
+function CancelReply(postId) {
+    $(`#replyBox_${postId}`).css('display', 'none');
+}
+
+function OnCancelReply(postId) {
+    $(`#canceled_${postId}`).css('color', 'white');
+}
+
+function OnMouseOutReply(postId) {
+    $(`#canceled_${postId}`).css('color', '#d9534f');
+}
+
 function ActivateReply(postId) {
     $(`#body_${postId}`).summernote();
     $(`#replyBox_${postId}`).css('display', 'block');
