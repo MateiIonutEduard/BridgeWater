@@ -218,8 +218,7 @@
                             </div>
                             @if (!string.IsNullOrEmpty(userId) && await postService.CheckIfCanRepply(userId, post.id.Value))
                             {
-                                string margin = post.depth > 0 ? $"margin-left: {(post.depth + 1) * 30}px;" : "";
-                                <form action="/Home/SendPostReply" id="replyBox_@(post.id)" style="width: 92%; @margin display: none;" method="post">
+                                <form action="/Home/SendPostReply" id="replyBox_@(post.id)" style="width: 92%; margin-left: @((post.depth + 1) * 30)px; display: none;" method="post">
                                     <input type="hidden" id="ReplyTo" name="ReplyTo" value="@post.id"/>
                                     <input type="hidden" id="FromMe" name="FromMe" value="@userId" />
                                     <input type="hidden" id="productId" name="productId" value="@id" />
