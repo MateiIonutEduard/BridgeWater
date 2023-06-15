@@ -13,6 +13,7 @@ namespace BridgeWater.Models
         public string? imageUrl { get; set; }
 
         public Description? description { get; set; }
+        public List<Comment>? comments { get; set; }
 
         public string? category { get; set; }
     }
