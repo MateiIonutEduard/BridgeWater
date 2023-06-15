@@ -1,6 +1,7 @@
 ﻿using BridgeWater.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using System.Net;
 #pragma warning disable
 
 namespace BridgeWater.Services
@@ -84,6 +85,54 @@ namespace BridgeWater.Services
                     .ToListAsync();
 
             return product.ToArray();
+        }
+
+        public async Task<int> CreatePostCommentAsync(CommentRatingModel commentRatingModel)
+        {
+            Plant? plant = await products.Find(p => p.Id.CompareTo(commentRatingModel.plantId) == 0)
+                .FirstOrDefaultAsync();
+
+            if(plant != null)
+            {
+                Comment? comment = plant.comments != null ? plant.comments
+                    .FirstOrDefault(c => c.accountId == commentRatingModel.accountId && (c.isDeleted != null ? !c.isDeleted.Value : false)) : null;
+
+                if(comment == null)
+                {
+                    /* check if it is valid */
+                    if(!string.IsNullOrEmpty(commentRatingModel.message) && commentRatingModel.rating != null)
+                    {
+                        comment = new Comment
+                        {
+                            body = commentRatingModel.message,
+                            rating = commentRatingModel.rating,
+                            accountId = commentRatingModel.accountId.Value,
+                            createdAt = DateTime.UtcNow,
+                            isDeleted = false
+                        };
+
+                        List<Comment> comments = new List<Comment>();
+
+                        /* add comments to list when not empty */
+                        if(plant.comments != null && plant.comments.Length > 0) 
+                            comments.AddRange(plant.comments);
+
+                        comments.Add(comment);
+                        plant.comments = comments.ToArray();
+                        await products.ReplaceOneAsync(e => e.Id.CompareTo(plant.Id) == 0, plant);
+                        return 1;
+                    }
+
+                    /* not valid */
+                    return 0;
+                }
+
+                /* comment found */
+                return -1;
+            }
+
+            /* plant does not exists */
+            return -2;
         }
 
         public async Task<Plant> GetProductAsync(string id)

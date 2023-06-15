@@ -1,5 +1,6 @@
 ﻿using BridgeWater.Models;
 using BridgeWater.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 #pragma warning disable
 
@@ -20,6 +21,25 @@ namespace BridgeWater.Controllers
         public IActionResult Details(string? id)
         {
             return View();
+        }
+
+        [HttpPost, Authorize]
+        public async Task<IActionResult> AddComment(CommentRatingModel commentRatingModel)
+        {
+            string? userId = HttpContext.User?.Claims?
+                .FirstOrDefault(u => u.Type == "id")?.Value;
+
+            if (userId != null)
+            {
+                // Creates new post with rating
+                int AccountId = Convert.ToInt32(userId);
+                commentRatingModel.accountId = AccountId;
+
+                await plantService.CreatePostCommentAsync(commentRatingModel);
+                return Redirect($"/Plant/Details/?id={commentRatingModel.plantId}");
+            }
+            else
+                return Redirect("/Account/");
         }
 
         [HttpPost]
