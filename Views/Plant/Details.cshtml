@@ -81,6 +81,18 @@
                 <div class="col-3"></div>
             </div>
         }
+        @if (string.IsNullOrEmpty(userId))
+        {
+            <div class="row" style="margin-left: 8%;">
+                <div class="col-1"></div>
+                <div class="col-7">
+                    <div class="alert alert-warning" style="margin-top: 4%;" role="alert">
+                        Pentru a putea oferi recenzii, trebuie sa va <a href="/Account/" class="alert-link">conectati</a>.
+                    </div>
+                </div>
+                <div class="col-3"></div>
+            </div>
+        }
     </div>
 }
 else {
