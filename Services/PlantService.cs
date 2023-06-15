@@ -35,7 +35,7 @@ namespace BridgeWater.Services
                 }
             }
 
-            return false;
+            return true;
         }
 
         public string?[] GetCategories()

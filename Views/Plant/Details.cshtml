@@ -1,6 +1,19 @@
 ﻿@using BridgeWater.Services;
 @inject PlantService plantService;
+<style>
+    .note-editable {
+        color: white;
+        height: 200px;
+    }
 
+    .note-btn {
+        color: #b0c7e9;
+    }
+
+    .note-btn:hover {
+        color: #eab676 !important;
+    }
+</style>
 @{
     #pragma warning disable
     ViewData["ActionName"] = "/Plant/SearchPlants";
@@ -33,9 +46,41 @@
                 <br/><h5 class="text-light">@plant.category</h5>
                 <p class="text-light">@plant.name</p>
             </div><br/>
-            <div class="col-9 text-light">@Html.Raw(plant.description?.body)</div>
+            <div class="col-9 text-light" style="margin-left: 8%;">@Html.Raw(plant.description?.body)</div>
             <div class="col-1"></div>
         </div>
+        @if (canShowRating)
+        {
+            <div class="row" style="margin-left: 8%;">
+                <div class="col-1"></div>
+                <h2 class="posts">Note si aprecieri</h2>
+                <div class="col-7">
+                    <form action="#" method="post">
+                        <textarea id="message" name="message" class="form-control form-control-sm" style="height: 300px;" rows="10" cols="100"></textarea><br />
+                        <div class="row">
+                            <div class="col-4">
+                                <p class="rateus">Cum evaluezi acest produs?</p>
+                            </div>
+                            <div class="col-4">
+                                <div class="rating">
+                                    <a id="star1" onclick="RateUs(1)" onmouseover="HoverUs(1)" onmouseout="ClearStars()" class="fa fa-star rating-star" title="1 Stea"></a>
+                                    <a id="star2" onclick="RateUs(2)" onmouseover="HoverUs(2)" onmouseout="ClearStars()" class="fa fa-star rating-star" title="2 Stele"></a>
+                                    <a id="star3" onclick="RateUs(3)" onmouseover="HoverUs(3)" onmouseout="ClearStars()" class="fa fa-star rating-star" title="3 Stele"></a>
+                                    <a id="star4" onclick="RateUs(4)" onmouseover="HoverUs(4)" onmouseout="ClearStars()" class="fa fa-star rating-star" title="4 Stele"></a>
+                                    <a id="star5" onclick="RateUs(5)" onmouseover="HoverUs(5)" onmouseout="ClearStars()" class="fa fa-star rating-star" title="5 Stele"></a>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <input type="hidden" id="rating" name="rating" value="0" />
+                                <input type="hidden" id="plantId" name="plantId" value="@id" />
+                                <button id="sender" type="submit" class="btn btn-primary btn-sm sender">Trimite</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-3"></div>
+            </div>
+        }
     </div>
 }
 else {
