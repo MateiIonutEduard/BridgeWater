@@ -16,6 +16,28 @@ namespace BridgeWater.Services
             products = mongoDatabase.GetCollection<Plant>(bridgeWaterSettings.Value.PlantCollectionName);
         }
 
+        public async Task<bool> HasPostRatingAsync(int accountId, string plantId)
+        {
+            Plant? plant = await products.Find(p => p.Id.CompareTo(plantId) == 0)
+                .FirstOrDefaultAsync();
+
+            /* plant exists */
+            if(plant != null)
+            {
+                /* have comments with rating */
+                if(plant.comments != null)
+                {
+                    Comment? comment = plant.comments
+                        .FirstOrDefault(e => e.accountId == accountId && (e.isDeleted == null || (e.isDeleted != null && !e.isDeleted.Value)));
+
+                    /* it has been found */
+                    return comment != null;
+                }
+            }
+
+            return false;
+        }
+
         public string?[] GetCategories()
         {
             var hash = new HashSet<string>();

@@ -5,6 +5,16 @@
     #pragma warning disable
     ViewData["ActionName"] = "/Plant/SearchPlants";
     string id = Context.Request.Query["id"];
+
+    string? userId = Context.User?.Claims?.FirstOrDefault(u => u.Type == "id")?.Value;
+    bool canShowRating = userId != null && id != null;
+
+    if (canShowRating)
+    {
+        int uid = Convert.ToInt32(userId);
+        canShowRating = await plantService.HasPostRatingAsync(uid, id);
+    }
+
     Plant plant = await plantService.GetProductAsync(id);
     if (plant != null) ViewData["Title"] = plant.name;
 }
