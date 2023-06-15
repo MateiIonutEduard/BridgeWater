@@ -135,11 +135,11 @@ namespace BridgeWater.Services
                 }
 
                 /* sort post comments list by creation date ascending */
-                for(int i = 0; i < posts.Length; i++)
+                for(int i = 0; i < posts.Length - 1; i++)
                 {
-                    for(int j = 0; j < posts.Length; j++)
+                    for(int j = i + 1; j < posts.Length; j++)
                     {
-                        if (posts[index[i]].createdAt.Value.CompareTo(posts[index[j]].createdAt.Value) < 0)
+                        if (posts[index[i]].createdAt.Value.CompareTo(posts[index[j]].createdAt.Value) > 0)
                         {
                             int t = index[i];
                             index[i] = index[j];
