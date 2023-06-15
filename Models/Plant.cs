@@ -8,12 +8,13 @@ namespace BridgeWater.Models
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
+        public double? Stars { get; set; }
 
         public string? name { get; set; }
         public string? imageUrl { get; set; }
 
         public Description? description { get; set; }
-        public List<Comment>? comments { get; set; }
+        public Comment[]? comments { get; set; }
 
         public string? category { get; set; }
     }
