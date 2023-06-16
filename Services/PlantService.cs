@@ -208,6 +208,7 @@ namespace BridgeWater.Services
                             id = comments[i].Id,
                             body = comments[i].body,
                             createdAt = comments[i].createdAt,
+                            depth = 0,
                             rating = comments[i].rating,
                             accountId = comments[i].accountId
                         };

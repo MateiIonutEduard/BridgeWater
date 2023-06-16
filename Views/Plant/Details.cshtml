@@ -21,6 +21,7 @@
 
     string? userId = Context.User?.Claims?.FirstOrDefault(u => u.Type == "id")?.Value;
     bool canShowRating = userId != null && id != null;
+    int t = 1;
 
     if (canShowRating)
     {
@@ -140,7 +141,7 @@
                                     <div class="col-6">
                                         @if (!string.IsNullOrEmpty(userId) && await plantService.CheckIfCanRepply(Convert.ToInt32(userId), plant.Id, comment.id))
                                         {
-                                            <a onclick="ActivateReply(@comment.id)" title="Comentati" style="margin-left: 90%;" class="btn btn-sm">
+                                            <a onclick="ActivateReply(@t)" title="Comentati" style="margin-left: 90%;" class="btn btn-sm">
                                                 <span class="fa fa fa-reply" style="color: #5cb85c;"></span>
                                             </a>
                                         }
@@ -158,7 +159,26 @@
                                 </div>
                             </div>
                         </div>
-                        <!-- add unit 2 -->
+                        @if (!string.IsNullOrEmpty(userId) && await plantService.CheckIfCanRepply(Convert.ToInt32(userId), plant.Id, comment.id))
+                        {
+                            <form action="#" id="replyBox_@(t)" style="width: 92%; margin-left: @((comment.depth + 1) * 30)px; display: none;" method="post">
+                                <input type="hidden" id="ReplyTo" name="ReplyTo" value="@comment.id" />
+                                <input type="hidden" id="FromMe" name="FromMe" value="@userId" />
+                                <input type="hidden" id="productId" name="productId" value="@id" />
+                                <textarea class="form-control" id="body_@(t)" name="body_@(t)" style="height: 300px;" rows="10" cols="100"></textarea><br />
+                                <div class="row">
+                                    <div class="col-7"></div>
+                                    <div class="col-4" id="postGroupBox">
+                                        <a title="Anulare" onclick="CancelReply(@t)" onmouseover="OnCancelReply(@t)" onmouseout="OnMouseOutReply(@t)" style="margin-left: 10px;" class="btn btn-outline-danger btn-sm">
+                                            <span id="canceled_@(t++)" class="fa fa-remove" style="color:#d9534f;"></span>
+                                        </a>
+                                        <button title="Trimiteti" type="submit" class="btn btn-primary btn-sm" style="margin-left: 94%;">
+                                            <span class="fa fa-send" style="color: #f7f7f7;"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        }
                     }
                 </div>
                 <div class="col-3"></div>
