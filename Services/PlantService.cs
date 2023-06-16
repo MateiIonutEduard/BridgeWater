@@ -1,4 +1,6 @@
-﻿using BridgeWater.Models;
+﻿using BridgeWater.Data;
+using BridgeWater.Models;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System.Net;
@@ -9,9 +11,11 @@ namespace BridgeWater.Services
     public class PlantService
     {
         readonly IMongoCollection<Plant> products;
+        readonly BridgeContext bridgeContext;
 
-        public PlantService(IOptions<BridgeWaterSettings> bridgeWaterSettings)
+        public PlantService(IOptions<BridgeWaterSettings> bridgeWaterSettings, BridgeContext bridgeContext)
         {
+            this.bridgeContext = bridgeContext;
             var mongoClient = new MongoClient(bridgeWaterSettings.Value.ConnectionString);
             var mongoDatabase = mongoClient.GetDatabase(bridgeWaterSettings.Value.DatabaseName);
             products = mongoDatabase.GetCollection<Plant>(bridgeWaterSettings.Value.PlantCollectionName);
@@ -230,48 +234,122 @@ namespace BridgeWater.Services
                     category = product.category
                 };
 
-                Comment[]? comments = product.comments;
-                List<CommentViewModel> commentList = new List<CommentViewModel>();
                 double rating = 0.0;
 
-                if(comments != null)
+                if (product.comments != null)
                 {
-                    var newList = comments.Where(c => c.isDeleted == null || (c.isDeleted != null && !c.isDeleted.Value))
+                    Comment[]? comments = product.comments.Where(c => c.isDeleted == null || (c.isDeleted != null && !c.isDeleted.Value))
                         .ToArray();
 
                     double sum = 0.0;
-                    int n = newList.Length;
+                    int n = comments.Length;
 
-                    for (int j = 0; j < newList.Length; j++)
+                    for (int j = 0; j < comments.Length; j++)
                     {
-                        if (newList[j].rating.HasValue)
-                            sum += newList[j].rating.Value;
+                        if (comments[j].rating.HasValue)
+                            sum += comments[j].rating.Value;
                         else n--;
                     }
 
-                    /* copy comments into layer objects */
-                    for(int i = 0; i < comments.Length; i++)
+                    /* initial position index */
+                    int[] index = new int[comments.Length];
+
+                    /* visited nodes */
+                    bool[] v = new bool[comments.Length];
+
+                    for (int i = 0; i < comments.Length; i++)
                     {
-                        if (comments[i].isDeleted != null && comments[i].isDeleted.Value)
-                            continue;
+                        index[i] = i;
+                        v[i] = false;
+                    }
 
-                        CommentViewModel comment = new CommentViewModel
+                    /* sort post comments list by creation date ascending */
+                    for (int i = 0; i < comments.Length - 1; i++)
+                    {
+                        for (int j = i + 1; j < comments.Length; j++)
                         {
-                            id = comments[i].Id,
-                            body = comments[i].body,
-                            createdAt = comments[i].createdAt,
-                            depth = 0,
-                            rating = comments[i].rating,
-                            accountId = comments[i].accountId
-                        };
+                            if (comments[index[i]].createdAt.CompareTo(comments[index[j]].createdAt) > 0)
+                            {
+                                int t = index[i];
+                                index[i] = index[j];
+                                index[j] = t;
+                            }
+                        }
+                    }
 
-                        /* add new one */
-                        commentList.Add(comment);
+                    Queue<CommentViewModel> queue = new Queue<CommentViewModel>();
+                    List<CommentViewModel> list = new List<CommentViewModel>();
+
+                    /* forest of trees */
+                    for (int i = 0; i < comments.Length; i++)
+                    {
+                        if (string.IsNullOrEmpty(comments[index[i]].replyTo))
+                        {
+                            Account? account = await bridgeContext.Account
+                                .FirstOrDefaultAsync(u => u.Id == comments[index[i]].accountId);
+
+                            CommentViewModel comment = new CommentViewModel
+                            {
+                                id = comments[index[i]].Id,
+                                body = comments[index[i]].body,
+                                createdAt = comments[index[i]].createdAt,
+                                rating = comments[index[i]].rating,
+                                accountId = comments[index[i]].accountId,
+                                username = account.Username,
+                                depth = 0
+                            };
+
+                            v[index[i]] = true;
+                            queue.Enqueue(comment);
+                        }
+                    }
+
+                    /* traverses the tree, using breadth-first search maner */
+                    while (queue.Count > 0)
+                    {
+                        CommentViewModel parent = queue.Dequeue();
+                        bool exists = false;
+
+                        for (int i = 0; i < list.Count; i++)
+                        {
+                            if (list[i].id == parent.id)
+                            {
+                                exists = true;
+                                break;
+                            }
+                        }
+
+                        if (!exists) list.Add(parent);
+
+                        for (int j = 0; j < comments.Length; j++)
+                        {
+                            if (parent.id == comments[index[j]].replyTo && !v[index[j]] && comments[index[j]].replyTo != null)
+                            {
+                                v[index[j]] = true;
+
+                                Account? account = await bridgeContext.Account
+                                    .FirstOrDefaultAsync(u => u.Id == comments[index[j]].accountId);
+
+                                CommentViewModel comment = new CommentViewModel
+                                {
+                                    id = comments[index[j]].Id,
+                                    body = comments[index[j]].body,
+                                    createdAt = comments[index[j]].createdAt,
+                                    rating = comments[index[j]].rating,
+                                    accountId = comments[index[j]].accountId,
+                                    username = account.Username,
+                                    depth = parent.depth + 1
+                                };
+
+                                list.Add(comment);
+                                queue.Enqueue(comment);
+                            }
+                        }
                     }
 
                     /* compute rating for presentation plant */
                     rating = sum / n;
-                    plant.comments = commentList.ToArray();
+                    plant.comments = list.ToArray();
                 }
 
                 plant.Stars = rating;

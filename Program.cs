@@ -59,7 +59,7 @@ namespace BridgeWater
             builder.Services.AddTransient<IOrderService, OrderService>();
 
             // add plant service
-            builder.Services.AddSingleton<PlantService>();
+            builder.Services.AddTransient<PlantService>();
 
             // Add cookie authentication
             builder.Services.AddAuthentication("CookieAuthentication")
