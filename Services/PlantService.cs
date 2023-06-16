@@ -136,6 +136,43 @@ namespace BridgeWater.Services
             return -2;
         }
 
+        public async Task<bool> CheckIfCanRepply(int accountId, string plantId, string commentId)
+        {
+            Plant? plant = await products.Find(p => p.Id.CompareTo(plantId) == 0)
+                .FirstOrDefaultAsync();
+
+            if(plant != null)
+            {
+                /* check only if have comments */
+                if(plant.comments != null && plant.comments.Length > 0)
+                {
+                    Comment? comment = plant.comments
+                        .FirstOrDefault(c => c.Id.CompareTo(commentId) == 0 && (c.isDeleted != null ? !c.isDeleted.Value : false));
+
+                    if(comment != null)
+                    {
+                        if (comment.accountId == accountId) return false;
+                        else
+                        {
+                            if(comment.replyTo != null)
+                            {
+                                /* does not allow to reply self */
+                                Comment? post = plant.comments.FirstOrDefault(e => e.Id.CompareTo(comment.replyTo) == 0);
+                                return post.accountId != accountId;
+                            }
+
+                            // are allowed
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
         public async Task<PlantViewModel> GetProductAsync(string id)
         {
             Plant? product = await products.Find(p => p.Id == id).FirstOrDefaultAsync();

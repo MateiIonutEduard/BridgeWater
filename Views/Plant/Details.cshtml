@@ -138,7 +138,12 @@
                                         <span class="time-right">@comment.createdAt?.ToString("dd/MM/yyyy hh:mm tt")</span>
                                     </div>
                                     <div class="col-6">
-                                        <!-- add reply feature -->
+                                        @if (!string.IsNullOrEmpty(userId) && await plantService.CheckIfCanRepply(Convert.ToInt32(userId), plant.Id, comment.id))
+                                        {
+                                            <a onclick="ActivateReply(@comment.id)" title="Comentati" style="margin-left: 90%;" class="btn btn-sm">
+                                                <span class="fa fa fa-reply" style="color: #5cb85c;"></span>
+                                            </a>
+                                        }
                                         @if (!string.IsNullOrEmpty(userId) && userId.CompareTo(comment.accountId.ToString()) == 0)
                                         {
                                             <form action="/Plant/RemoveComment" method="post">
