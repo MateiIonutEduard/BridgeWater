@@ -64,8 +64,8 @@ namespace BridgeWater.Controllers
                         commentRatingModel.message = HttpContext.Request.Form[key];
                 }
 
-                //await plantService.CreateReplyPostAsync(commentRatingModel);
-                return Redirect($"/Home/About/?id={commentRatingModel.plantId}");
+                await plantService.CreateReplyPostAsync(commentRatingModel);
+                return Redirect($"/Plant/Details/?id={commentRatingModel.plantId}");
             }
             else
                 return Redirect("/Account/");

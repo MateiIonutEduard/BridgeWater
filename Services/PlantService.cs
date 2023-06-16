@@ -136,6 +136,48 @@ namespace BridgeWater.Services
             return -2;
         }
 
+        public async Task<bool> CreateReplyPostAsync(CommentRatingModel commentRatingModel)
+        {
+            Plant? plant = await products.Find(p => p.Id.CompareTo(commentRatingModel.plantId) == 0)
+                .FirstOrDefaultAsync();
+
+            if(plant != null)
+            {
+                Comment? comment = plant.comments != null ? plant.comments
+                    .FirstOrDefault(c => c.accountId == commentRatingModel.accountId && c.replyTo != null && c.replyTo.CompareTo(commentRatingModel.replyTo) == 0 && (c.isDeleted != null ? !c.isDeleted.Value : false)) : null;
+
+                if (comment != null) return false;
+                List<Comment> comments = new List<Comment>();
+
+                if(plant.comments != null) 
+                    comments.AddRange(plant.comments);
+
+                if (!string.IsNullOrEmpty(commentRatingModel.message))
+                {
+                    comment = new Comment
+                    {
+                        Id = Guid.NewGuid().ToString(),
+                        accountId = commentRatingModel.accountId.Value,
+                        replyTo = commentRatingModel.replyTo,
+                        body = commentRatingModel.message,
+                        createdAt = DateTime.UtcNow,
+                        isDeleted = false
+                    };
+
+                    comments.Add(comment);
+                    plant.comments = comments.ToArray();
+
+                    /* update plant entity from collection */
+                    await products.ReplaceOneAsync(p => p.Id.CompareTo(commentRatingModel.plantId) == 0, plant);
+                    return true;
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
         public async Task<bool> CheckIfCanRepply(int accountId, string plantId, string commentId)
         {
             Plant? plant = await products.Find(p => p.Id.CompareTo(plantId) == 0)
@@ -194,8 +236,18 @@ namespace BridgeWater.Services
 
                 if(comments != null)
                 {
-                    double sum = comments.Where(c => c.rating != null && c.isDeleted == null || (c.isDeleted != null && !c.isDeleted.Value))
-                        .Sum(c => c.rating.Value);
+                    var newList = comments.Where(c => c.isDeleted == null || (c.isDeleted != null && !c.isDeleted.Value))
+                        .ToArray();
+
+                    double sum = 0.0;
+                    int n = newList.Length;
+
+                    for (int j = 0; j < newList.Length; j++)
+                    {
+                        if (newList[j].rating.HasValue)
+                            sum += newList[j].rating.Value;
+                        else n--;
+                    }
 
                     /* copy comments into layer objects */
                     for(int i = 0; i < comments.Length; i++)
@@ -218,7 +270,7 @@ namespace BridgeWater.Services
                     }
 
                     /* compute rating for presentation plant */
-                    rating = sum / comments.Count();
+                    rating = sum / n;
                     plant.comments = commentList.ToArray();
                 }
 
