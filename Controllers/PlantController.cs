@@ -1,4 +1,5 @@
-﻿using BridgeWater.Models;
+﻿using BridgeWater.Data;
+using BridgeWater.Models;
 using BridgeWater.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -37,6 +38,27 @@ namespace BridgeWater.Controllers
 
                 await plantService.CreatePostCommentAsync(commentRatingModel);
                 return Redirect($"/Plant/Details/?id={commentRatingModel.plantId}");
+            }
+            else
+                return Redirect("/Account/");
+        }
+
+        [HttpPost, Authorize]
+        public async Task<IActionResult> RemoveComment(string plantId, string commentId)
+        {
+            string? userId = HttpContext.User?.Claims?
+                .FirstOrDefault(u => u.Type == "id")?.Value;
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                int AccountId = Convert.ToInt32(userId);
+                Comment? comment = await plantService.GetCommentAsync(plantId, commentId);
+
+                /* comment exists, so remove it */
+                if(comment != null) 
+                    await plantService.RemoveCommentAsync(AccountId, plantId, commentId);
+
+                return Redirect($"/Plant/Details/?id={plantId}");
             }
             else
                 return Redirect("/Account/");

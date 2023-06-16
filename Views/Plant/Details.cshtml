@@ -141,8 +141,9 @@
                                         <!-- add reply feature -->
                                         @if (!string.IsNullOrEmpty(userId) && userId.CompareTo(comment.accountId.ToString()) == 0)
                                         {
-                                            <form action="#" method="post">
-                                                <input type="hidden" id="pid" name="pid" value="@comment.id" />
+                                            <form action="/Plant/RemoveComment" method="post">
+                                                <input type="hidden" id="plantId" name="plantId" value="@plant.Id"/>
+                                                <input type="hidden" id="commentId" name="commentId" value="@comment.id" />
                                                 <button title="Stergeti" style="margin-left: 90%;" class="btn btn-sm" type="submit">
                                                     <span class="fa fa-trash" style="color: #DC4C64;"></span>
                                                 </button>

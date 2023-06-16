@@ -32,7 +32,7 @@ namespace BridgeWater.Services
                         .FirstOrDefault(e => e.accountId == accountId && (e.isDeleted == null || (e.isDeleted != null && !e.isDeleted.Value)));
 
                     /* it has been found */
-                    return comment != null;
+                    return comment == null;
                 }
             }
 
@@ -104,6 +104,7 @@ namespace BridgeWater.Services
                     {
                         comment = new Comment
                         {
+                            Id = Guid.NewGuid().ToString(),
                             body = commentRatingModel.message,
                             rating = commentRatingModel.rating,
                             accountId = commentRatingModel.accountId.Value,
@@ -156,12 +157,15 @@ namespace BridgeWater.Services
 
                 if(comments != null)
                 {
-                    double sum = comments.Where(c => c.rating != null)
+                    double sum = comments.Where(c => c.rating != null && c.isDeleted == null || (c.isDeleted != null && !c.isDeleted.Value))
                         .Sum(c => c.rating.Value);
 
                     /* copy comments into layer objects */
                     for(int i = 0; i < comments.Length; i++)
                     {
+                        if (comments[i].isDeleted != null && comments[i].isDeleted.Value)
+                            continue;
+
                         CommentViewModel comment = new CommentViewModel
                         {
                             id = comments[i].Id,
@@ -185,6 +189,63 @@ namespace BridgeWater.Services
             }
 
             return null;
+        }
+
+        public async Task<Comment?> GetCommentAsync(string plantId, string commentId)
+        {
+            Plant? plant = await products.Find(p => p.Id == plantId)
+                .FirstOrDefaultAsync();
+
+            if(plant != null)
+            {
+                /* have comments */
+                if(plant.comments != null && plant.comments.Length > 0)
+                {
+                    /* get valid comment */
+                    Comment? comment = plant.comments
+                        .FirstOrDefault(e => e.Id.CompareTo(commentId) == 0 && e.isDeleted == null || (e.isDeleted != null && !e.isDeleted.Value));
+
+                    return comment;
+                }
+            }
+
+            /* plant not exists */
+            return null;
+        }
+
+        public async Task<int> RemoveCommentAsync(int accountId, string plantId, string commentId)
+        {
+            Plant? plant = await products.Find(p => p.Id == plantId)
+                .FirstOrDefaultAsync();
+
+            if(plant != null)
+            {
+                Comment? comment = plant.comments
+                    .FirstOrDefault(c => c.Id.CompareTo(commentId) == 0 && c.accountId == accountId);
+
+                if(comment != null)
+                {
+                    List<Comment> comments = new List<Comment>();
+                    
+                    for(int k = 0; k < plant.comments.Length; k++)
+                    {
+                        /* ignore selected comment */
+                        if (plant.comments[k].Id.CompareTo(commentId) == 0) comment.isDeleted = true;
+                        comments.Add(plant.comments[k]);
+                    }
+
+                    /* remove successful */
+                    plant.comments = comments.ToArray();
+                    await products.ReplaceOneAsync(e => e.Id.CompareTo(plantId) == 0, plant);
+                    return 1;
+                }
+
+                /* you have no rights */
+                return 0;
+            }
+
+            /* plant not exists s*/
+            return -1;
         }
 
         public async Task CreateProductAsync(Plant product) => await products.InsertOneAsync(product);

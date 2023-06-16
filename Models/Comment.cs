@@ -5,10 +5,7 @@ namespace BridgeWater.Models
 {
     public class Comment
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
         public string? Id { get; set; }
-
         public string? body { get; set; }
         public int? rating { get; set; }
         public DateTime createdAt { get; set; }
