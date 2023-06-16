@@ -6,6 +6,7 @@ let ReplyIndex = -1;
 
 $(document).ready(function () {
     $('#body').summernote();
+    $('#message').summernote();
     $('#description').summernote();
     $('#techInfo').summernote();
 });

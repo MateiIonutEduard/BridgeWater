@@ -1,5 +1,7 @@
-﻿using BridgeWater.Models;
+﻿using BridgeWater.Data;
+using BridgeWater.Models;
 using BridgeWater.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 #pragma warning disable
 
@@ -20,6 +22,74 @@ namespace BridgeWater.Controllers
         public IActionResult Details(string? id)
         {
             return View();
+        }
+
+        [HttpPost, Authorize]
+        public async Task<IActionResult> AddComment(CommentRatingModel commentRatingModel)
+        {
+            string? userId = HttpContext.User?.Claims?
+                .FirstOrDefault(u => u.Type == "id")?.Value;
+
+            if (userId != null)
+            {
+                // Creates new post with rating
+                int AccountId = Convert.ToInt32(userId);
+                commentRatingModel.accountId = AccountId;
+
+                await plantService.CreatePostCommentAsync(commentRatingModel);
+                return Redirect($"/Plant/Details/?id={commentRatingModel.plantId}");
+            }
+            else
+                return Redirect("/Account/");
+        }
+
+        [HttpPost, Authorize]
+        public async Task<IActionResult> SendPostReply(CommentRatingModel commentRatingModel)
+        {
+            string? userId = HttpContext.User?.Claims?
+                .FirstOrDefault(u => u.Type == "id")?.Value;
+
+            if (userId != null)
+            {
+                // Creates new post with rating
+                int AccountId = Convert.ToInt32(userId);
+                commentRatingModel.accountId = AccountId;
+
+                if (string.IsNullOrEmpty(commentRatingModel.message))
+                {
+                    string? key = HttpContext.Request.Form.Keys
+                        .FirstOrDefault(key => key.StartsWith("body"));
+
+                    if (!string.IsNullOrEmpty(key))
+                        commentRatingModel.message = HttpContext.Request.Form[key];
+                }
+
+                await plantService.CreateReplyPostAsync(commentRatingModel);
+                return Redirect($"/Plant/Details/?id={commentRatingModel.plantId}");
+            }
+            else
+                return Redirect("/Account/");
+        }
+
+        [HttpPost, Authorize]
+        public async Task<IActionResult> RemoveComment(string plantId, string commentId)
+        {
+            string? userId = HttpContext.User?.Claims?
+                .FirstOrDefault(u => u.Type == "id")?.Value;
+
+            if (!string.IsNullOrEmpty(userId))
+            {
+                int AccountId = Convert.ToInt32(userId);
+                Comment? comment = await plantService.GetCommentAsync(plantId, commentId);
+
+                /* comment exists, so remove it */
+                if(comment != null) 
+                    await plantService.RemoveCommentAsync(AccountId, plantId, commentId);
+
+                return Redirect($"/Plant/Details/?id={plantId}");
+            }
+            else
+                return Redirect("/Account/");
         }
 
         [HttpPost]
@@ -43,7 +113,7 @@ namespace BridgeWater.Controllers
 
         public  async Task<IActionResult> Show(string id, bool? face)
         {
-            Plant plant = await plantService.GetProductAsync(id);
+            PlantViewModel plant = await plantService.GetProductAsync(id);
 
             if (face != null)
             {

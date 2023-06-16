@@ -1,11 +1,35 @@
 ﻿@using BridgeWater.Services;
 @inject PlantService plantService;
+<style>
+    .note-editable {
+        color: white;
+        height: 200px;
+    }
 
+    .note-btn {
+        color: #b0c7e9;
+    }
+
+    .note-btn:hover {
+        color: #eab676 !important;
+    }
+</style>
 @{
     #pragma warning disable
     ViewData["ActionName"] = "/Plant/SearchPlants";
     string id = Context.Request.Query["id"];
-    Plant plant = await plantService.GetProductAsync(id);
+
+    string? userId = Context.User?.Claims?.FirstOrDefault(u => u.Type == "id")?.Value;
+    bool canShowRating = userId != null && id != null;
+    int t = 1;
+
+    if (canShowRating)
+    {
+        int uid = Convert.ToInt32(userId);
+        canShowRating = await plantService.HasPostRatingAsync(uid, id);
+    }
+
+    PlantViewModel plant = await plantService.GetProductAsync(id);
     if (plant != null) ViewData["Title"] = plant.name;
 }
 <br />
@@ -21,11 +45,145 @@
         <div class="row">
             <div class="col-2" id="plantPanel">
                 <br/><h5 class="text-light">@plant.category</h5>
-                <p class="text-light">@plant.name</p>
+                <div class="row">
+                      <div class="col-4">
+                            <p class="text-light">@plant.name</p>
+                      </div>
+                      <div class="col-6"></div>
+                      <div class="col-2">
+                        <span class="fa fa-star" style="color: orange; font-size: 18px; margin-left: 45%;">&nbsp;<small class="rate" style="color: white;">@plant.Stars.Value.ToString("0.##")</small></span>
+                      </div>
+                </div>
             </div><br/>
-            <div class="col-9 text-light">@Html.Raw(plant.description?.body)</div>
+            <div class="col-9 text-light" style="margin-left: 8%;">@Html.Raw(plant.description?.body)</div>
             <div class="col-1"></div>
         </div>
+        @if (canShowRating)
+        {
+            <div class="row" style="margin-left: 8%;">
+                <div class="col-1"></div>
+                <h2 class="posts">Note si aprecieri</h2>
+                <div class="col-7">
+                    <form action="/Plant/AddComment" method="post">
+                        <textarea id="message" name="message" class="form-control form-control-sm" style="height: 300px;" rows="10" cols="100"></textarea><br />
+                        <div class="row">
+                            <div class="col-4">
+                                <p class="rateus">Cum evaluezi acest produs?</p>
+                            </div>
+                            <div class="col-4">
+                                <div class="rating">
+                                    <a id="star1" onclick="RateUs(1)" onmouseover="HoverUs(1)" onmouseout="ClearStars()" class="fa fa-star rating-star" title="1 Stea"></a>
+                                    <a id="star2" onclick="RateUs(2)" onmouseover="HoverUs(2)" onmouseout="ClearStars()" class="fa fa-star rating-star" title="2 Stele"></a>
+                                    <a id="star3" onclick="RateUs(3)" onmouseover="HoverUs(3)" onmouseout="ClearStars()" class="fa fa-star rating-star" title="3 Stele"></a>
+                                    <a id="star4" onclick="RateUs(4)" onmouseover="HoverUs(4)" onmouseout="ClearStars()" class="fa fa-star rating-star" title="4 Stele"></a>
+                                    <a id="star5" onclick="RateUs(5)" onmouseover="HoverUs(5)" onmouseout="ClearStars()" class="fa fa-star rating-star" title="5 Stele"></a>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <input type="hidden" id="rating" name="rating" value="0" />
+                                <input type="hidden" id="plantId" name="plantId" value="@id" />
+                                <button id="sender" type="submit" class="btn btn-primary btn-sm sender">Trimite</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-3"></div>
+            </div>
+        }
+        @if (string.IsNullOrEmpty(userId))
+        {
+            <div class="row" style="margin-left: 8%;">
+                <div class="col-1"></div>
+                <div class="col-7">
+                    <div class="alert alert-warning" style="margin-top: 4%;" role="alert">
+                        Pentru a putea oferi recenzii, trebuie sa va <a href="/Account/" class="alert-link">conectati</a>.
+                    </div>
+                </div>
+                <div class="col-3"></div>
+            </div>
+        }
+        @if(plant.comments != null && plant.comments.Length > 0)
+        {
+            <div class="row" style="margin-left: 8%;">
+                <div class="col-1"></div>
+                <div class="col-7">
+                    <h2 class="posts">Toate aprecierile (<small style="color: #7a4444;">@plant.comments.Length</small>)</h2><br />
+                    @foreach (CommentViewModel comment in plant.comments)
+                    {
+                        string style = comment.depth > 0 ? $"margin-left: {comment.depth * 30}px;" : "";
+                        <div class="container" style="@style">
+                            <div class="post">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <img src="/Account/Show/?id=@comment.accountId" alt="@comment.username">&nbsp;
+                                        <p class="post-name">@comment.username</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="row">
+                                            <div class="col-4"></div>
+                                            <div class="col-2">
+                                                <p style="color: #404041; margin-left: 56%; font-weight: bold;">@comment.rating</p>
+                                            </div>
+                                            <div class="col-6">
+                                                @for (int k = 1; k <= comment.rating; k++)
+                                                {
+                                                    <span class="fa fa-star" style="color: orange;"></span>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style="margin-left: 13%;">@Html.Raw(comment.body)</div>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <span class="time-right">@comment.createdAt?.ToString("dd/MM/yyyy hh:mm tt")</span>
+                                    </div>
+                                    <div class="col-6">
+                                        @if (!string.IsNullOrEmpty(userId) && await plantService.CheckIfCanRepply(Convert.ToInt32(userId), plant.Id, comment.id))
+                                        {
+                                            <a onclick="ActivateReply(@t)" title="Comentati" style="margin-left: 90%;" class="btn btn-sm">
+                                                <span class="fa fa fa-reply" style="color: #5cb85c;"></span>
+                                            </a>
+                                        }
+                                        @if (!string.IsNullOrEmpty(userId) && userId.CompareTo(comment.accountId.ToString()) == 0)
+                                        {
+                                            <form action="/Plant/RemoveComment" method="post">
+                                                <input type="hidden" id="plantId" name="plantId" value="@plant.Id"/>
+                                                <input type="hidden" id="commentId" name="commentId" value="@comment.id" />
+                                                <button title="Stergeti" style="margin-left: 90%;" class="btn btn-sm" type="submit">
+                                                    <span class="fa fa-trash" style="color: #DC4C64;"></span>
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @if (!string.IsNullOrEmpty(userId) && await plantService.CheckIfCanRepply(Convert.ToInt32(userId), plant.Id, comment.id))
+                        {
+                            <form action="/Plant/SendPostReply" id="replyBox_@(t)" style="width: 92%; margin-left: @((comment.depth + 1) * 30)px; display: none;" method="post">
+                                <input type="hidden" id="replyTo" name="replyTo" value="@comment.id" />
+                                <input type="hidden" id="accountId" name="accountId" value="@userId" />
+                                <input type="hidden" id="plantId" name="plantId" value="@id" />
+                                <textarea class="form-control" id="body_@(t)" name="body_@(t)" style="height: 300px;" rows="10" cols="100"></textarea><br />
+                                <div class="row">
+                                    <div class="col-7"></div>
+                                    <div class="col-4" id="postGroupBox">
+                                        <a title="Anulare" onclick="CancelReply(@t)" onmouseover="OnCancelReply(@t)" onmouseout="OnMouseOutReply(@t)" style="margin-left: 10px;" class="btn btn-outline-danger btn-sm">
+                                            <span id="canceled_@(t++)" class="fa fa-remove" style="color:#d9534f;"></span>
+                                        </a>
+                                        <button title="Trimiteti" type="submit" class="btn btn-primary btn-sm" style="margin-left: 94%;">
+                                            <span class="fa fa-send" style="color: #f7f7f7;"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        }
+                    }
+                </div>
+                <div class="col-3"></div>
+            </div>
+        }
     </div>
 }
 else {
