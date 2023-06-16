@@ -394,14 +394,31 @@ namespace BridgeWater.Services
                 if(comment != null)
                 {
                     List<Comment> comments = new List<Comment>();
-                    
-                    for(int k = 0; k < plant.comments.Length; k++)
-                    {
-                        /* ignore selected comment */
-                        if (plant.comments[k].Id.CompareTo(commentId) == 0) comment.isDeleted = true;
-                        comments.Add(plant.comments[k]);
-                    }
+                    Queue<Comment> queue = new Queue<Comment>();
+                    queue.Enqueue(comment);
 
+                    if (plant.comments != null && plant.comments.Length > 0)
+                        comments.AddRange(plant.comments);
+
+                    /* remove child chat nodes recursively */
+                    while (queue.Count > 0)
+                    {
+                        Comment node = queue.Dequeue();
+                        node.isDeleted = true;
+
+                        for(int j = 0; j < comments.Count; j++)
+                        {
+                            if (node.Id.CompareTo(comments[j].Id) == 0)
+                                comments[j].isDeleted = true;
+                        }
+
+                        for(int k = 0; k < plant.comments.Length; k++)
+                        {
+                            if (plant.comments[k].replyTo != null && plant.comments[k].replyTo.CompareTo(node.Id) == 0)
+                                queue.Enqueue(plant.comments[k]);
+                        }
+                    }
+                    
                     /* remove successful */
                     plant.comments = comments.ToArray();
                     await products.ReplaceOneAsync(e => e.Id.CompareTo(plantId) == 0, plant);
