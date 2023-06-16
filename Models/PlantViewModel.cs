@@ -1,6 +1,6 @@
 ﻿namespace BridgeWater.Models
 {
-    public class CommentViewModel
+    public class PlantViewModel
     {
         public int? id { get; set; }
         public string? username { get; set; }
