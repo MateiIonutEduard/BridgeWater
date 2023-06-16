@@ -133,7 +133,23 @@
                                     </div>
                                 </div>
                                 <div style="margin-left: 13%;">@Html.Raw(comment.body)</div>
-                                <!-- Add unit 1 -->
+                                <div class="row">
+                                    <div class="col-6">
+                                        <span class="time-right">@comment.createdAt?.ToString("dd/MM/yyyy hh:mm tt")</span>
+                                    </div>
+                                    <div class="col-6">
+                                        <!-- add reply feature -->
+                                        @if (!string.IsNullOrEmpty(userId) && userId.CompareTo(comment.accountId.ToString()) == 0)
+                                        {
+                                            <form action="#" method="post">
+                                                <input type="hidden" id="pid" name="pid" value="@comment.id" />
+                                                <button title="Stergeti" style="margin-left: 90%;" class="btn btn-sm" type="submit">
+                                                    <span class="fa fa-trash" style="color: #DC4C64;"></span>
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <!-- add unit 2 -->
