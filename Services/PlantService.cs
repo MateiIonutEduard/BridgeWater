@@ -135,13 +135,23 @@ namespace BridgeWater.Services
             return -2;
         }
 
-        public async Task<Plant> GetProductAsync(string id)
+        public async Task<PlantViewModel> GetProductAsync(string id)
         {
             Plant? product = await products.Find(p => p.Id == id).FirstOrDefaultAsync();
 
             if(product != null)
             {
+                PlantViewModel plant = new PlantViewModel
+                {
+                    Id = product.Id,
+                    name = product.name,
+                    imageUrl = product.imageUrl,
+                    description = product.description,
+                    category = product.category
+                };
+
                 Comment[]? comments = product.comments;
+                List<CommentViewModel> commentList = new List<CommentViewModel>();
                 double rating = 0.0;
 
                 if(comments != null)
@@ -149,13 +159,32 @@ namespace BridgeWater.Services
                     double sum = comments.Where(c => c.rating != null)
                         .Sum(c => c.rating.Value);
 
+                    /* copy comments into layer objects */
+                    for(int i = 0; i < comments.Length; i++)
+                    {
+                        CommentViewModel comment = new CommentViewModel
+                        {
+                            id = comments[i].Id,
+                            body = comments[i].body,
+                            createdAt = comments[i].createdAt,
+                            rating = comments[i].rating,
+                            accountId = comments[i].accountId
+                        };
+
+                        /* add new one */
+                        commentList.Add(comment);
+                    }
+
                     /* compute rating for presentation plant */
                     rating = sum / comments.Count();
-                    product.Stars = rating;
+                    plant.comments = commentList.ToArray();
                 }
+
+                plant.Stars = rating;
+                return plant;
             }
 
-            return product;
+            return null;
         }
 
         public async Task CreateProductAsync(Plant product) => await products.InsertOneAsync(product);

@@ -63,7 +63,7 @@ namespace BridgeWater.Controllers
 
         public  async Task<IActionResult> Show(string id, bool? face)
         {
-            Plant plant = await plantService.GetProductAsync(id);
+            PlantViewModel plant = await plantService.GetProductAsync(id);
 
             if (face != null)
             {
