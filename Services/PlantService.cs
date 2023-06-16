@@ -137,7 +137,24 @@ namespace BridgeWater.Services
 
         public async Task<Plant> GetProductAsync(string id)
         {
-            Plant product = await products.Find(p => p.Id == id).FirstOrDefaultAsync();
+            Plant? product = await products.Find(p => p.Id == id).FirstOrDefaultAsync();
+
+            if(product != null)
+            {
+                Comment[]? comments = product.comments;
+                double rating = 0.0;
+
+                if(comments != null)
+                {
+                    double sum = comments.Where(c => c.rating != null)
+                        .Sum(c => c.rating.Value);
+
+                    /* compute rating for presentation plant */
+                    rating = sum / comments.Count();
+                    product.Stars = rating;
+                }
+            }
+
             return product;
         }
 
