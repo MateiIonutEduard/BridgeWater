@@ -161,10 +161,10 @@
                         </div>
                         @if (!string.IsNullOrEmpty(userId) && await plantService.CheckIfCanRepply(Convert.ToInt32(userId), plant.Id, comment.id))
                         {
-                            <form action="#" id="replyBox_@(t)" style="width: 92%; margin-left: @((comment.depth + 1) * 30)px; display: none;" method="post">
-                                <input type="hidden" id="ReplyTo" name="ReplyTo" value="@comment.id" />
-                                <input type="hidden" id="FromMe" name="FromMe" value="@userId" />
-                                <input type="hidden" id="productId" name="productId" value="@id" />
+                            <form action="/Plant/SendPostReply" id="replyBox_@(t)" style="width: 92%; margin-left: @((comment.depth + 1) * 30)px; display: none;" method="post">
+                                <input type="hidden" id="replyTo" name="replyTo" value="@comment.id" />
+                                <input type="hidden" id="accountId" name="accountId" value="@userId" />
+                                <input type="hidden" id="plantId" name="plantId" value="@id" />
                                 <textarea class="form-control" id="body_@(t)" name="body_@(t)" style="height: 300px;" rows="10" cols="100"></textarea><br />
                                 <div class="row">
                                     <div class="col-7"></div>

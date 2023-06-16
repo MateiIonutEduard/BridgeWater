@@ -44,6 +44,34 @@ namespace BridgeWater.Controllers
         }
 
         [HttpPost, Authorize]
+        public async Task<IActionResult> SendPostReply(CommentRatingModel commentRatingModel)
+        {
+            string? userId = HttpContext.User?.Claims?
+                .FirstOrDefault(u => u.Type == "id")?.Value;
+
+            if (userId != null)
+            {
+                // Creates new post with rating
+                int AccountId = Convert.ToInt32(userId);
+                commentRatingModel.accountId = AccountId;
+
+                if (string.IsNullOrEmpty(commentRatingModel.message))
+                {
+                    string? key = HttpContext.Request.Form.Keys
+                        .FirstOrDefault(key => key.StartsWith("body"));
+
+                    if (!string.IsNullOrEmpty(key))
+                        commentRatingModel.message = HttpContext.Request.Form[key];
+                }
+
+                //await plantService.CreateReplyPostAsync(commentRatingModel);
+                return Redirect($"/Home/About/?id={commentRatingModel.plantId}");
+            }
+            else
+                return Redirect("/Account/");
+        }
+
+        [HttpPost, Authorize]
         public async Task<IActionResult> RemoveComment(string plantId, string commentId)
         {
             string? userId = HttpContext.User?.Claims?

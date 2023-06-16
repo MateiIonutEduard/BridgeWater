@@ -5,6 +5,7 @@
         public int? accountId { get; set; }
         public string? message { get; set; }
         public int? rating { get; set; }
+        public string? replyTo { get; set; }
         public string? plantId { get; set; }
     }
 }
