@@ -124,7 +124,23 @@ namespace BridgeWater.Services
 
             if (post != null)
             {
-                post.IsDeleted = true;
+                List<Post> posts = await bridgeContext.Post.ToListAsync();
+                Queue<Post> queue = new Queue<Post>();
+                queue.Enqueue(post);
+
+                /* recursively, mark post comments as deleted */
+                while(queue.Count > 0)
+                {
+                    Post node = queue.Dequeue();
+                    node.IsDeleted = true;
+
+                    for(int k = 0; k < posts.Count; k++)
+                    {
+                        if (posts[k].ReplyTo != null && posts[k].ReplyTo == node.Id)
+                            queue.Enqueue(posts[k]);
+                    }
+                }
+
                 await bridgeContext.SaveChangesAsync();
                 return true;
             }

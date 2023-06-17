@@ -159,33 +159,33 @@ namespace BridgeWater.Services
                         v[index[i]] = true;
                         queue.Enqueue(posts[index[i]]);
                     }
-                }
 
-                /* traverses the tree using breadth-first search */
-                while (queue.Count > 0)
-                {
-                    PostRatingViewModel parent = queue.Dequeue();
-                    bool exists = false;
-
-                    for(int i = 0; i < list.Count; i++)
+                    /* traverses the tree using breadth-first search */
+                    while (queue.Count > 0)
                     {
-                        if (list[i].id == parent.id)
+                        PostRatingViewModel parent = queue.Dequeue();
+                        bool exists = false;
+
+                        for (int j = 0; j < list.Count; j++)
                         {
-                            exists = true;
-                            break;
+                            if (list[j].id == parent.id)
+                            {
+                                exists = true;
+                                break;
+                            }
                         }
-                    }
 
-                    if(!exists) list.Add(parent);
+                        if (!exists) list.Add(parent);
 
-                    for(int j = 0; j < posts.Length; j++)
-                    {
-                        if(parent.id == posts[index[j]].depth && !v[index[j]] && posts[index[j]].depth != null)
+                        for (int j = 0; j < posts.Length; j++)
                         {
-                            v[index[j]] = true;
-                            list.Add(posts[index[j]]);
-                            posts[index[j]].depth = parent.depth + 1;
-                            queue.Enqueue(posts[index[j]]);
+                            if (parent.id == posts[index[j]].depth && !v[index[j]] && posts[index[j]].depth != null)
+                            {
+                                v[index[j]] = true;
+                                list.Add(posts[index[j]]);
+                                posts[index[j]].depth = parent.depth + 1;
+                                queue.Enqueue(posts[index[j]]);
+                            }
                         }
                     }
                 }
