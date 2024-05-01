@@ -420,6 +420,13 @@ input[type=number]::-webkit-outer-spin-button {
     font-size: 18px;
 }
 
+#dismissible {
+    margin-left: 13%;
+    width: 85%;
+    height: 56px;
+    background-color: #b9d0f7;
+}
+
 #postGroupBox {
     display: flex;
     flex-direction: row-reverse;

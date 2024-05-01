@@ -21,6 +21,7 @@
     list.Add(firstCategory);
     list.AddRange(categories);
     string IsCanceled = string.Empty;
+    bool IsFilterApplied = false;
 
     int previousPage = 1, totalPages = 1;
     int nextPage = 1, mainPage = 1;
@@ -40,13 +41,21 @@
         {
             if (filter.IsCanceled != null && filter.IsCanceled.Value)
                 IsCanceled = "&IsCanceled=true";
+
+            IsFilterApplied = true;
         }
+
         /* If IsCanceled appears in query string, this enable implicit filtering. */
         if (!string.IsNullOrEmpty(Context.Request.Query["IsCanceled"]))
         {
             filter = new OrderSearchFilter();
             filter.IsCanceled = Convert.ToBoolean(Context.Request.Query["IsCanceled"]);
-            if (filter.IsCanceled != null && filter.IsCanceled.Value) IsCanceled = "&IsCanceled=true";
+
+            if (filter.IsCanceled != null && filter.IsCanceled.Value) 
+            {
+                IsCanceled = "&IsCanceled=true";
+                IsFilterApplied = true;
+            }
         }
 
         var productOrderViewList = await orderService.GetProductOrdersAsync(filter, userId, page);
@@ -105,6 +114,12 @@
                         </div>
                     </div>
                 </form><br/>
+                @if (IsFilterApplied)
+                {
+                    <div class="alert" id="dismissible">
+                        <a href="/Order/" title="Clear filters" class="text-danger"><i class="fa fa-times" id="deny" aria-hidden="true"></i></a> Clear all filters for product orders.
+                    </div>
+                }
                 <table class="table table-light table-hover" id="products" style="margin-left: 10%; width: 90%;">
                     <thead>
                         <tr>
