@@ -65,7 +65,7 @@ namespace BridgeWater.Controllers
         }
 
         [HttpPost, Authorize]
-        public async Task<IActionResult> Cancel(int orderId)
+        public async Task<IActionResult> Cancel([FromQuery]int orderId)
         {
             string? userId = HttpContext.User?.Claims?
                 .FirstOrDefault(u => u.Type == "id")?.Value;

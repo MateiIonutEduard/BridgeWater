@@ -20,6 +20,8 @@
 
     list.Add(firstCategory);
     list.AddRange(categories);
+    string IsCanceled = string.Empty;
+    bool IsFilterApplied = false;
 
     int previousPage = 1, totalPages = 1;
     int nextPage = 1, mainPage = 1;
@@ -34,6 +36,26 @@
         {
             filter = new OrderSearchFilter();
             filter.IsCanceled = false;
+        }
+        else
+        {
+            if (filter.IsCanceled != null && filter.IsCanceled.Value)
+                IsCanceled = "&IsCanceled=true";
+
+            IsFilterApplied = true;
+        }
+
+        /* If IsCanceled appears in query string, this enable implicit filtering. */
+        if (!string.IsNullOrEmpty(Context.Request.Query["IsCanceled"]))
+        {
+            filter = new OrderSearchFilter();
+            filter.IsCanceled = Convert.ToBoolean(Context.Request.Query["IsCanceled"]);
+
+            if (filter.IsCanceled != null && filter.IsCanceled.Value) 
+            {
+                IsCanceled = "&IsCanceled=true";
+                IsFilterApplied = true;
+            }
         }
 
         var productOrderViewList = await orderService.GetProductOrdersAsync(filter, userId, page);
@@ -92,6 +114,12 @@
                         </div>
                     </div>
                 </form><br/>
+                @if (IsFilterApplied)
+                {
+                    <div class="alert" id="dismissible">
+                        <a href="/Order/" title="Clear filters" class="text-danger"><i class="fa fa-times" id="deny" aria-hidden="true"></i></a> Clear all filters for product orders.
+                    </div>
+                }
                 <table class="table table-light table-hover" id="products" style="margin-left: 10%; width: 90%;">
                     <thead>
                         <tr>
@@ -136,8 +164,8 @@
                                             <form action="/Order/UpdateOrder" method="post">
                                                 <input type="hidden" id="ProductOrderId" name="ProductOrderId" value="@orders[k].ProductId"/>
                                                 <input type="hidden" id="Stock" name="Stock" value="@orders[k].Stock" />
-                                                <button id="changeOrder" name="changeOrder" style="visibility: hidden;" class="btn btn-sm" type="submit" title="Modificati Comanda">
-                                                    <i class="fas fa-sync" style="color: #784949;" aria-hidden="true"></i>
+                                                <button id="changeOrder_@(k + 1)" name="changeOrder_@(k + 1)" style="visibility: hidden;" class="btn btn-sm" type="submit" title="Modificati Comanda">
+                                                    <i class="fa fa-refresh" style="color: #784949;" aria-hidden="true"></i>
                                                 </button>
                                             </form>
                                         </div>
@@ -149,10 +177,10 @@
                                         <div class="col-2">
                                             @if (!string.IsNullOrEmpty(uid))
                                             {
-                                                <button type="button" class="btn btn-sm" title="Elimina Comanda" data-bs-toggle="modal" data-bs-target="#removeOrderModal">
+                                                <button type="button" class="btn btn-sm" title="Elimina Comanda" data-bs-toggle="modal" data-bs-target="#removeOrderModal_@(k + 1)">
                                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                                 </button>
-                                                <div class="modal fade" id="removeOrderModal" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
+                                                <div class="modal fade" id="removeOrderModal_@(k + 1)" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog modal-dialog-centered">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
@@ -166,8 +194,7 @@
                                                                 <button type="button" class="btn btn-sm btn-success" data-bs-dismiss="modal">
                                                                     <i class="fa fa-times" aria-hidden="true"></i>&nbsp;Inchideti
                                                                 </button>
-                                                                <form action="/Order/Cancel" method="post">
-                                                                    <input type="hidden" id="orderId" name="orderId" value="@orders[k].Id" />
+                                                                <form action="/Order/Cancel/?orderId=@orders[k].Id" method="post">
                                                                     <button class="btn btn-sm btn-danger" type="submit" title="Elimina Comanda">
                                                                         <i class="fa fa-trash" style="color: white;" aria-hidden="true"></i>&nbsp;Anulati
                                                                     </button>
@@ -196,19 +223,19 @@
                             <ul class="pagination">
                                 @if (mainPage > 1)
                                 {
-                                    <li class="page-item"><a class="page-link" href="/Order/?page=@previousPage">&lt;&lt;</a></li>
-                                    <li class="page-item"><a class="page-link" href="/Order/?page=@previousPage">@previousPage</a></li>
+                                        <li class="page-item"><a class="page-link" href="/Order/?page=@previousPage@IsCanceled">&lt;&lt;</a></li>
+                                        <li class="page-item"><a class="page-link" href="/Order/?page=@previousPage@IsCanceled">@previousPage</a></li>
                                 }
                                 <li class="page-item active"><a class="page-link" style="color: #ffa571 !important;">@mainPage</a></li>
 
                                 @if (nextPage <= totalPages && mainPage < totalPages)
                                 {
-                                    <li class="page-item"><a class="page-link" href="/Order/?page=@nextPage">@nextPage</a></li>
+                                        <li class="page-item"><a class="page-link" href="/Order/?page=@nextPage@IsCanceled">@nextPage</a></li>
                                 }
 
                                 @if (nextPage <= totalPages && mainPage < totalPages)
                                 {
-                                    <li class="page-item"><a class="page-link" href="/Order/?page=@nextPage">&gt;&gt;</a></li>
+                                        <li class="page-item"><a class="page-link" href="/Order/?page=@nextPage@IsCanceled">&gt;&gt;</a></li>
                                 }
                             </ul>
                         </nav>

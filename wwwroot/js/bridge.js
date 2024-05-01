@@ -69,7 +69,7 @@ function UpdatePrice() {
 
     // display update button if quantity was changed
     if (quantity < MaxQuantity) {
-        $(childs[5].querySelector('#changeOrder')).css('visibility', 'visible');
+        $(childs[5].querySelector(`#changeOrder_${childIndex}`)).css('visibility', 'visible');
         $(childs[5].querySelector('#Stock')).val(parseInt(quantity));
     }
     else {
