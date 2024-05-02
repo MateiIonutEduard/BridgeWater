@@ -129,7 +129,7 @@
                             <th style="background-color: #506983; color: white;">Pretul</th>
                             <th style="background-color: #506983; color: white;">Anulata</th>
                             <th style="background-color: #506983; color: white;">Platita</th>
-                            <th style="background-color: #506983; color: white;">Actiuni</th>
+                            <th style="background-color: #506983; color: white; text-align: center;">Acțiuni</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -177,7 +177,7 @@
                                 </td>
                                 <td id="productField">
                                     <div class="row">
-                                        <div class="col-3"></div>
+                                        <div class="col-2"></div>
                                         <div class="col-2">
                                             <form action="/Order/UpdateOrder" method="post">
                                                 <input type="hidden" id="ProductOrderId" name="ProductOrderId" value="@orders[k].ProductId"/>
@@ -192,17 +192,25 @@
                                                 <i class="fa fa-eye" aria-hidden="true"></i>
                                             </a>
                                         </div>
+                                        @if(!orders[k].IsPayed)
+                                        {
+                                            <div class="col-2">
+                                                <a class="btn btn-sm" href="#" title="Plătește">
+                                                    <i class="fa fa-credit-card text-success" aria-hidden="true"></i>
+                                                </a>
+                                            </div>
+                                        }
                                         <div class="col-2">
                                             @if (!string.IsNullOrEmpty(uid) && !orders[k].IsPayed)
                                             {
-                                                <button type="button" class="btn btn-sm" title="Elimina Comanda" data-bs-toggle="modal" data-bs-target="#removeOrderModal_@(k + 1)">
+                                                <button type="button" class="btn btn-sm" title="Elimină Comanda" data-bs-toggle="modal" data-bs-target="#removeOrderModal_@(k + 1)">
                                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                                 </button>
                                                 <div class="modal fade" id="removeOrderModal_@(k + 1)" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog modal-dialog-centered">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title" id="orderModalLabel">Elimina Comanda</h5>
+                                                                <h5 class="modal-title" id="orderModalLabel">Elimină Comanda</h5>
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
                                                             <div class="modal-body">
@@ -213,7 +221,7 @@
                                                                     <i class="fa fa-times" aria-hidden="true"></i>&nbsp;Inchideti
                                                                 </button>
                                                                 <form action="/Order/Cancel/?orderId=@orders[k].Id" method="post">
-                                                                    <button class="btn btn-sm btn-danger" type="submit" title="Elimina Comanda">
+                                                                    <button class="btn btn-sm btn-danger" type="submit" title="Elimină Comanda">
                                                                         <i class="fa fa-trash" style="color: white;" aria-hidden="true"></i>&nbsp;Anulati
                                                                     </button>
                                                                 </form>
@@ -223,7 +231,7 @@
                                                 </div>
                                             }
                                         </div>
-                                        <div class="col-3"></div>
+                                        <div class="col-2"></div>
                                     </div>
                                 </td>
                             </tr>
