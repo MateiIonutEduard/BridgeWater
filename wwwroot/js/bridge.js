@@ -12,6 +12,15 @@ $(function () {
     $('#techInfo').summernote();
 });
 
+function PayOrder(orderId) {
+    const win = window.open(`/Order/Payment/?orderId=${orderId}`, '_blank', 'location=yes,height=520,width=520,scrollbars=yes,status=yes');
+
+    /* captures the window close event */
+    win.addEventListener('beforeunload', e => {
+        setTimeout(location.reload(true), 1000);
+    });
+}
+
 function CancelReply(postId) {
     ReplyIndex = -1;
     $(`#replyBox_${postId}`).css('display', 'none');

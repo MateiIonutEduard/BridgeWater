@@ -195,7 +195,7 @@
                                         @if(!orders[k].IsPayed)
                                         {
                                             <div class="col-2">
-                                                <a class="btn btn-sm" href="#" title="Plătește">
+                                                <a class="btn btn-sm" onclick="PayOrder('@orders[k].Id')" title="Plătește">
                                                     <i class="fa fa-credit-card text-success" aria-hidden="true"></i>
                                                 </a>
                                             </div>

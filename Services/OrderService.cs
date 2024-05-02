@@ -12,6 +12,48 @@ namespace BridgeWater.Services
         public OrderService(BridgeContext bridgeContext)
         { this.bridgeContext = bridgeContext; }
 
+        public async Task<OrderViewModel?> GetOrderAsync(int orderId)
+        {
+            Order? order = await bridgeContext.Order.Where(o => o.Id == orderId)
+                .FirstOrDefaultAsync();
+
+            /* If product order does not exists. */
+            if (order == null) return null;
+            var product = await bridgeContext.Product.Where(p => p.Id == order.ProductOrderId)
+                .FirstOrDefaultAsync();
+
+            /* found it! */
+            var obj = new OrderViewModel
+            {
+                Id = order.Id,
+                ProductId = product.Id,
+                ProductName = product.Name,
+                IsCanceled = (order.IsCanceled != null ? order.IsCanceled.Value : false),
+                IsPayed = (order.IsPayed != null ? order.IsPayed.Value : false),
+                Price = product.Price,
+                Stock = order.Stock
+            };
+
+            return obj;
+        }
+
+        public async Task<bool> ModifyOrderAsync(int orderId, bool IsPayed)
+        {
+            Order? order = await bridgeContext.Order
+                .FirstOrDefaultAsync(e => e.Id == orderId && (e.IsCanceled != null ? !e.IsCanceled.Value : false));
+
+            // check if order exists already, thus is updated
+            if (order != null)
+            {
+                order.IsPayed = IsPayed;
+                await bridgeContext.SaveChangesAsync();
+                return true;
+            }
+
+            // cannot update
+            return false;
+        }
+
         public async Task<bool> ModifyOrderAsync(OrderModel orderModel)
         {
             Order? order = await bridgeContext.Order
