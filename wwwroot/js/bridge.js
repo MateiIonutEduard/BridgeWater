@@ -4,7 +4,8 @@ var MaxQuantity = 0;
 var PricePerUnit = 0;
 let ReplyIndex = -1;
 
-$(document).ready(function () {
+/* Old way function call is deprecated since jQuery 1.8 and completely removed in jQuery 3.0. */
+$(function () {
     $('#body').summernote();
     $('#message').summernote();
     $('#description').summernote();
