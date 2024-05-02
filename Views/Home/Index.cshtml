@@ -92,36 +92,36 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (ProductViewModel product in products)
+                        @for(int k = 0; k < products.Length; k++)
                         {
                             <tr>
                                 <td id="productField">
-                                    <a href="/Home/About/?id=@product.Id">
-                                        <img src="/Home/Show/?id=@product.Id&logo=true" alt="@product.Name" width="64" height="64" />
+                                    <a href="/Home/About/?id=@products[k].Id">
+                                        <img src="/Home/Show/?id=@products[k].Id&logo=true" alt="@products[k].Name" width="64" height="64" />
                                     </a>
                                 </td>
                                 <td id="productField">
-                                    <small>@product.Name</small>
+                                    <small>@products[k].Name</small>
                                 </td>
-                                <td id="productField"><span class="fa fa-star" style="color: orange;"><small style="color: #404041;">&nbsp;@product.Stars.ToString("0.##")</small></span></td>
+                                <td id="productField"><span class="fa fa-star" style="color: orange;"><small style="color: #404041;">&nbsp;@products[k].Stars.ToString("0.##")</small></span></td>
                                 <td id="productField">
-                                    <small style="color: #66BB6A; font-weight: bold;">@((Math.Truncate(product.Price * 100) / 100).ToString("#####.##"))</small>
+                                    <small style="color: #66BB6A; font-weight: bold;">@((Math.Truncate(products[k].Price * 100) / 100).ToString("#####.##"))</small>
                                 </td>
                                 <td id="productField">
                                 <div class="row">
                                     <div class="col-4"></div>
                                     <div class="col-2">
-                                            <a class="btn btn-sm" href="/Home/About/?id=@product.Id" title="Vizualizare">
+                                            <a class="btn btn-sm" href="/Home/About/?id=@products[k].Id" title="Vizualizare">
                                                 <i class="fa fa-eye" aria-hidden="true"></i>
                                             </a>
                                     </div>
                                     <div class="col-2">
                                             @if (CanRemove)
                                             {
-                                                <button type="button" class="btn btn-sm" title="Elimina Produsul" data-bs-toggle="modal" data-bs-target="#removeProductModal">
+                                                <button type="button" class="btn btn-sm" title="Elimina Produsul" data-bs-toggle="modal" data-bs-target="#removeProductModal_@(k + 1)">
                                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                                 </button>
-                                                <div class="modal fade" id="removeProductModal" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
+                                                <div class="modal fade" id="removeProductModal_@(k + 1)" tabindex="-1" aria-labelledby="productModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog modal-dialog-centered">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
@@ -135,8 +135,7 @@
                                                                 <button type="button" class="btn btn-sm btn-success" data-bs-dismiss="modal">
                                                                     <i class="fa fa-times" aria-hidden="true"></i>&nbsp;Anulare
                                                                 </button>
-                                                                <form action="/Home/RemoveProduct" method="post">
-                                                                    <input type="hidden" id="productId" name="productId" value="@product.Id" />
+                                                                <form action="/Home/RemoveProduct/?productId=@products[k].Id" method="post">
                                                                     <button type="submit" class="btn btn-sm btn-danger" title="Elimina Produsul">
                                                                         <i class="fa fa-trash" style="color: white;" aria-hidden="true"></i>&nbsp;Elimina
                                                                     </button>

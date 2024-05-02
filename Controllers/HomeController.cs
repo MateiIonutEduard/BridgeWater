@@ -131,7 +131,7 @@ namespace BridgeWater.Controllers
         }
 
         [HttpPost, Authorize]
-        public async Task<IActionResult> RemoveProduct(int productId)
+        public async Task<IActionResult> RemoveProduct([FromQuery]int productId)
         {
             string? userId = HttpContext.User?.Claims?
                 .FirstOrDefault(u => u.Type == "id")?.Value;
