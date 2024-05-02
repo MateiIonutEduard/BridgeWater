@@ -46,6 +46,7 @@ namespace BridgeWater.Services
                         ProductId = p.Id,
                         ProductName = p.Name,
                         IsCanceled = (o.IsCanceled != null ? o.IsCanceled.Value : false),
+                        IsPayed = (o.IsPayed != null ? o.IsPayed.Value : false),
                         Price = p.Price,
                         Stock = o.Stock
                     }
