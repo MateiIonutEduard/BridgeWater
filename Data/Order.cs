@@ -12,5 +12,6 @@ namespace BridgeWater.Data
         public Product Product { get; set; }
         public int Stock { get; set; }
         public bool? IsCanceled { get; set; }
+        public bool? IsPayed { get; set; }
     }
 }

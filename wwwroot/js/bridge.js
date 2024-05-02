@@ -4,12 +4,22 @@ var MaxQuantity = 0;
 var PricePerUnit = 0;
 let ReplyIndex = -1;
 
-$(document).ready(function () {
+/* Old way function call is deprecated since jQuery 1.8 and completely removed in jQuery 3.0. */
+$(function () {
     $('#body').summernote();
     $('#message').summernote();
     $('#description').summernote();
     $('#techInfo').summernote();
 });
+
+function PayOrder(orderId) {
+    const win = window.open(`/Order/Payment/?orderId=${orderId}`, '_blank', 'location=yes,height=520,width=520,scrollbars=yes,status=yes');
+
+    /* captures the window close event */
+    win.addEventListener('beforeunload', e => {
+        setTimeout(location.reload(true), 1000);
+    });
+}
 
 function CancelReply(postId) {
     ReplyIndex = -1;
@@ -69,12 +79,12 @@ function UpdatePrice() {
 
     // display update button if quantity was changed
     if (quantity < MaxQuantity) {
-        $(childs[5].querySelector(`#changeOrder_${childIndex}`)).css('visibility', 'visible');
-        $(childs[5].querySelector('#Stock')).val(parseInt(quantity));
+        $(childs[6].querySelector(`#changeOrder_${childIndex}`)).css('visibility', 'visible');
+        $(childs[6].querySelector('#Stock')).val(parseInt(quantity));
     }
     else {
         // otherwise, revert initial control
-        $(childs[5].querySelector('#changeOrder')).css('visibility', 'hidden');
+        $(childs[6].querySelector(`#changeOrder_${childIndex}`)).css('visibility', 'hidden');
         $(`#quant_${childIndex}`).remove();
 
         $(parentControl.querySelector("#quantity")).css('display', 'inline');
