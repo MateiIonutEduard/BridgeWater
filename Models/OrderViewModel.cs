@@ -7,6 +7,7 @@
         public string? ProductName { get; set; }
         public double Price { get; set; }
         public bool IsCanceled { get; set; }
+        public bool IsPayed { get; set; }
         public int Stock { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using BridgeWater.Models;
+﻿using Braintree;
+using BridgeWater.Models;
 using BridgeWater.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -8,9 +9,14 @@ namespace BridgeWater.Controllers
     public class OrderController : Controller
     {
         readonly IOrderService orderService;
+        readonly IBraintreeService braintreeService;
 
-        public OrderController(IOrderService orderService)
-        { this.orderService = orderService; }
+        public OrderController(IOrderService orderService, IBraintreeService braintreeService)
+        { 
+            this.orderService = orderService;
+            this.braintreeService = braintreeService;
+        }
+
         public IActionResult Index()
         {
             return View();
@@ -62,6 +68,35 @@ namespace BridgeWater.Controllers
             }
             else
                 return Redirect("/Account/");
+        }
+
+        public IActionResult Payment()
+        {
+            var gateway = braintreeService.GetGateway();
+            var clientToken = gateway.ClientToken.Generate();
+            ViewBag.ClientToken = clientToken;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Pay(int orderId)
+        {
+            var gateway = braintreeService.GetGateway();
+            var request = new TransactionRequest
+            {
+                Amount = Convert.ToDecimal("250"),
+                PaymentMethodNonce = HttpContext.Request.Form["nonce"],
+                Options = new TransactionOptionsRequest
+                {
+                    SubmitForSettlement = true
+                }
+            };
+
+            Result<Transaction> result = gateway.Transaction.Sale(request);
+            bool isPayed = result.IsSuccess();
+
+            await orderService.ModifyOrderAsync(orderId, isPayed);
+            return Redirect($"/Order/Payment/?orderId={orderId}&isPayed={isPayed}");
         }
 
         [HttpPost, Authorize]

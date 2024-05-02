@@ -21,6 +21,9 @@ namespace BridgeWater
             // now, need MongoDB database config 
             builder.Services.Configure<BridgeWaterSettings>(builder.Configuration.GetSection("BridgeWaterDB"));
 
+            // activate payment gateway feature
+            builder.Services.AddTransient<IBraintreeService, BraintreeService>();
+
             // get appSettings section
             builder.Services.Configure<AppSettings>(
                     builder.Configuration.GetSection(nameof(AppSettings)));

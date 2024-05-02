@@ -128,7 +128,8 @@
                             <th style="background-color: #506983; color: white;">Cantitate</th>
                             <th style="background-color: #506983; color: white;">Pretul</th>
                             <th style="background-color: #506983; color: white;">Anulata</th>
-                            <th style="background-color: #506983; color: white;">Actiuni</th>
+                            <th style="background-color: #506983; color: white;">Platita</th>
+                            <th style="background-color: #506983; color: white; text-align: center;">Acțiuni</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -143,23 +144,40 @@
                                 <td id="productField">
                                     <small>@orders[k].ProductName</small>
                                 </td>
-                                <td id="productField"><small id="quantity" onmouseover="OverQuantity(@(k + 1), @orders[k].IsCanceled.ToString().ToLower())" onmouseout="LeaveQuantity(@(k + 1), @orders[k].IsCanceled.ToString().ToLower())" onclick="ModifyQuantity(@orders[k].IsCanceled.ToString().ToLower(), @(k + 1), @orders[k].Stock, @orders[k].Price)" title="Modificati Cantitatea">&nbsp;@orders[k].Stock</small></td>
+                                @if(!orders[k].IsPayed)
+                                {
+                                    <td id="productField"><small id="quantity" onmouseover="OverQuantity(@(k + 1), @orders[k].IsCanceled.ToString().ToLower())" onmouseout="LeaveQuantity(@(k + 1), @orders[k].IsCanceled.ToString().ToLower())" onclick="ModifyQuantity(@orders[k].IsCanceled.ToString().ToLower(), @(k + 1), @orders[k].Stock, @orders[k].Price)" title="Modificati Cantitatea">&nbsp;@orders[k].Stock</small></td>
+                                }
+                                else
+                                {
+                                    <td id="productField"><small id="quantity" title="Cantitatea nu poate fi modificată.">&nbsp;@orders[k].Stock</small></td>
+                                }
                                 <td id="productField">
                                     <small id="totalPrice" style="color: #66BB6A; font-weight: bold;">@((Math.Truncate((orders[k].Price * orders[k].Stock) * 100) / 100).ToString("#####.##"))&nbsp;Lei</small>
                                 </td>
                                 <td id="productField">
                                     @if(orders[k].IsCanceled)
                                     {
-                                        <span class="fa fa-check text-success" style="margin-left: 35%;"></span>
+                                        <span class="fa fa-check text-success" title="Comanda anulată" style="margin-left: 35%;"></span>
                                     }
                                     else
                                     {
-                                        <span class="fa fa-times text-danger" style="margin-left: 35%;"></span>
+                                        <span class="fa fa-times text-danger" title="Comanda activă" style="margin-left: 35%;"></span>
+                                    }
+                                </td>
+                                <td id="productField">
+                                    @if(orders[k].IsPayed)
+                                    {
+                                        <span class="fa fa-check text-success" title="Plată efectuată" style="margin-left: 35%;"></span>
+                                    }
+                                    else
+                                    {
+                                        <span class="fa fa-times text-danger" title="Plata este în așteptare" style="margin-left: 35%;"></span>
                                     }
                                 </td>
                                 <td id="productField">
                                     <div class="row">
-                                        <div class="col-3"></div>
+                                        <div class="col-2"></div>
                                         <div class="col-2">
                                             <form action="/Order/UpdateOrder" method="post">
                                                 <input type="hidden" id="ProductOrderId" name="ProductOrderId" value="@orders[k].ProductId"/>
@@ -174,17 +192,25 @@
                                                 <i class="fa fa-eye" aria-hidden="true"></i>
                                             </a>
                                         </div>
+                                        @if(!orders[k].IsPayed)
+                                        {
+                                            <div class="col-2">
+                                                <a class="btn btn-sm" onclick="PayOrder('@orders[k].Id')" title="Plătește">
+                                                    <i class="fa fa-credit-card text-success" aria-hidden="true"></i>
+                                                </a>
+                                            </div>
+                                        }
                                         <div class="col-2">
-                                            @if (!string.IsNullOrEmpty(uid))
+                                            @if (!string.IsNullOrEmpty(uid) && !orders[k].IsPayed)
                                             {
-                                                <button type="button" class="btn btn-sm" title="Elimina Comanda" data-bs-toggle="modal" data-bs-target="#removeOrderModal_@(k + 1)">
+                                                <button type="button" class="btn btn-sm" title="Elimină Comanda" data-bs-toggle="modal" data-bs-target="#removeOrderModal_@(k + 1)">
                                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                                 </button>
                                                 <div class="modal fade" id="removeOrderModal_@(k + 1)" tabindex="-1" aria-labelledby="orderModalLabel" aria-hidden="true">
                                                     <div class="modal-dialog modal-dialog-centered">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
-                                                                <h5 class="modal-title" id="orderModalLabel">Elimina Comanda</h5>
+                                                                <h5 class="modal-title" id="orderModalLabel">Elimină Comanda</h5>
                                                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                             </div>
                                                             <div class="modal-body">
@@ -195,7 +221,7 @@
                                                                     <i class="fa fa-times" aria-hidden="true"></i>&nbsp;Inchideti
                                                                 </button>
                                                                 <form action="/Order/Cancel/?orderId=@orders[k].Id" method="post">
-                                                                    <button class="btn btn-sm btn-danger" type="submit" title="Elimina Comanda">
+                                                                    <button class="btn btn-sm btn-danger" type="submit" title="Elimină Comanda">
                                                                         <i class="fa fa-trash" style="color: white;" aria-hidden="true"></i>&nbsp;Anulati
                                                                     </button>
                                                                 </form>
@@ -205,7 +231,7 @@
                                                 </div>
                                             }
                                         </div>
-                                        <div class="col-3"></div>
+                                        <div class="col-2"></div>
                                     </div>
                                 </td>
                             </tr>

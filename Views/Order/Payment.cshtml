@@ -1,0 +1,75 @@
+﻿@using System.Web;
+@using BridgeWater.Data;
+@using BridgeWater.Models;
+@using BridgeWater.Services;
+@inject IOrderService orderService;
+
+@{
+    int orderId = !string.IsNullOrEmpty(Context.Request.Query["orderId"]) ? 
+        Convert.ToInt32(Context.Request.Query["orderId"]) : -1;
+
+    bool? isPayed = !string.IsNullOrEmpty(Context.Request.Query["isPayed"]) ?
+        Convert.ToBoolean(Context.Request.Query["isPayed"]) : null;
+
+    ViewData["Title"] = "Notificare de plată";
+    var obj = orderId > 0 ? await orderService.GetOrderAsync(orderId) : null;
+    string val = isPayed != null && isPayed.Value ? "1" : "0";
+    #pragma warning disable
+}
+
+@if(isPayed != null && !isPayed.Value)
+{
+    <script>
+        window.close();
+    </script>
+}
+
+@if(orderId > 0)
+{
+    <div class="wrapper">
+        <div class="checkout container">
+            <form id="payment-form" asp-controller="Order" asp-action="Pay" method="post">
+                <section>
+                    <div class="bt-drop-in-wrapper">
+                        <div id="bt-dropin"></div>
+                    </div>
+                </section>
+                <input type="hidden" id="orderId" name="orderId" value="@Context.Request.Query["orderId"]" />
+                <input type="hidden" id="IsPayed" name="IsPayed" value="@val" />
+                <input type="hidden" id="nonce" value="" />
+                <hr />
+                <div class="row">
+                    <div class="col-1"></div>
+                    <div class="col-4">
+                        <button class="btn btn-success" type="submit"><span>Plătiți @((Math.Truncate((obj.Price * obj.Stock) * 100) / 100).ToString("#####.##")) lei</span></button>
+                    </div>
+                    <div class="col-3">
+                        <button class="btn btn-danger" onclick="window.close();"><span>Anulare</span></button>
+                    </div>
+                    <div class="col-4"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+}
+
+<script src="https://js.braintreegateway.com/web/dropin/1.9.4/js/dropin.min.js"></script>
+<script>
+    var client_token = "@ViewBag.ClientToken";
+    var form = document.querySelector('#payment-form');
+
+    braintree.dropin.create({
+        authorization: client_token,
+        container: '#bt-dropin'
+    }, function (createErr, instance) {
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            instance.requestPaymentMethod(function (err, payload) {
+                if (err) return;
+                document.querySelector('#nonce').value = payload.nonce;
+                form.submit();
+            });
+        });
+    });
+</script>
