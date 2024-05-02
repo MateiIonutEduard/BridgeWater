@@ -70,12 +70,12 @@ function UpdatePrice() {
 
     // display update button if quantity was changed
     if (quantity < MaxQuantity) {
-        $(childs[5].querySelector(`#changeOrder_${childIndex}`)).css('visibility', 'visible');
-        $(childs[5].querySelector('#Stock')).val(parseInt(quantity));
+        $(childs[6].querySelector(`#changeOrder_${childIndex}`)).css('visibility', 'visible');
+        $(childs[6].querySelector('#Stock')).val(parseInt(quantity));
     }
     else {
         // otherwise, revert initial control
-        $(childs[5].querySelector('#changeOrder')).css('visibility', 'hidden');
+        $(childs[6].querySelector(`#changeOrder_${childIndex}`)).css('visibility', 'hidden');
         $(`#quant_${childIndex}`).remove();
 
         $(parentControl.querySelector("#quantity")).css('display', 'inline');
